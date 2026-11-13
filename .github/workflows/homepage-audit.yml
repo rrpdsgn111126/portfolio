@@ -93,6 +93,40 @@ jobs:
                       print('READYMAG_DESKTOP_GEOMETRY_MATCH_1440',json.dumps(data),flush=True)
                   if width<=430:
                       assert all(c['rect']['w']<=width-30 for c in data['cards']),(width,data)
+                  # Shared Finam inspector must be inert without ?debug=blocks.
+                  assert page.locator('#block-debug-overlay').count()==0,('overlay leaked into normal mode',width)
+                  # Inspect mode uses the same no-layout-change overlay as the Finam case.
+                  debug=ctx.new_page()
+                  debug_errors=[]
+                  debug.on('pageerror',lambda error:debug_errors.append(str(error)))
+                  debug.goto('http://127.0.0.1:4173/?debug=blocks',wait_until='networkidle',timeout=30000)
+                  assert debug.locator('#block-debug-overlay').count()==1,('missing inspector',width)
+                  assert debug.locator('#block-debug-overlay .block-debug-label').count()==38,('wrong block labels',width)
+                  for selector in ('#home-intro','#home-title','#home-description','#home-work',
+                                   '#beeline-family-media','#beeline-family-image-1','#beeline-family-image-2',
+                                   '#beeline-family-copy','#beeline-family-title','#beeline-family-description','#beeline-family-tags',
+                                   '#finam-media','#finam-image-1','#finam-image-2','#finam-tags'):
+                      assert debug.locator(selector).count()==1,(width,'missing debug ID',selector)
+                      assert debug.locator('.block-debug-label',has_text=selector).count()>=1,(width,'missing label',selector)
+                  # IDs and overlay must not disturb original geometry, overflow or page content.
+                  for selector in ('#home-title','#beeline-family','#alfaforex','#equilibrium','#finam'):
+                      normal=page.locator(selector).bounding_box()
+                      marked=debug.locator(selector).bounding_box()
+                      assert normal and marked,(width,'missing geometry',selector)
+                      for key in ('x','y','width','height'):
+                          assert abs(normal[key]-marked[key])<1,(width,selector,key,normal,marked)
+                  assert debug.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),('debug overflow',width)
+                  # Clicking a named overlay copies its ID and must not open the case link.
+                  if width==1440:
+                      target=debug.locator('.block-debug-label',has_text='#beeline-family-image-1')
+                      target.click(force=True)
+                      debug.wait_for_timeout(120)
+                      assert debug.url.endswith('/?debug=blocks'),('inspector navigated unexpectedly',debug.url)
+                      assert 'beeline-family-image-1' in debug.locator('#block-debug-toast').inner_text(),('copy feedback missing',width)
+                  if width in (390,1440):
+                      debug.screenshot(path=str(out/f'homepage-debug-{width}.png'),full_page=True,animations='disabled')
+                  assert not debug_errors,(width,debug_errors)
+                  debug.close()
                   page.evaluate('window.scrollTo(0,0)')
                   page.wait_for_timeout(150)
                   page.screenshot(path=str(out/f'homepage-{width}.png'),full_page=True,animations='disabled',timeout=30000)
