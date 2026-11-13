@@ -93,6 +93,9 @@ jobs:
                       print('READYMAG_DESKTOP_GEOMETRY_MATCH_1440',json.dumps(data),flush=True)
                   if width<=430:
                       assert all(c['rect']['w']<=width-30 for c in data['cards']),(width,data)
+                  # Normalize scroll before comparing viewport-relative bounding boxes.
+                  page.evaluate('window.scrollTo(0,0)')
+                  page.wait_for_timeout(120)
                   # Shared Finam inspector must be inert without ?debug=blocks.
                   assert page.locator('#block-debug-overlay').count()==0,('overlay leaked into normal mode',width)
                   # Inspect mode uses the same no-layout-change overlay as the Finam case.
