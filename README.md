@@ -24,6 +24,11 @@ node --check components-carousel.js
 
 Playwright/Chromium audit workflows inspect Finam via `/cases/finam/`. Homepage browser tests use the original Readymag as reference.
 
+## Block inspector
+
+Open `https://finam-case.pages.dev/?debug=blocks` to show clickable outlines and copyable block IDs on the homepage. The same shared `debug-blocks.js` is used on Finam. The complete ID registry is in [`HOME-BLOCK-MAP.md`](HOME-BLOCK-MAP.md). In the normal homepage mode no overlays are loaded.
+
+
 ## Hosting
 
 Cloudflare project `finam-case` remains in place. `portfolio.pages.dev` is already occupied by an unrelated site and must not be treated as this repository's endpoint. Confirm the correct Cloudflare Pages project and hostname separately. No DNS or Cloudflare project settings are changed by this repository migration.
