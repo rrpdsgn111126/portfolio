@@ -85,7 +85,7 @@ jobs:
                       for idx,expected in enumerate((426,804,1184,1564)):
                           box=cards[idx]['rect']
                           assert abs(box['x']-86)<1 and abs(box['y']-expected)<3 and abs(box['w']-1268)<1 and abs(box['h']-328)<1,('card',idx,box)
-                          assert cards[idx]['size']=='18px' and cards[idx]['weight']=='400'
+                          assert cards[idx]['size']=='18px' and cards[idx]['weight']=='700'
                           assert cards[idx]['bg']=='rgb(232, 235, 241)'
                       for i,(x,y) in enumerate([(193,470),(402,495),(941,850),(732,875),(193,1236),(402,1280)]):
                           img=cards[i//2]['images'][i%2]

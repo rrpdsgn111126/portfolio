@@ -10,7 +10,7 @@ body{overflow-x:clip}
 .portfolio-home-shell{overflow-x:clip}
 .home-header{position:absolute;inset:0 0 auto;z-index:10;height:0}
 .home-mark{
-  position:fixed;top:48px;left:-5px;display:block;width:60px;height:60px;
+  position:absolute;top:40px;left:-5px;display:block;width:60px;height:60px;
   font:400 67px/1 var(--font-body);color:rgba(0,0,0,.75);
   transform-origin:center center;z-index:10;
 }
@@ -18,7 +18,7 @@ body{overflow-x:clip}
 .home-mark:focus-visible,.home-project__link:focus-visible{outline:2px solid #222;outline-offset:4px}
 .home-intro{padding-top:72px;padding-bottom:104px}
 .home-intro h1.portfolio-display{
-  font:400 50px/60px var(--font-heading);letter-spacing:0;
+  font:700 50px/60px var(--font-heading);letter-spacing:0;
   width:min(100%,756px);max-width:756px;color:rgba(0,0,0,.82);
 }
 .home-intro p.portfolio-body{
@@ -28,7 +28,7 @@ body{overflow-x:clip}
 .home-work{padding-bottom:94px}
 .home-project{
   position:relative;width:100%;height:328px;margin:0 0 50px;
-  background:var(--home-card);border:0;border-radius:0;
+  background:var(--home-card);border:0;border-radius:10px;
   overflow:hidden;isolation:isolate;
 }
 .home-project:not(:first-child){margin-bottom:52px}
@@ -37,7 +37,8 @@ body{overflow-x:clip}
 .home-project__media{position:absolute;inset:0;pointer-events:none}
 .home-project__shot{
   position:absolute;display:block;width:24.132492%;height:auto;max-width:none;
-  object-fit:contain;z-index:1;
+  object-fit:contain;z-index:1;border-radius:5px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
   transition:transform 500ms ease,opacity 500ms ease,filter 500ms ease;
   transform-origin:center center;
 }
@@ -58,7 +59,7 @@ body{overflow-x:clip}
 .home-project--left .home-project__copy{right:8.438486%}
 .home-project--right .home-project__copy{left:8.438486%}
 .home-project__copy h2{
-  font:400 18px/26px var(--font-heading);letter-spacing:0;
+  font:700 18px/26px var(--font-heading);letter-spacing:0;
   text-transform:lowercase;color:rgba(0,0,0,.95);
   padding:0 0 13px;margin:0;
 }
@@ -95,8 +96,8 @@ body{overflow-x:clip}
 }
 @media(max-width:767px){
   :root{--pad:6.25vw}
-  .home-mark{top:17px;left:10px;width:44px;height:44px;font-size:48px}
-  .home-intro{padding-top:100px;padding-bottom:66px}
+  .home-mark{top:34px;left:-5px;width:59px;height:60px;font-size:67px}
+  .home-intro{padding-top:118px;padding-bottom:66px}
   .home-intro h1.portfolio-display{width:100%;font-size:clamp(27px,7.25vw,36px);line-height:1.24}
   .home-intro p.portfolio-body{margin-top:24px;font-size:16px;line-height:1.52}
   .home-work{padding-bottom:75px}
@@ -104,7 +105,7 @@ body{overflow-x:clip}
   .home-project:not(:first-child){margin-bottom:26px}
   .home-project__link{display:flex;flex-direction:column;height:auto}
   .home-project__media{position:relative;inset:auto;height:clamp(185px,56vw,248px);flex:none;width:100%}
-  .home-project__shot{width:64%;max-width:none}
+  .home-project__shot{width:64%;max-width:none;box-shadow:0 7px 18px rgba(0,0,0,.13)}
   .home-project--left .home-project__shot--first{left:8%;top:20px}
   .home-project--left .home-project__shot--second{left:35%;top:40px}
   .home-project--right .home-project__shot--first{left:35%;top:20px}
