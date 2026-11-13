@@ -81,6 +81,34 @@ jobs:
                   ctx.close()
               browser.close()
           PY
+      - name: Probe original Readymag hover interactions
+        run: |
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          import json
+          with sync_playwright() as p:
+            b=p.chromium.launch(headless=True,args=['--no-sandbox'])
+            c=b.new_context(viewport={'width':1440,'height':900})
+            page=c.new_page()
+            page.goto('https://readymag.website/u3341020794/3666146/',wait_until='domcontentloaded',timeout=60000)
+            page.wait_for_timeout(3000)
+            js="""() => {
+              const pic=document.querySelector('.rmwidget.widget-picture');
+              const pill=document.querySelector('.rmwidget.widget-button');
+              const group=e=>[e,...e.querySelectorAll('*')].slice(0,9).map(n=>{const c=getComputedStyle(n);return {tag:n.tagName,cls:String(n.className).slice(0,70),hover:n.matches(':hover'),opacity:c.opacity,filter:c.filter,transform:c.transform,scale:c.scale,transition:c.transition,animation:c.animation,background:c.backgroundColor,shadow:c.boxShadow,radius:c.borderRadius}});
+              return {picture:group(pic),tag:group(pill)};
+            }""";
+            def snapshot(name):print('HOVER_PROBE',name,json.dumps(page.evaluate(js),ensure_ascii=False),flush=True)
+            page.mouse.move(120,380)
+            snapshot('base')
+            page.mouse.move(220,490)
+            page.wait_for_timeout(650)
+            snapshot('image')
+            page.mouse.move(875,642)
+            page.wait_for_timeout(450)
+            snapshot('pill')
+            c.close();b.close()
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
