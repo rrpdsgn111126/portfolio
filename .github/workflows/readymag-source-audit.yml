@@ -1,0 +1,73 @@
+name: Inspect original Readymag homepage geometry
+on:
+  push:
+    branches: [fix/readymag-accurate-home-20261113]
+    paths: [.github/workflows/readymag-source-audit.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+      - name: Record source page elements with actual pixels and computed styles
+        run: |
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          import json, os
+          os.makedirs('source-geometry',exist_ok=True)
+          js=r"""() => {
+             const rect=(el)=>{let r=el.getBoundingClientRect();return {x:+r.x.toFixed(1),y:+(r.y+scrollY).toFixed(1),w:+r.width.toFixed(1),h:+r.height.toFixed(1)}};
+             const describe=(el)=>{
+               const c=getComputedStyle(el);
+               const text=(el.innerText||el.textContent||'').replace(/\\s+/g,' ').trim().slice(0,200);
+               const image=el.matches('img')?el:el.querySelector('img');
+               const a=el.matches('a')?el:el.closest('a')||el.querySelector('a');
+               const txt=el.matches('p,h1,h2,h3,h4,span')?el:el.querySelector('p,h1,h2,h3,h4,span');
+               const tstyle=getComputedStyle(txt||el);
+               return {rect:rect(el),id:el.id,classes:typeof el.className==='string'?el.className.slice(0,150):'',display:c.display,visibility:c.visibility,opacity:c.opacity,position:c.position,transform:c.transform,background:c.backgroundColor,backgroundImage:c.backgroundImage.slice(0,95),borderRadius:c.borderRadius,overflow:c.overflow,
+                 text, font:tstyle.fontFamily,size:tstyle.fontSize,weight:tstyle.fontWeight,lineHeight:tstyle.lineHeight,color:tstyle.color,letter:tstyle.letterSpacing,
+                 image:image?{src:image.currentSrc||image.src,rect:rect(image),width:image.naturalWidth,height:image.naturalHeight,fit:getComputedStyle(image).objectFit}:null,
+                 link:a?.href||null,widgetType:el.getAttribute('data-type')||'',
+                 parent:el.parentElement?{className:String(el.parentElement.className).slice(0,80),rect:rect(el.parentElement)}:null};
+             };
+             const widgets=[...document.querySelectorAll('.rmwidget')];
+             const chosen=widgets.length?widgets:[...document.querySelectorAll('h1,h2,h3,h4,p,img')];
+             const items=chosen.map(describe).filter(d=>d.rect.w>2&&d.rect.h>2);
+             const textWidgets=items.filter(d=>d.text.length>0);
+             const images=items.filter(d=>d.image);
+             return {url:location.href,viewport:innerWidth,height:innerHeight,document:{w:document.documentElement.scrollWidth,h:document.documentElement.scrollHeight},bodyBg:getComputedStyle(document.body).backgroundColor,widgets:items.length,all:items.slice(0,150),textWidgets:textWidgets.length,images:images.length};
+          }""";
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
+              for width in (390,1440):
+                  ctx=browser.new_context(viewport={'width':width,'height':900},device_scale_factor=1)
+                  page=ctx.new_page()
+                  errs=[]
+                  page.on('pageerror',lambda e:errs.append(str(e)))
+                  page.goto('https://readymag.website/u3341020794/3666146/',wait_until='domcontentloaded',timeout=65000)
+                  page.wait_for_timeout(3800)
+                  page.evaluate('() => document.fonts.ready')
+                  out=page.evaluate(js)
+                  out['errors']=errs[:7]
+                  print('SOURCE_LAYOUT',width,json.dumps({k:v for k,v in out.items() if k!='all'},ensure_ascii=False),flush=True)
+                  for i,item in enumerate(out['all']):
+                      print('SOURCE_WIDGET',width,i,json.dumps(item,ensure_ascii=False),flush=True)
+                  with open(f'source-geometry/source-{width}.json','w') as f:json.dump(out,f,ensure_ascii=False,indent=2)
+                  page.screenshot(path=f'source-geometry/readymag-{width}.png',full_page=True,animations='disabled',timeout=40000)
+                  ctx.close()
+              browser.close()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: readymag-source-geometry
+          path: source-geometry/
