@@ -5,6 +5,7 @@ on:
     paths:
       - 'index.html'
       - 'home.css'
+      - 'home-interactions.js'
       - 'assets/home/**'
       - 'shared/**'
       - '.github/workflows/homepage-audit.yml'
@@ -12,6 +13,7 @@ on:
     paths:
       - 'index.html'
       - 'home.css'
+      - 'home-interactions.js'
       - 'assets/home/**'
       - 'shared/**'
       - '.github/workflows/homepage-audit.yml'
@@ -20,71 +22,110 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install Chromium browser
-        run: |
+      - run: |
           python -m pip install playwright==1.56.0
           python -m playwright install chromium
-      - name: Start static file server
+      - name: Launch static website
         run: |
           python -m http.server 4173 --bind 127.0.0.1 > /tmp/portfolio-home-http.log 2>&1 &
           sleep 2
-      - name: Check homepage and Finam at six screen widths
+      - name: Verify precise homepage geometry and six viewport layouts
         run: |
           python - <<'PY'
           from pathlib import Path
           from playwright.sync_api import sync_playwright
+          import json
           out=Path('homepage-audit');out.mkdir(exist_ok=True)
-          with sync_playwright() as playwright:
-              browser=playwright.chromium.launch(headless=True,args=['--no-sandbox'])
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
               for width in (375,390,430,1280,1440,1920):
                   ctx=browser.new_context(viewport={'width':width,'height':900},device_scale_factor=1)
                   page=ctx.new_page()
                   errors=[]
-                  page.on('pageerror',lambda error:errors.append(str(error)))
-                  page.on('response',lambda response:errors.append('HTTP '+str(response.status)+' '+response.url) if response.status>=400 and response.url.startswith('http://127.0.0.1:4173') else None)
-                  page.goto('http://127.0.0.1:4173/',wait_until='networkidle')
+                  page.on('pageerror',lambda e:errors.append(str(e)))
+                  page.on('response',lambda r:errors.append('HTTP '+str(r.status)+' '+r.url) if r.status>=400 and r.url.startswith('http://127.0.0.1:4173') else None)
+                  page.goto('http://127.0.0.1:4173/',wait_until='networkidle',timeout=30000)
                   page.evaluate('() => document.fonts.ready')
                   assert page.title()=='Roman Khokhlov — Portfolio'
-                  assert page.locator('.home-project').count()==5
-                  assert page.locator('.home-archive a').count()==8
+                  assert page.locator('.home-project').count()==4,('project count',width)
+                  assert page.locator('.home-project__shot').count()==8,('screenshots',width)
+                  assert page.locator('.home-archive').count()==0
+                  assert page.locator('#stforex').count()==0
+                  assert page.locator('.home-project__arrow').count()==0
                   assert page.locator('#finam a[href="/cases/finam/"]').count()==1
-                  assert page.locator('.home-project__visual img').count()==10
-                  for img in page.locator('.home-project__visual img').all():
-                      img.scroll_into_view_if_needed()
-                      img.evaluate("(el) => {el.loading='eager'}")
-                  page.wait_for_function("() => [...document.querySelectorAll('.home-project__visual img')].every(img => img.complete && img.naturalWidth > 0)",timeout=25000)
                   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),('horizontal overflow',width)
-                  assert not errors,(width,errors)
-                  page.screenshot(path=str(out/f'home-{width}.png'),full_page=True,animations='disabled')
-                  page.goto('http://127.0.0.1:4173/cases/finam/',wait_until='domcontentloaded')
+                  assert page.evaluate("getComputedStyle(document.body).backgroundColor")=='rgb(249, 249, 250)'
+                  images=page.locator('.home-project__shot')
+                  for image in images.all():
+                      image.evaluate("(e)=>e.loading='eager'")
+                      image.scroll_into_view_if_needed()
+                  page.wait_for_function("() => [...document.querySelectorAll('.home-project__shot')].every(x=>x.complete && x.naturalWidth>0)",timeout=25000)
+                  page.wait_for_timeout(550)
+                  assert not errors,('errors',width,errors)
+                  data=page.evaluate("""() => {
+                    const rect=e=>{const b=e.getBoundingClientRect();return {x:b.x,y:b.y+scrollY,w:b.width,h:b.height}};
+                    return {title:rect(document.querySelector('#home-title')),lead:rect(document.querySelector('.home-intro p')),
+                      cards:[...document.querySelectorAll('.home-project')].map(e=>({rect:rect(e),copy:rect(e.querySelector('.home-project__copy')),title:rect(e.querySelector('h2')),
+                        images:[...e.querySelectorAll('img')].map(rect),bg:getComputedStyle(e).backgroundColor,
+                        font:getComputedStyle(e.querySelector('h2')).fontFamily,weight:getComputedStyle(e.querySelector('h2')).fontWeight,
+                        size:getComputedStyle(e.querySelector('h2')).fontSize,
+                        descSize:getComputedStyle(e.querySelector('p')).fontSize}))};
+                  }""")
+                  if width==1440:
+                      assert abs(data['title']['x']-86)<1 and abs(data['title']['y']-72)<1,('intro',data)
+                      assert abs(data['title']['h']-120)<2,('title height',data['title'])
+                      assert abs(data['lead']['x']-86)<1 and abs(data['lead']['y']-218)<2,('lead',data['lead'])
+                      cards=data['cards']
+                      for idx,expected in enumerate((426,804,1184,1564)):
+                          box=cards[idx]['rect']
+                          assert abs(box['x']-86)<1 and abs(box['y']-expected)<3 and abs(box['w']-1268)<1 and abs(box['h']-328)<1,('card',idx,box)
+                          assert cards[idx]['size']=='18px' and cards[idx]['weight']=='400'
+                          assert cards[idx]['bg']=='rgb(232, 235, 241)'
+                      for i,(x,y) in enumerate([(193,470),(402,495),(941,850),(732,875),(193,1236),(402,1280)]):
+                          img=cards[i//2]['images'][i%2]
+                          assert abs(img['x']-x)<2 and abs(img['y']-y)<3,('image placement',i,img,x,y)
+                      print('READYMAG_DESKTOP_GEOMETRY_MATCH_1440',json.dumps(data),flush=True)
+                  if width<=430:
+                      assert all(c['rect']['w']<=width-30 for c in data['cards']),(width,data)
+                  page.evaluate('window.scrollTo(0,0)')
+                  page.wait_for_timeout(150)
+                  page.screenshot(path=str(out/f'homepage-{width}.png'),full_page=True,animations='disabled',timeout=30000)
+                  page.locator('#finam a').click()
+                  assert page.url.endswith('/cases/finam/')
                   assert page.title()=='Finam — Roman Khokhlov'
                   assert page.locator('#components-carousel .components-slide').count()==3
                   assert page.locator('#portfolio-home-link').get_attribute('href')=='/'
-                  page.screenshot(path=str(out/f'finam-{width}.png'),full_page=False,animations='disabled')
-                  assert not errors,(width,errors)
-                  ctx.close()
+                  page.go_back(wait_until='domcontentloaded')
+                  assert page.title()=='Roman Khokhlov — Portfolio'
+                  assert not errors,('navigation',width,errors)
                   print('PORTFOLIO_BROWSER_OK',width,flush=True)
+                  ctx.close()
+              # Original Readymag uses an internal scroll wrapper; capture three viewport slices.
               for width in (390,1440):
                   ctx=browser.new_context(viewport={'width':width,'height':900})
                   page=ctx.new_page()
                   try:
-                      page.goto('https://readymag.website/u3341020794/3666146/',wait_until='domcontentloaded',timeout=40000)
-                      page.screenshot(path=str(out/f'readymag-reference-{width}.png'),full_page=True,animations='disabled',timeout=35000)
-                      print('SOURCE_SCREENSHOT_OK',width,flush=True)
+                      page.goto('https://readymag.website/u3341020794/3666146/',wait_until='domcontentloaded',timeout=45000)
+                      page.wait_for_timeout(2000)
+                      for offset in (0,650,1080):
+                          page.evaluate('(scroll)=>{const sc=document.querySelector(".content-scroll-wrapper");if(sc)sc.scrollTop=scroll;}',offset)
+                          page.wait_for_timeout(350)
+                          page.screenshot(path=str(out/f'readymag-{width}-scroll-{offset}.png'),animations='disabled',timeout=25000)
+                      print('REFERENCE_CAPTURE_OK',width,flush=True)
                   except Exception as error:
-                      print('REFERENCE_SCREENSHOT_UNAVAILABLE',width,str(error)[:300],flush=True)
+                      print('REFERENCE_CAPTURE_UNAVAILABLE',width,str(error)[:270],flush=True)
                   ctx.close()
               browser.close()
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: homepage-comparison-screenshots
+          name: homepage-readymag-comparison
           path: homepage-audit/
           if-no-files-found: warn
