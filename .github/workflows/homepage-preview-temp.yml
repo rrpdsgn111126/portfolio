@@ -1,0 +1,63 @@
+name: Temporary homepage visual comparison preview
+on:
+  push:
+    branches: [fix/readymag-accurate-home-20261113]
+    paths: [.github/workflows/homepage-preview-temp.yml]
+permissions:
+  contents: write
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          python -m pip install playwright==1.56.0 Pillow
+          python -m playwright install chromium
+      - name: Render exact source and new page for visual inspection
+        run: |
+          python -m http.server 4173 --bind 127.0.0.1 > /tmp/portfolio-preview.log 2>&1 &
+          sleep 2
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          pth=Path('qa-preview');pth.mkdir(exist_ok=True)
+          with sync_playwright() as p:
+            b=p.chromium.launch(headless=True,args=['--no-sandbox'])
+            for name,url in [('source','https://readymag.website/u3341020794/3666146/'),('new','http://127.0.0.1:4173/')]:
+              for width in (1440,390):
+                c=b.new_context(viewport={'width':width,'height':900},device_scale_factor=1)
+                page=c.new_page()
+                page.goto(url,wait_until='domcontentloaded',timeout=60000)
+                page.wait_for_timeout(1500)
+                page.evaluate('() => document.fonts.ready')
+                for offset in (0,600):
+                  if name=='source':
+                    page.evaluate('(v)=>{let e=document.querySelector(".content-scroll-wrapper");if(e)e.scrollTop=v}',offset)
+                  else:
+                    page.evaluate('(v)=>window.scrollTo(0,v)',offset)
+                  page.wait_for_timeout(650)
+                  temp=pth/'temp.png'
+                  page.screenshot(path=str(temp),animations='disabled',timeout=20000)
+                  im=Image.open(temp).convert('RGB')
+                  out=pth/f'{name}-{width}-scroll-{offset}.jpg'
+                  im.save(out,quality=77,optimize=True)
+                  print('PREVIEW',out,im.size,out.stat().st_size,flush=True)
+                c.close()
+            b.close()
+          PY
+      - name: Store comparison on isolated working branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- qa-preview/source-1440-scroll-0.jpg qa-preview/source-1440-scroll-600.jpg qa-preview/source-390-scroll-0.jpg qa-preview/source-390-scroll-600.jpg qa-preview/new-1440-scroll-0.jpg qa-preview/new-1440-scroll-600.jpg qa-preview/new-390-scroll-0.jpg qa-preview/new-390-scroll-600.jpg
+          git commit -m "Temporary visual comparison screenshots for homepage QA"
+          git pull --rebase origin fix/readymag-accurate-home-20261113
+          git push origin HEAD:fix/readymag-accurate-home-20261113
