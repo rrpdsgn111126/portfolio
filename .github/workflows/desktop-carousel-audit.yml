@@ -6,11 +6,21 @@ on:
     paths:
       - styles.css
       - components-carousel.js
+      - index.html
+      - cases/finam/index.html
+      - components-carousel.json
+      - 'assets/components-slide-*.webp'
+      - assets/components-slide-01-4408-41190.png
       - .github/workflows/desktop-carousel-audit.yml
   pull_request:
     paths:
       - styles.css
       - components-carousel.js
+      - index.html
+      - cases/finam/index.html
+      - components-carousel.json
+      - 'assets/components-slide-*.webp'
+      - assets/components-slide-01-4408-41190.png
       - .github/workflows/desktop-carousel-audit.yml
 
 permissions:
@@ -94,6 +104,13 @@ jobs:
                       }''', {'root':root,'panel':panel,'slideClass':slide_class})
                       assert data['imageLoaded'], (width, name, data)
                       assert data['fit']=='contain', (width, name, data)
+                      if name == 'components':
+                          # The approved first artwork is a two-card 1228 x 856 frame.
+                          # The obsolete three-card export had a portrait aspect ratio.
+                          dimensions = page.locator(root+' '+slide_class+' img').first.evaluate(
+                              'img => [img.naturalWidth, img.naturalHeight]')
+                          assert dimensions[0] and dimensions[1] and 1.42 < dimensions[0] / dimensions[1] < 1.45, (
+                              width, 'incorrect first Components artwork', dimensions)
                       if width >= 768:
                           assert data['paddingBottom']=='0px', (width,name,data)
                           assert data['justify']=='flex-start' and data['align']=='center', (width,name,data)
@@ -169,7 +186,7 @@ jobs:
                               assert abs(margins['halfGap']-margins['initialGap']/2)<1.5, (width,name,index,margins)
                               print('CAROUSEL_SPACING_OK', width, name, index+1, margins, flush=True)
                       if name=='modular':
-                          # Check all four Figma source images, including offscreen lazy-loaded slides.
+                          # Check all five current Figma source images, including offscreen lazy-loaded slides.
                           page.locator(root+' '+slide_class+' img').evaluate_all(
                               "(imgs) => imgs.forEach(img => img.loading='eager')"
                           )
@@ -181,7 +198,7 @@ jobs:
                               const rect=img.getBoundingClientRect();
                               return {w:rect.width,h:rect.height,x:rect.x,naturalW:img.naturalWidth};
                             })''')
-                          assert len(sizes)==4 and all(v['naturalW']==1228 for v in sizes),(width,sizes)
+                          assert len(sizes)==5 and all(v['naturalW']>0 for v in sizes),(width,sizes)
                           if width >= 768:
                               assert max(v['w'] for v in sizes)-min(v['w'] for v in sizes)<0.5,(width,sizes)
                               assert max(v['x'] for v in sizes)-min(v['x'] for v in sizes)<0.5,(width,sizes)
@@ -194,6 +211,29 @@ jobs:
                       print('CAROUSEL_GEOMETRY_OK', name, width, data, flush=True)
                       if width in (390,1440):
                           page.locator(panel).screenshot(path=str(out/f'{name}-{width}.png'))
+                          if name == 'components':
+                              # Walk every slide at desktop and mobile widths, and
+                              # capture each settled frame for visual comparison.
+                              selector = root+' '+slide_class
+                              page.locator(selector+' img').evaluate_all(
+                                  "(imgs) => imgs.forEach(img => img.loading='eager')")
+                              page.wait_for_function('''selector => [...document.querySelectorAll(selector)]
+                                  .every(img => img.complete && img.naturalWidth > 0)''',
+                                  arg=selector+' img', timeout=25000)
+                              for slide_index in range(3):
+                                  page.locator(root+' [class$="-pagination"] button').nth(slide_index).click()
+                                  page.wait_for_function('''arg => {
+                                      const slides=[...document.querySelectorAll(arg.selector)];
+                                      return slides[arg.index]?.classList.contains('is-current');
+                                  }''', arg={'selector':selector,'index':slide_index}, timeout=15000)
+                                  page.wait_for_timeout(750)
+                                  opacities = page.locator(selector).evaluate_all(
+                                      "els => els.map(el => Number(getComputedStyle(el).opacity))")
+                                  assert all(abs(o - (1 if i==slide_index else 0))<0.01
+                                      for i,o in enumerate(opacities)), (width,slide_index,opacities)
+                                  page.locator(panel).screenshot(
+                                      path=str(out/f'components-{width}-slide-{slide_index+1}.png'))
+                                  print('COMPONENTS_SLIDE_OK',width,slide_index+1,opacities,flush=True)
                   context.close()
               browser.close()
           PY
