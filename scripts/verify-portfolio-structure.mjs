@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pages = ['index.html', 'cases/finam/index.html'];
-const cssFiles = ['styles.css','shared/tokens.css','shared/typography.css','shared/layout.css','shared/components.css'];
+const cssFiles = ['home.css','styles.css','shared/tokens.css','shared/typography.css','shared/layout.css','shared/components.css'];
 let failures = 0;
 function check(ok, message) {
   if (!ok) { console.error('ERROR: ' + message); failures++; }
@@ -20,7 +20,7 @@ for (const page of pages) {
   check(existsSync(abs),'Missing page: '+page);
   if (!existsSync(abs)) continue;
   const html=readFileSync(abs,'utf8');
-  check(html.includes('Finam — Roman Khokhlov'),'Finam metadata missing: '+page);
+  check(html.includes(page==='index.html'?'Roman Khokhlov — Portfolio':'Finam — Roman Khokhlov'),'Incorrect page metadata: '+page);
   for (const sheet of ['tokens','typography','layout','components']) {
     check(html.includes('shared/'+sheet+'.css'),sheet+' CSS not linked in '+page);
   }
@@ -34,10 +34,21 @@ for (const page of pages) {
   }
 }
 for (const css of cssFiles) check(existsSync(resolve(root,css)),'Missing stylesheet '+css);
-const css=readFileSync(resolve(root,'styles.css'),'utf8');
+const css=readFileSync(resolve(root,'styles.css'),'utf8')+'\n'+readFileSync(resolve(root,'home.css'),'utf8');
 for (const m of css.matchAll(/url\(\s*['"]?([^)'"]+)/g)){
   const target=localFile('styles.css',m[1]);
   if (target) check(existsSync(target),'Missing CSS asset '+relative(root,target));
 }
+const homepage=readFileSync(resolve(root,'index.html'),'utf8');
+const finam=readFileSync(resolve(root,'cases/finam/index.html'),'utf8');
+check(homepage.includes('href="/cases/finam/"'),'Homepage Finam case link missing');
+check(finam.includes('href="/"'),'Finam home link is not /');
+check(!homepage.includes('id="case-title"'),'Homepage contains Finam-specific markup');
+const scripts=['sync-components-carousel.mjs','sync-examples-media.mjs','sync-figma-images.mjs','sync-key-visual-carousel.mjs','reexport-modular-carousel.mjs'];
+for(const script of scripts) {
+ const source=readFileSync(resolve(root,'scripts',script),'utf8');
+ check(!source.includes("readFile('index.html'") && !source.includes("writeFile('index.html'"),'Figma script targets root index: '+script);
+}
+check(!existsSync(resolve(root,'scripts/build-finam-mirror.mjs')),'Retired mirror builder exists');
 if (failures) process.exitCode=1;
 else console.log('Portfolio structure: HTML, shared CSS, assets and scripts OK');

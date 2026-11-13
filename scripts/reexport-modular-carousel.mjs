@@ -22,7 +22,7 @@ async function get(url,headers={}){
 const url='https://api.figma.com/v1/images/'+key+'?ids='+encodeURIComponent(ids.join(','))+'&format=png&scale=1';
 const data=await(await get(url,{'X-Figma-Token':token})).json();
 if(data.err)throw Error('Figma export error '+data.err);
-let html=await fs.readFile('index.html','utf8');
+let html=await fs.readFile('cases/finam/index.html','utf8');
 let mapping=await fs.readFile('FIGMA-BLOCK-MAP.md','utf8');
 for(let i=0;i<ids.length;i++){
  const src=data.images?.[ids[i]];
@@ -33,7 +33,7 @@ for(let i=0;i<ids.length;i++){
  const name='modular-slide-'+String(i+1).padStart(2,'0');
  const output=await sharp(input).webp({quality:84,effort:6,alphaQuality:100}).toBuffer();
  await fs.writeFile('assets/'+name+'.webp',output);
- const oldPath='assets/'+name+'.png',newPath='assets/'+name+'.webp';
+ const oldPath='../../assets/'+name+'.png',newPath='../../assets/'+name+'.webp';
  if(!html.includes(oldPath)&&!html.includes(newPath))throw Error('Missing HTML image reference '+name);
  if(!mapping.includes(oldPath)&&!mapping.includes(newPath))throw Error('Missing mapping for '+name);
  html=html.replaceAll(oldPath,newPath);
@@ -41,5 +41,5 @@ for(let i=0;i<ids.length;i++){
  await fs.unlink(oldPath).catch(e=>{if(e.code!=='ENOENT')throw e;});
  console.log(name,ids[i],meta.width,meta.height,input.length,output.length);
 }
-await fs.writeFile('index.html',html);
+await fs.writeFile('cases/finam/index.html',html);
 await fs.writeFile('FIGMA-BLOCK-MAP.md',mapping);

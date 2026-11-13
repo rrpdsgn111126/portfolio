@@ -36,13 +36,15 @@ for (const item of all) {
   results.push({ ...item, filename, before: input.length, after: output.length });
 }
 
-let html = await fs.readFile('index.html', 'utf8');
+let html = await fs.readFile('cases/finam/index.html', 'utf8');
 const slides = results.filter((item) => item.name.startsWith('modular-slide-'));
-const slideMarkup = '<div id="modular-carousel-track" class="modular-carousel-track">' + slides.map((item, index) => '<div class="modular-slide" id="modular-slide-' + (index + 1) + '" role="group" aria-label="' + (index + 1) + ' of ' + slides.length + '"><img src="assets/' + item.filename + '" alt="Modular Block System layout ' + (index + 1) + '" loading="lazy"></div>').join('') + '</div>';
+const slideMarkup = '<div id="modular-carousel-track" class="modular-carousel-track">' + slides.map((item, index) => '<div class="modular-slide" id="modular-slide-' + (index + 1) + '" role="group" aria-label="' + (index + 1) + ' of ' + slides.length + '"><img src="../../assets/' + item.filename + '" alt="Modular Block System layout ' + (index + 1) + '" loading="lazy"></div>').join('') + '</div>';
 html = html.replace(/<!-- MODULAR_SLIDES -->[\s\S]*?<!-- \/MODULAR_SLIDES -->/, '<!-- MODULAR_SLIDES -->' + slideMarkup + '<!-- /MODULAR_SLIDES -->');
-html = html.replace(/(<div id="hero-image-left"[^>]*><img[^>]*src=")[^"]+/, '$1assets/hero-demo-left.webp');
-html = html.replace(/(<div id="hero-image-right"[^>]*><img[^>]*src=")[^"]+/, '$1assets/hero-demo-right.webp');
-await fs.writeFile('index.html', html);
+// Figma 2304:1991: the tall 4315:59621 image belongs on the left,
+// the shorter 4315:59451 image belongs on the right.
+html = html.replace(/(<div id="hero-image-left"[^>]*><img[^>]*src=")[^"]+/, '$1../../assets/hero-demo-right.webp');
+html = html.replace(/(<div id="hero-image-right"[^>]*><img[^>]*src=")[^"]+/, '$1../../assets/hero-demo-left.webp');
+await fs.writeFile('cases/finam/index.html', html);
 
 const keep = new Set(results.map((item) => item.filename));
 for (const file of await fs.readdir(outDir)) if (/^(modular-slide-|hero-demo-).*\.webp$/i.test(file) && !keep.has(file)) await fs.unlink(path.join(outDir, file));

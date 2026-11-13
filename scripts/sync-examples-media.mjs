@@ -46,7 +46,7 @@ function collect(node){
   for(const child of node.children||[])collect(child);
 }
 collect(root);
-const html=await fs.readFile('index.html','utf8');
+const html=await fs.readFile('cases/finam/index.html','utf8');
 const start=html.indexOf('<div id="examples-media"');
 const end=html.indexOf('\n</section>',start);
 if(start<0||end<0)throw new Error('Missing #examples-media');
@@ -56,7 +56,7 @@ for(const [id,name,htmlId,width,height] of items){
   if(n?.type!=='RECTANGLE'||!n.fills?.some(f=>f.type==='IMAGE')||!rect
     ||Math.abs(rect.width-width)>1||Math.abs(rect.height-height)>1)throw new Error('Unexpected Figma image '+id);
   const tags=[...markup.matchAll(/<img\b[^>]*>/g)].map(m=>m[0]).filter(s=>s.includes('id="'+htmlId+'"'));
-  if(tags.length!==1||!tags[0].includes('src="assets/'+name+'.webp"'))throw new Error('Wrong HTML image mapping: '+htmlId);
+  if(tags.length!==1||!tags[0].includes('src="../../assets/'+name+'.webp"'))throw new Error('Wrong HTML image mapping: '+htmlId);
 }
 const ids=items.map(x=>x[0]).join(',');
 const rendered=await figma('/images/'+fileKey+'?ids='+encodeURIComponent(ids)+'&format=png&scale=2');

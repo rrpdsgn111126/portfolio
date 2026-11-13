@@ -77,20 +77,20 @@ for (const item of config.frames) {
     pngBytes:input.length, webpBytes:optimized.data.length});
 }
 
-let html = await fs.readFile('index.html', 'utf8');
+let html = await fs.readFile('cases/finam/index.html', 'utf8');
 const openToken = '<div id="components-media" ';
 const start = html.indexOf(openToken);
 const end = html.indexOf('\n</section>', start);
 if (start < 0 || end < 0 || html.indexOf(openToken, start + 1) !== -1)
   throw new Error('Cannot safely locate unique #components-media markup');
-if (!html.includes('<script src="components-carousel.js" defer></script>'))
+if (!html.includes('<script src="../../components-carousel.js" defer></script>'))
   throw new Error('Components carousel script is not loaded');
 
 // Preserve the existing section and description, replace only its media container.
 const slideMarkup = results.map((item, i) =>
   '<div id="components-slide-' + (i + 1) + '" class="components-slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' of ' + results.length + '">'
   + '<img id="components-image-' + (i + 1) + '" alt="Finam reusable components — slide ' + (i + 1)
-  + '" src="assets/' + item.filename + '" width="' + item.width + '" height="' + item.height
+  + '" src="../../assets/' + item.filename + '" width="' + item.width + '" height="' + item.height
   + '" loading="lazy" decoding="async"/></div>'
 ).join('\n');
 const dots = results.map((item, i) =>
@@ -119,7 +119,7 @@ if ((html.match(/class="components-slide"/g) || []).length !== 3)
 const assetDir = 'assets';
 await fs.mkdir(assetDir, {recursive:true});
 for (const [name, data] of binaries) await fs.writeFile(path.join(assetDir, name), data);
-await fs.writeFile('index.html', html);
+await fs.writeFile('cases/finam/index.html', html);
 
 const keep = new Set(binaries.keys());
 for (const name of await fs.readdir(assetDir)) {
@@ -128,7 +128,7 @@ for (const name of await fs.readdir(assetDir)) {
 }
 const css = await fs.readFile('styles.css','utf8');
 for (const oldAsset of ['image-42.webp','image-44.webp']) {
-  if (!html.includes('assets/' + oldAsset) && !css.includes('assets/' + oldAsset))
+  if (!html.includes('../../assets/' + oldAsset) && !css.includes('assets/' + oldAsset))
     await fs.rm(path.join(assetDir, oldAsset), {force:true});
 }
 

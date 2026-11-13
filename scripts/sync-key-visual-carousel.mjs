@@ -77,7 +77,7 @@ for (const item of config.frames) {
   });
 }
 
-const htmlPath = 'index.html';
+const htmlPath = 'cases/finam/index.html';
 let html = await fs.readFile(htmlPath, 'utf8');
 const startToken = '<div id="key-visual-media" ';
 const startIndex = html.indexOf(startToken);
@@ -88,7 +88,7 @@ if (startIndex < 0 || endIndex < 0 || html.indexOf(startToken, startIndex + 1) !
 
 const slides = results.map((item, index) =>
   '<div id="key-visual-slide-' + (index + 1) + '" class="key-visual-slide" role="group" aria-roledescription="slide" aria-label="' + (index + 1) + ' of ' + results.length + '">' +
-  '<img id="key-visual-image-' + (index + 1) + '" src="assets/' + item.filename + '" alt="Finam key visual screen ' + (index + 1) + '" loading="lazy" decoding="async" width="' + item.width + '" height="' + item.height + '"/></div>'
+  '<img id="key-visual-image-' + (index + 1) + '" src="../../assets/' + item.filename + '" alt="Finam key visual screen ' + (index + 1) + '" loading="lazy" decoding="async" width="' + item.width + '" height="' + item.height + '"/></div>'
 ).join('\n');
 const dots = results.map((item, index) =>
   '<button type="button" class="key-visual-dot' + (index === 0 ? ' is-current' : '') + '" aria-label="Go to slide ' + (index + 1) + '"' + (index === 0 ? ' aria-current="true"' : '') + '></button>'
@@ -108,7 +108,7 @@ const markup = [
   '</div></div></div></div>'
 ].join('\n');
 html = html.slice(0, startIndex) + markup + html.slice(endIndex);
-if (!html.includes('src="components-carousel.js"')) throw new Error('Shared carousel controller must be included before export');
+if (!html.includes('src="../../components-carousel.js"')) throw new Error('Shared carousel controller must be included before export');
 if ((html.match(/class="key-visual-slide"/g) || []).length !== config.frames.length) throw new Error('Wrong slide count');
 
 const assetDir = 'assets';
@@ -122,7 +122,7 @@ for (const filename of await fs.readdir(assetDir)) {
     await fs.unlink(path.join(assetDir, filename));
   }
 }
-if (!html.includes('assets/image-31.webp')) {
+if (!html.includes('../../assets/image-31.webp')) {
   // The original stand-alone Key Visual image is no longer used.
   const css = await fs.readFile('styles.css', 'utf8');
   if (!css.includes('assets/image-31.webp')) {

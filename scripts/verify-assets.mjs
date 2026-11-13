@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-const html=await fs.readFile('index.html','utf8'),css=await fs.readFile('styles.css','utf8');
+const html=await fs.readFile('cases/finam/index.html','utf8'),css=await fs.readFile('styles.css','utf8');
 const urls=[...html.matchAll(/assets\/([\w.-]+\.(?:png|jpe?g|webp|svg))/g),...css.matchAll(/assets\/([\w.-]+\.(?:png|jpe?g|webp|svg))/g)].map(m=>m[1]);
 const missing=[];
 for(const name of new Set(urls)){
