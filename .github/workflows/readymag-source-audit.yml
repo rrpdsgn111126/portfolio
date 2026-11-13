@@ -57,6 +57,21 @@ jobs:
                   page.wait_for_timeout(3800)
                   page.evaluate('() => document.fonts.ready')
                   out=page.evaluate(js)
+                  detail=page.evaluate(r"""() => {
+                    const r=e=>{const b=e.getBoundingClientRect();return [Math.round(b.x),Math.round(b.y+scrollY),Math.round(b.width),Math.round(b.height)]};
+                    const format=e=>{const c=getComputedStyle(e);return {tag:e.tagName,cls:String(e.className).slice(0,90),r:r(e),text:(e.innerText||'').slice(0,90).replace(/\\s+/g,' '),size:c.fontSize,line:c.lineHeight,font:c.fontFamily,weight:c.fontWeight,color:c.color,bg:c.backgroundColor,radius:c.borderRadius,pad:c.padding,margin:c.margin,opacity:c.opacity,display:c.display,transform:c.transform}};
+                    const widgets=[...document.querySelectorAll('.rmwidget.widget-text-v3')].filter(e=>/beeline family|alfaforex|equilibrium|stforex|Hi, i'm Roman/.test(e.innerText));
+                    const buttons=[...document.querySelectorAll('.rmwidget.widget-button')].slice(0,2);
+                    const images=[...document.querySelectorAll('.rmwidget.widget-picture')].slice(0,8);
+                    const parentChain=e=>{const a=[];for(let i=0;e&&i<8;i++,e=e.parentElement)a.push({tag:e.tagName,cls:String(e.className).slice(0,100),r:r(e),scroll:e.scrollHeight,client:e.clientHeight,overflow:getComputedStyle(e).overflow,transform:getComputedStyle(e).transform});return a};
+                    const scrollers=[...document.querySelectorAll('*')].filter(e=>e.scrollHeight>e.clientHeight+300&&e.clientHeight>100).slice(0,15).map(e=>({tag:e.tagName,cls:String(e.className).slice(0,120),r:r(e),scroll:e.scrollHeight,client:e.clientHeight,top:e.scrollTop,overflow:getComputedStyle(e).overflow}));
+                    return {texts:widgets.map(e=>({outer:format(e),inner:[...e.querySelectorAll('h1,h2,h3,h4,p,span,a')].slice(0,15).map(format)})),buttons:buttons.map(e=>({outer:format(e),inner:[...e.querySelectorAll('*')].slice(0,7).map(format)})),images:images.map(e=>format(e)),scrollers,chain:parentChain(widgets[0])};
+                  }""")
+                  print('SOURCE_DETAIL',width,json.dumps(detail,ensure_ascii=False),flush=True)
+                  page.mouse.wheel(0,1200)
+                  page.wait_for_timeout(900)
+                  scroll=page.evaluate("""() => ({win:scrollY,docH:document.documentElement.scrollHeight,scrollers:[...document.querySelectorAll('*')].filter(e=>e.scrollTop>100).slice(0,8).map(e=>({className:String(e.className).slice(0,80),scrollTop:e.scrollTop})),hero:document.querySelector('.rmwidget.widget-text-v3')?.getBoundingClientRect().y})""")
+                  print('SOURCE_SCROLL',width,json.dumps(scroll,ensure_ascii=False),flush=True)
                   out['errors']=errs[:7]
                   print('SOURCE_LAYOUT',width,json.dumps({k:v for k,v in out.items() if k!='all'},ensure_ascii=False),flush=True)
                   for i,item in enumerate(out['all']):
