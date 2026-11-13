@@ -108,7 +108,7 @@ const markup = [
   '</div></div></div></div>'
 ].join('\n');
 html = html.slice(0, startIndex) + markup + html.slice(endIndex);
-if (!html.includes('src="key-visual-carousel.js"')) throw new Error('Carousel controls script must be included before export');
+if (!html.includes('src="components-carousel.js"')) throw new Error('Shared carousel controller must be included before export');
 if ((html.match(/class="key-visual-slide"/g) || []).length !== config.frames.length) throw new Error('Wrong slide count');
 
 const assetDir = 'assets';
