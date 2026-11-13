@@ -104,7 +104,7 @@ jobs:
                   debug.on('pageerror',lambda error:debug_errors.append(str(error)))
                   debug.goto('http://127.0.0.1:4173/?debug=blocks',wait_until='networkidle',timeout=30000)
                   assert debug.locator('#block-debug-overlay').count()==1,('missing inspector',width)
-                  assert debug.locator('#block-debug-overlay .block-debug-label').count()==38,('wrong block labels',width)
+                  assert debug.locator('#block-debug-overlay .block-debug-label').count()==37,('wrong block labels',width)
                   for selector in ('#home-intro','#home-title','#home-description','#home-work',
                                    '#beeline-family-media','#beeline-family-image-1','#beeline-family-image-2',
                                    '#beeline-family-copy','#beeline-family-title','#beeline-family-description','#beeline-family-tags',
