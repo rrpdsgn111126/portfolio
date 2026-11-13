@@ -8,13 +8,16 @@
 }
 body{overflow-x:clip}
 .portfolio-home-shell{overflow-x:clip}
-.home-header{position:absolute;inset:0 0 auto;z-index:10;height:0}
+/* Keep the home navigation symbol fixed and positioned exactly as in Finam. */
+.home-header{position:fixed;inset:0 auto auto 0;z-index:60;width:0;height:0;pointer-events:none}
 .home-mark{
-  position:absolute;top:40px;left:-5px;display:block;width:60px;height:60px;
+  position:fixed;top:15px;left:max(18px,calc((100vw - 1440px)/2 + 20px));
+  display:flex;align-items:center;justify-content:center;width:62px;height:60px;
   font:400 67px/1 var(--font-body);color:rgba(0,0,0,.75);
-  transform-origin:center center;z-index:10;
+  text-decoration:none;pointer-events:auto;transform-origin:50% 50%;
 }
-.home-mark:hover{opacity:.7}
+.home-mark:hover{animation:star-reference-spin 10s linear infinite}
+@keyframes star-reference-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .home-mark:focus-visible,.home-project__link:focus-visible{outline:2px solid #222;outline-offset:4px}
 .home-intro{padding-top:72px;padding-bottom:104px}
 .home-intro h1.portfolio-display{
@@ -97,7 +100,7 @@ body{overflow-x:clip}
 }
 @media(max-width:767px){
   :root{--pad:6.25vw}
-  .home-mark{top:34px;left:-5px;width:59px;height:60px;font-size:67px}
+  .home-mark{top:4.375vw;left:2.5vw;width:7.5vw;height:8.125vw;font-size:8.125vw;line-height:1}
   .home-intro{padding-top:118px;padding-bottom:66px}
   .home-intro h1.portfolio-display{width:100%;font-size:clamp(27px,7.25vw,36px);line-height:1.24}
   .home-intro p.portfolio-body{margin-top:24px;font-size:16px;line-height:1.52}
@@ -120,7 +123,11 @@ body{overflow-x:clip}
   .home-tags{position:static;top:auto;left:auto;width:auto;margin-top:28px;gap:8px}
   .home-tags li{font-size:12px;min-height:26px;line-height:26px;padding:0 10px}
 }
+@media(max-width:375px){
+  .home-mark{left:10px}
+}
 @media(prefers-reduced-motion:reduce){
+  .home-mark:hover{animation:none}
   .home-project__shot{transition:none!important}
   .home-project__link:hover .home-project__shot{transform:none!important}
   .home-motion .home-project:not(.is-visible) .home-project__shot{opacity:1!important;transform:none!important}
