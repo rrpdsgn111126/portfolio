@@ -327,8 +327,9 @@ h1{text-transform:lowercase}
   overflow:hidden;
 }
 #hero-artboard .hero-tile img{
-  display:block;width:100%;max-width:100%;height:100%;
-  object-fit:cover;object-position:center;
+  /* Preserve image width and natural height, anchored to the tile's top edge. */
+  display:block;width:100%;max-width:100%;height:auto;
+  object-fit:contain;object-position:center top;
 }
 #hero-artboard > #hero-image-left{
   left:8.9116719%;top:12.8698225%;
