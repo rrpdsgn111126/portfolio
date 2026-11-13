@@ -1,0 +1,18 @@
+/* Shared layout primitives. Current Finam rules retain the same selectors. */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.page-shell,.portfolio-page-shell{overflow-x:clip}
+.wrap,.portfolio-container{
+  max-width:calc(var(--content) + var(--pad)*2);width:100%;
+  padding-inline:var(--pad);margin-inline:auto;
+}
+.media-frame,.portfolio-media-frame{
+  position:relative;overflow:hidden;background:var(--surface);
+  border-radius:0;isolation:isolate;
+}
+.full-bleed,.portfolio-full-bleed{
+  position:relative;width:100vw;max-width:none;left:50%;transform:translateX(-50%);
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

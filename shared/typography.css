@@ -1,0 +1,36 @@
+/* Shared type scale: Finam's approved type metrics, usable by all pages.
+   Load Google Fonts Poppins 400 and Unbounded 400/600/700 in each page head. */
+body {
+  margin:0; background:var(--background); color:var(--primary);
+  font-family:var(--font-body); font-weight:400; font-synthesis:none;
+  text-rendering:optimizeLegibility;
+}
+h1,h2,h3,p{margin:0}
+h1,h2,h3,.section-title,.info-card h3,.stat-card strong,
+.portfolio-display,.portfolio-lead,.portfolio-section-title,.portfolio-info-card h3 {
+  font-family:var(--font-heading);font-weight:700;font-style:normal;font-synthesis:none;
+}
+h1,.lead,.stat-card strong,.portfolio-display,.portfolio-lead {
+  font-size:var(--type-display-size);line-height:1.2;letter-spacing:normal;
+}
+.lead,.portfolio-lead {
+  font-family:var(--font-heading);font-weight:400;font-style:normal;
+  font-synthesis:none;margin-bottom:26px;letter-spacing:normal;
+}
+.body-text,.feature-copy p,.results-intro p,.portfolio-body {
+  font-size:var(--type-body-size);line-height:1.45;color:var(--secondary);
+}
+.section-title,.portfolio-section-title {
+  font-size:var(--type-section-size);line-height:1.45;letter-spacing:normal;
+  text-transform:lowercase;margin-bottom:13px;
+}
+@media(max-width:1100px) {
+  .portfolio-display,.portfolio-lead {font-size:clamp(36px,4vw,50px)}
+}
+@media(max-width:767px) {
+  .portfolio-display {font-size:34px}
+  .portfolio-lead {font-size:clamp(28px,7vw,36px);line-height:1.22;margin-bottom:20px}
+  .portfolio-body {font-size:16px;line-height:1.52}
+  .portfolio-section-title {font-size:18px;line-height:1.45;margin-bottom:12px}
+}
+@media(max-width:375px) {.portfolio-lead {font-size:28px}}

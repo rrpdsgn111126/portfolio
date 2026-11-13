@@ -83,3 +83,21 @@ These rules apply to all changes in this repository. Read this file and inspect 
 - Mobile (up to 767px): `box-shadow: 0 0 15px rgba(0, 0, 0, 0.25)`.
 - Vertical offset is always `0`; do not introduce a downward shadow offset.
 - Images whose shadow is explicitly reset to `box-shadow: none` remain unshadowed unless the task explicitly requests otherwise.
+
+## Multi-page portfolio (staging)
+
+- The repository is `rrpdsgn111126/portfolio`. The root `index.html` is still Finam
+  until a complete portfolio homepage has been implemented and hosting checked.
+- The Finam case has a mirrored URL in `cases/finam/index.html`; do not edit that
+  mirror manually. Run `node scripts/build-finam-mirror.mjs` after changes to the
+  root Finam HTML. Relevant Figma workflows rebuild the mirror automatically.
+- Shared `shared/tokens.css`, `typography.css`, `layout.css`, and
+  `components.css` are the source of truth for extracted styling; keep the
+  established Finam visuals unchanged and load case CSS after the shared layer.
+- `shared/README.md` documents reusable classes. Follow the INFO-CARD-INSIGHTS and
+  CAROUSEL-COMPONENTS registries above for future cases. Never repeat IDs.
+- Before migrating the actual homepage into root, update every Figma workflow
+  that reads or mutates `index.html` to target the nested Finam case; remove
+  the temporary mirror builder at that stage. This prevents overwriting homepage.
+- Verify with `node scripts/build-finam-mirror.mjs --check` and
+  `node scripts/verify-portfolio-structure.mjs`, then existing browser audits.

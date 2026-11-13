@@ -1,0 +1,15 @@
+/* Shared portfolio design tokens. Extracted from the approved Finam implementation. */
+:root {
+  --background: #15131a;
+  --surface: #212228;
+  --secondary: rgba(199,199,199,.75);
+  --primary: #fff;
+  --content: 1268px;
+  --pad: clamp(22px,5.2vw,74px);
+  --section-space: 152px;
+  --font-body: 'Poppins', Arial, sans-serif;
+  --font-heading: 'Unbounded', sans-serif;
+  --type-display-size: 50px;
+  --type-body-size: 18px;
+  --type-section-size: 18px;
+}
