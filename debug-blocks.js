@@ -9,6 +9,8 @@
     '.block-debug-outline.is-section{border:2px solid rgba(255,184,0,.9)}',
     '.block-debug-label{position:absolute;top:0;left:0;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px 5px;color:#080b13;background:#75efff;border:0;border-radius:0 0 4px 0;cursor:copy;pointer-events:auto;font:11px/1.25 monospace}',
     '.block-debug-outline.is-section>.block-debug-label{background:#ffc85c}',
+    '.block-debug-outline[data-label-position="top-right"]>.block-debug-label{left:auto;right:0;border-radius:0 0 0 4px}',
+    '.block-debug-outline[data-label-position="bottom-left"]>.block-debug-label{top:auto;bottom:0;border-radius:0 4px 0 0}',
     '#block-debug-toast{position:fixed;right:12px;bottom:12px;z-index:2147483647;background:#15131a;color:#fff;padding:9px 12px;border:1px solid #75efff;border-radius:6px;pointer-events:none;font:12px/1.4 monospace}',
     '#block-debug-toast[hidden]{display:none}'
   ].join('\n');
@@ -32,6 +34,8 @@
   const entries = nodes.map(element => {
     const outline = document.createElement('div');
     outline.className = 'block-debug-outline' + (element.matches('section,header') ? ' is-section' : '');
+    // Optional label docks keep nested IDs separately clickable; absent on Finam.
+    if (element.dataset.debugLabelPosition) outline.dataset.labelPosition = element.dataset.debugLabelPosition;
     const label = document.createElement('button');
     label.type = 'button';
     label.className = 'block-debug-label';
