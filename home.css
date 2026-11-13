@@ -31,6 +31,7 @@ body{overflow-x:clip}
   background:var(--home-card);border:0;border-radius:0;
   overflow:hidden;isolation:isolate;
 }
+.home-project:not(:first-child){margin-bottom:52px}
 .home-project:last-child{margin-bottom:0}
 .home-project__link{display:block;position:relative;width:100%;height:100%;color:inherit}
 .home-project__media{position:absolute;inset:0;pointer-events:none}
@@ -100,6 +101,7 @@ body{overflow-x:clip}
   .home-intro p.portfolio-body{margin-top:24px;font-size:16px;line-height:1.52}
   .home-work{padding-bottom:75px}
   .home-project{height:auto;min-height:0;margin-bottom:26px;overflow:hidden}
+  .home-project:not(:first-child){margin-bottom:26px}
   .home-project__link{display:flex;flex-direction:column;height:auto}
   .home-project__media{position:relative;inset:auto;height:clamp(185px,56vw,248px);flex:none;width:100%}
   .home-project__shot{width:64%;max-width:none}
