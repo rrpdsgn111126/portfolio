@@ -1,4 +1,5 @@
 name: Temporary homepage visual comparison preview
+# Second visual pass: font weights, shadows, corner radii and scroll symbol
 on:
   push:
     branches: [fix/readymag-accurate-home-20261113]
