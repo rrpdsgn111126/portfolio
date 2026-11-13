@@ -1,0 +1,90 @@
+name: Portfolio homepage browser audit
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'index.html'
+      - 'home.css'
+      - 'assets/home/**'
+      - 'shared/**'
+      - '.github/workflows/homepage-audit.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'home.css'
+      - 'assets/home/**'
+      - 'shared/**'
+      - '.github/workflows/homepage-audit.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium browser
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+      - name: Start static file server
+        run: |
+          python -m http.server 4173 --bind 127.0.0.1 > /tmp/portfolio-home-http.log 2>&1 &
+          sleep 2
+      - name: Check homepage and Finam at six screen widths
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out=Path('homepage-audit');out.mkdir(exist_ok=True)
+          with sync_playwright() as playwright:
+              browser=playwright.chromium.launch(headless=True,args=['--no-sandbox'])
+              for width in (375,390,430,1280,1440,1920):
+                  ctx=browser.new_context(viewport={'width':width,'height':900},device_scale_factor=1)
+                  page=ctx.new_page()
+                  errors=[]
+                  page.on('pageerror',lambda error:errors.append(str(error)))
+                  page.on('response',lambda response:errors.append('HTTP '+str(response.status)+' '+response.url) if response.status>=400 and response.url.startswith('http://127.0.0.1:4173') else None)
+                  page.goto('http://127.0.0.1:4173/',wait_until='networkidle')
+                  page.evaluate('() => document.fonts.ready')
+                  assert page.title()=='Roman Khokhlov — Portfolio'
+                  assert page.locator('.home-project').count()==5
+                  assert page.locator('.home-archive a').count()==8
+                  assert page.locator('#finam a[href="/cases/finam/"]').count()==1
+                  assert page.locator('.home-project__visual img').count()==10
+                  for img in page.locator('.home-project__visual img').all():
+                      img.scroll_into_view_if_needed()
+                      img.evaluate("(el) => {el.loading='eager'}")
+                  page.wait_for_function("() => [...document.querySelectorAll('.home-project__visual img')].every(img => img.complete && img.naturalWidth > 0)",timeout=25000)
+                  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),('horizontal overflow',width)
+                  assert not errors,(width,errors)
+                  page.screenshot(path=str(out/f'home-{width}.png'),full_page=True,animations='disabled')
+                  page.goto('http://127.0.0.1:4173/cases/finam/',wait_until='domcontentloaded')
+                  assert page.title()=='Finam — Roman Khokhlov'
+                  assert page.locator('#components-carousel .components-slide').count()==3
+                  assert page.locator('#portfolio-home-link').get_attribute('href')=='/'
+                  page.screenshot(path=str(out/f'finam-{width}.png'),full_page=False,animations='disabled')
+                  assert not errors,(width,errors)
+                  ctx.close()
+                  print('PORTFOLIO_BROWSER_OK',width,flush=True)
+              for width in (390,1440):
+                  ctx=browser.new_context(viewport={'width':width,'height':900})
+                  page=ctx.new_page()
+                  try:
+                      page.goto('https://readymag.website/u3341020794/3666146/',wait_until='domcontentloaded',timeout=40000)
+                      page.screenshot(path=str(out/f'readymag-reference-{width}.png'),full_page=True,animations='disabled',timeout=35000)
+                      print('SOURCE_SCREENSHOT_OK',width,flush=True)
+                  except Exception as error:
+                      print('REFERENCE_SCREENSHOT_UNAVAILABLE',width,str(error)[:300],flush=True)
+                  ctx.close()
+              browser.close()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: homepage-comparison-screenshots
+          path: homepage-audit/
+          if-no-files-found: warn

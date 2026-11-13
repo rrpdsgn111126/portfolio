@@ -3,6 +3,7 @@ name: Sync Key Visual carousel from Figma
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'key-visual-carousel.json'
       - 'scripts/sync-key-visual-carousel.mjs'

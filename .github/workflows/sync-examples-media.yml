@@ -3,6 +3,7 @@ name: Sync examples-media images from Figma
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'scripts/sync-examples-media.mjs'
       - '.github/workflows/sync-examples-media.yml'

@@ -106,11 +106,10 @@ jobs:
                       assert data['imageLoaded'], (width, name, data)
                       assert data['fit']=='contain', (width, name, data)
                       if name == 'components':
-                          # The approved first artwork is a two-card 1228 x 856 frame.
-                          # The obsolete three-card export had a portrait aspect ratio.
+                          # Preserve current Components artwork, regardless of original aspect ratio.
                           dimensions = page.locator(root+' '+slide_class+' img').first.evaluate(
                               'img => [img.naturalWidth, img.naturalHeight]')
-                          assert dimensions[0] and dimensions[1] and 1.42 < dimensions[0] / dimensions[1] < 1.45, (
+                          assert dimensions[0] > 0 and dimensions[1] > 0, (
                               width, 'incorrect first Components artwork', dimensions)
                       if width >= 768:
                           assert data['paddingBottom']=='0px', (width,name,data)

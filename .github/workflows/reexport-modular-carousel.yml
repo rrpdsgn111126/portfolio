@@ -3,6 +3,7 @@ name: Re-export Modular carousel from Figma
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'scripts/reexport-modular-carousel.mjs'
       - '.github/workflows/reexport-modular-carousel.yml'

@@ -3,6 +3,7 @@ name: Sync Components carousel from Figma
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'components-carousel.json'
       - 'scripts/sync-components-carousel.mjs'

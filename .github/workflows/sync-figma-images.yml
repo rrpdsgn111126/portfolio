@@ -3,6 +3,7 @@ name: Sync Finam images from Figma
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'figma-assets.json'
       - 'scripts/sync-figma-images.mjs'
