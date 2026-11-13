@@ -3,10 +3,11 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'home.css'
+      - 'scripts/import-home-assets.mjs'
       - 'styles.css'
       - 'shared/**'
       - 'cases/**'
-      - 'scripts/build-finam-mirror.mjs'
       - 'scripts/verify-portfolio-structure.mjs'
       - '.github/workflows/portfolio-structure.yml'
   pull_request:
@@ -21,6 +22,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node scripts/build-finam-mirror.mjs --check
       - run: node scripts/verify-portfolio-structure.mjs
       - run: git diff --check

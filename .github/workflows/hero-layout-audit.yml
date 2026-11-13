@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'styles.css'
+      - 'cases/finam/index.html'
       - '.github/workflows/hero-layout-audit.yml'
 
 permissions:
@@ -79,7 +80,7 @@ jobs:
             browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
             for width in (320,375,390,430,768,1024,1440):
               output[str(width)]={}
-              for name,url in [('reference','https://readymag.website/u875042579/5202538/'),('finam','http://127.0.0.1:4173/')]:
+              for name,url in [('reference','https://readymag.website/u875042579/5202538/'),('finam','http://127.0.0.1:4173/cases/finam/')]:
                 c=browser.new_context(viewport={'width':width,'height':844},device_scale_factor=1,is_mobile=width<768,has_touch=width<768)
                 page=c.new_page()
                 error=None
@@ -153,7 +154,7 @@ jobs:
             b=p.chromium.launch(headless=True,args=['--no-sandbox'])
             for width,height in ((390,844),(1440,900)):
               frames={}
-              for name,url in (('local','http://127.0.0.1:4173/'),('published','https://finam-case.pages.dev/')):
+              for name,url in (('local','http://127.0.0.1:4173/cases/finam/'),('published','https://finam-case.pages.dev/')):
                 c=b.new_context(viewport={'width':width,'height':height},device_scale_factor=1,is_mobile=width<768,has_touch=width<768)
                 page=c.new_page()
                 page.goto(url,wait_until='networkidle',timeout=60000)

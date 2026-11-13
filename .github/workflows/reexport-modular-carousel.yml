@@ -47,8 +47,6 @@ jobs:
           node --check scripts/reexport-modular-carousel.mjs
           node scripts/reexport-modular-carousel.mjs
 
-      - name: Refresh Finam case URL
-        run: node scripts/build-finam-mirror.mjs
       - name: Validate files and site
         run: |
           node scripts/verify-assets.mjs
@@ -59,7 +57,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- index.html cases/finam/index.html FIGMA-BLOCK-MAP.md \
+          git add -- cases/finam/index.html FIGMA-BLOCK-MAP.md \
             assets/modular-slide-01.webp assets/modular-slide-02.webp \
             assets/modular-slide-03.webp assets/modular-slide-04.webp
           # On initial export, stage PNG deletions; on later exports those paths no longer exist.
