@@ -35,7 +35,7 @@ for(let i=0;i<ids.length;i++){
  await fs.writeFile('assets/'+name+'.webp',output);
  const oldPath='../../assets/'+name+'.png',newPath='../../assets/'+name+'.webp';
  if(!html.includes(oldPath)&&!html.includes(newPath))throw Error('Missing HTML image reference '+name);
- if(!mapping.includes(oldPath)&&!mapping.includes(newPath))throw Error('Missing mapping for '+name);
+ if(!mapping.includes(oldPath.replace('../../',''))&&!mapping.includes(newPath.replace('../../','')))throw Error('Missing mapping for '+name);
  html=html.replaceAll(oldPath,newPath);
  mapping=mapping.replaceAll(oldPath,newPath);
  await fs.unlink(oldPath).catch(e=>{if(e.code!=='ENOENT')throw e;});

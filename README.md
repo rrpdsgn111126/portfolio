@@ -1,49 +1,31 @@
-# Portfolio — shared styles and case studies
+# Roman Khokhlov — portfolio
 
-The portfolio is being expanded from the existing Finam site into a multi-page project.
-The **same GitHub repository** and current Cloudflare Pages project remain in use.
+## Routes
 
-## Current safe migration state
+- `/` — portfolio homepage in `index.html`, composed with `home.css`
+- `/cases/finam/` — original Finam case in `cases/finam/index.html`
+- `/cases/{slug}/` — convention for future case migrations; no placeholder routes
 
-- `/` (root `index.html`) — **existing Finam page**, unchanged in content and behavior.
-- `/cases/finam/` — mirrored Finam case, using root assets and shared styles.
-- `/shared/` — reusable design tokens, typography, layout primitives and approved card components.
-- Home page from Readymag is **not implemented yet**. It will replace `/` only after design and Cloudflare routing are checked.
+The homepage preserves all the pre-existing Readymag cases as external links and adds a local Finam card. Original homepage artwork lives in `assets/home/`.
 
-Shared CSS loading order on every page:
-```html
-<link href="/shared/tokens.css" rel="stylesheet">
-<link href="/shared/typography.css" rel="stylesheet">
-<link href="/shared/layout.css" rel="stylesheet">
-<link href="/shared/components.css" rel="stylesheet">
-```
-Load Google Fonts (Poppins 400, Unbounded 400/600/700) in the page head.
-Case-specific CSS comes after shared CSS. See `shared/README.md` for the components.
+## Styles and synchronization
 
-For Finam, the nested page links use `../../shared/*.css` and `../../styles.css`.
-Root `styles.css` retains **Finam-only** CSS and all carousel geometry and responsive overrides.
-Do not copy Finam CSS wholesale for a new case.
+Shared typography, tokens, layout primitives and components are in `shared/`; each page loads the four shared stylesheets before its own layout CSS. Finam uses `styles.css` and existing carousel/image reveal controllers, without homepage layout rules.
 
-## Figma automation
+All Figma export scripts operate on `cases/finam/index.html` and `assets/`. No process may overwrite homepage `index.html`. The old `build-finam-mirror.mjs` script has been removed.
 
-Existing Figma workflows still operate on root `index.html` and `assets/`.
-Until the homepage is migrated, `scripts/build-finam-mirror.mjs` mirrors the root Finam
-markup into `cases/finam/index.html`. Workflows that update root HTML also refresh this mirror.
+## Checks
 
-To check locally with Node 20+:
-```bash
-node scripts/build-finam-mirror.mjs --check
+```sh
 node scripts/verify-portfolio-structure.mjs
+node scripts/verify-assets.mjs
+node --check components-carousel.js
 ```
 
-Before replacing the root with the portfolio homepage: retarget Figma workflows to
-`cases/finam/index.html`, stop mirroring root HTML, update its source-relative paths,
-and preserve the original Finam layout. Do not do that as part of the current staging.
+Playwright/Chromium audit workflows inspect Finam via `/cases/finam/`. Homepage browser tests use the original Readymag as reference.
 
 ## Hosting
 
-Current site: https://finam-case.pages.dev/ — existing Cloudflare Pages settings
-have not been changed. Once the homepage and URLs are ready, verify Cloudflare
-deployment, custom domain and redirects before changing `/`.
+Cloudflare project `finam-case` remains in place. `portfolio.pages.dev` is already occupied by an unrelated site and must not be treated as this repository's endpoint. Confirm the correct Cloudflare Pages project and hostname separately. No DNS or Cloudflare project settings are changed by this repository migration.
 
 Repository: https://github.com/rrpdsgn111126/portfolio

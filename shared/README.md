@@ -27,4 +27,4 @@ Finam markup/CSS. Its visual and interaction invariants are in `AGENTS.md`.
 Do not copy carousel IDs across cases. Abstract reusable carousel markup only when
 implementing a second real instance, after checking the Finam reference.
 
-The Finam export and QA workflows still assume root Finam during the staging phase.
+Finam's canonical HTML is now `cases/finam/index.html` and the root `index.html` is the homepage. Export and QA workflows operate on the nested case.

@@ -5,7 +5,7 @@ These rules apply to all changes in this repository. Read this file and inspect 
 ## Existing code is the source of truth
 
 - Reuse approved HTML structures, selectors, and responsive rules instead of inventing new equivalents.
-- Before building a repeated section, identify the corresponding reference element and inspect all relevant rules in `index.html` and `styles.css`, including later media-query overrides and CSS cascade.
+- Before building a repeated section, identify the corresponding reference element and inspect all relevant rules in `cases/finam/index.html` and `styles.css`, including later media-query overrides and CSS cascade.
 - Keep approved reference elements unchanged unless the task explicitly requests modifying the reference itself.
 - For a new instance, change content and assets only where possible; retain structure and spacing. If variation is necessary, use a narrowly scoped modifier, not a global override that silently changes other sections.
 - Preserve the existing visual behavior on desktop and mobile. Do not infer CSS values from screenshots when the actual rules are available.
@@ -15,7 +15,7 @@ These rules apply to all changes in this repository. Read this file and inspect 
 
 ### INFO-CARD-INSIGHTS — informational card group
 
-- **Reference card:** `#insight-card-visual-style` inside `#insights` in `index.html`.
+- **Reference card:** `#insight-card-visual-style` inside `#insights` in `cases/finam/index.html`.
 - **Reference group:** `#insight-grid` / `.insight-grid`.
 - **Reference card class:** `.info-card`.
 - **Use for:** groups of informational cards with a heading and descriptive text, especially when copying the visual rhythm of the Insights section.
@@ -37,11 +37,11 @@ These rules apply to all changes in this repository. Read this file and inspect 
 
 - **Never end a paragraph with a period** anywhere on the Finam page, including introduction, section descriptions, informational cards, and results captions.
 - Keep punctuation **between sentences within the same paragraph**. Remove only a final `.` from the paragraph's rendered text; do not rewrite its content or remove sentence-internal periods.
-- When adding, translating, or editing text, check **every `<p>` in `index.html`** for trailing periods before publishing, even paragraphs outside the edited section.
+- When adding, translating, or editing text, check **every `<p>` in `cases/finam/index.html`** for trailing periods before publishing, even paragraphs outside the edited section.
 
 ### CAROUSEL-COMPONENTS — reference carousel for comparable galleries
 
-- **Canonical implementation:** `#components-carousel` within `#components-media` in `index.html`, its selectors (including final media-query overrides) in `styles.css`, and the shared controller in `components-carousel.js` (also used by `#key-visual-carousel` and `#modular-carousel`).
+- **Canonical implementation:** `#components-carousel` within `#components-media` in `cases/finam/index.html`, its selectors (including final media-query overrides) in `styles.css`, and the shared controller in `components-carousel.js` (also used by `#key-visual-carousel` and `#modular-carousel`).
 - **Scope:** use as the structural and behavioral basis for new or explicitly requested changes to comparable image carousels. The canonical carousel and all three existing galleries were explicitly updated to crossfade. Preserve their images, content, intrinsic image proportions, per-section canvas dimensions, and other intentional differences.
 - **HTML:** focusable `role="region"` / `aria-roledescription="carousel"`, containing an overflow-hidden viewport, a stacked slide container, previous/next buttons, and one accessible pagination button per slide. New instances must use unique IDs and properly matched selectors/JS; never reuse reference IDs.
 - **Slide mechanics:** shared **crossfade** for all analogous galleries: no horizontal translation. Slides are stacked in the same viewport with `position:absolute;inset:0`, and switch simultaneously using `transition: opacity 400ms ease-in-out` in either direction. Incoming slide opacity `0 → 1`, outgoing `1 → 0`. Only the active slide receives pointer events, with the outgoing slide retained underneath until transition completion. Use `object-fit:contain`, never crop; preserve section-specific sizes and proportions. Account for image decode before activation and coalesce rapid input without exposing blank frames.
@@ -84,20 +84,11 @@ These rules apply to all changes in this repository. Read this file and inspect 
 - Vertical offset is always `0`; do not introduce a downward shadow offset.
 - Images whose shadow is explicitly reset to `box-shadow: none` remain unshadowed unless the task explicitly requests otherwise.
 
-## Multi-page portfolio (staging)
+## Multi-page portfolio (live)
 
-- The repository is `rrpdsgn111126/portfolio`. The root `index.html` is still Finam
-  until a complete portfolio homepage has been implemented and hosting checked.
-- The Finam case has a mirrored URL in `cases/finam/index.html`; do not edit that
-  mirror manually. Run `node scripts/build-finam-mirror.mjs` after changes to the
-  root Finam HTML. Relevant Figma workflows rebuild the mirror automatically.
-- Shared `shared/tokens.css`, `typography.css`, `layout.css`, and
-  `components.css` are the source of truth for extracted styling; keep the
-  established Finam visuals unchanged and load case CSS after the shared layer.
-- `shared/README.md` documents reusable classes. Follow the INFO-CARD-INSIGHTS and
-  CAROUSEL-COMPONENTS registries above for future cases. Never repeat IDs.
-- Before migrating the actual homepage into root, update every Figma workflow
-  that reads or mutates `index.html` to target the nested Finam case; remove
-  the temporary mirror builder at that stage. This prevents overwriting homepage.
-- Verify with `node scripts/build-finam-mirror.mjs --check` and
-  `node scripts/verify-portfolio-structure.mjs`, then existing browser audits.
+- Root `index.html` is the portfolio homepage, with `home.css`. Never read or write that HTML from Finam Figma exports.
+- Canonical Finam HTML: `cases/finam/index.html`. Finam-only CSS: root `styles.css`. Shared CSS: `shared/*.css`. Image and script references in Finam use `../../`.
+- The old root-to-nested mirror builder is retired. Never regenerate Finam HTML from root.
+- Every Figma sync script and workflow must write only nested Finam HTML and root `assets/`; root `index.html` must remain untouched.
+- Run `node scripts/verify-portfolio-structure.mjs`, `node scripts/verify-assets.mjs` and Playwright/Chromium browser audits before publishing.
+- Future cases: `cases/{slug}/`; keep old external links until cases are migrated.
