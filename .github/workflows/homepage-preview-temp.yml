@@ -39,7 +39,7 @@ jobs:
                 page.goto(url,wait_until='domcontentloaded',timeout=60000)
                 page.wait_for_timeout(1500)
                 page.evaluate('() => document.fonts.ready')
-                for offset in (0,600):
+                for offset in (0,600,1300):
                   if name=='source':
                     page.evaluate('(v)=>{let e=document.querySelector(".content-scroll-wrapper");if(e)e.scrollTop=v}',offset)
                   else:
@@ -58,7 +58,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- qa-preview/source-1440-scroll-0.jpg qa-preview/source-1440-scroll-600.jpg qa-preview/source-390-scroll-0.jpg qa-preview/source-390-scroll-600.jpg qa-preview/new-1440-scroll-0.jpg qa-preview/new-1440-scroll-600.jpg qa-preview/new-390-scroll-0.jpg qa-preview/new-390-scroll-600.jpg
+          git add -- qa-preview/source-1440-scroll-0.jpg qa-preview/source-1440-scroll-600.jpg qa-preview/source-1440-scroll-1300.jpg qa-preview/source-390-scroll-0.jpg qa-preview/source-390-scroll-600.jpg qa-preview/source-390-scroll-1300.jpg qa-preview/new-1440-scroll-0.jpg qa-preview/new-1440-scroll-600.jpg qa-preview/new-1440-scroll-1300.jpg qa-preview/new-390-scroll-0.jpg qa-preview/new-390-scroll-600.jpg qa-preview/new-390-scroll-1300.jpg
           git commit -m "Temporary visual comparison screenshots for homepage QA"
           git pull --rebase origin fix/readymag-accurate-home-20261113
           git push origin HEAD:fix/readymag-accurate-home-20261113

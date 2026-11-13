@@ -38,11 +38,12 @@ body{overflow-x:clip}
 .home-project__shot{
   position:absolute;display:block;width:24.132492%;height:auto;max-width:none;
   object-fit:contain;z-index:1;border-radius:5px;
-  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  filter:drop-shadow(0 12px 16px rgba(0,0,0,.1));
   transition:transform 500ms ease,opacity 500ms ease,filter 500ms ease;
   transform-origin:center center;
 }
 .home-project__shot--second{z-index:2}
+#beeline-family .home-project__shot--first,#alfaforex .home-project__shot--first,#finam .home-project__shot--first{z-index:3}
 .home-project--left .home-project__shot--first{left:8.438486%;top:44px}
 .home-project--left .home-project__shot--second{left:24.921136%;top:69px}
 .home-project--right .home-project__shot--first{left:67.429022%;top:46px}
@@ -79,7 +80,7 @@ body{overflow-x:clip}
   color:rgba(0,0,0,.75);background:#fff;border-radius:100px;
 }
 @media(hover:hover){
-  .home-project__link:hover .home-project__shot--first{transform:translateY(-6px);filter:brightness(1.035)}
+  .home-project__link:hover .home-project__shot--first{transform:translateY(-6px);filter:drop-shadow(0 12px 16px rgba(0,0,0,.1)) brightness(1.035)}
   .home-project__link:hover .home-project__shot--second{transform:translateY(-9px);filter:brightness(1.035)}
   .home-project__link:hover .home-project__copy h2{color:#333}
   .home-project__link:hover .home-tags li{opacity:.88}
@@ -105,7 +106,7 @@ body{overflow-x:clip}
   .home-project:not(:first-child){margin-bottom:26px}
   .home-project__link{display:flex;flex-direction:column;height:auto}
   .home-project__media{position:relative;inset:auto;height:clamp(185px,56vw,248px);flex:none;width:100%}
-  .home-project__shot{width:64%;max-width:none;box-shadow:0 7px 18px rgba(0,0,0,.13)}
+  .home-project__shot{width:64%;max-width:none;filter:drop-shadow(0 8px 12px rgba(0,0,0,.1))}
   .home-project--left .home-project__shot--first{left:8%;top:20px}
   .home-project--left .home-project__shot--second{left:35%;top:40px}
   .home-project--right .home-project__shot--first{left:35%;top:20px}
