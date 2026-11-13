@@ -6,7 +6,7 @@
 - `/cases/finam/` — original Finam case in `cases/finam/index.html`
 - `/cases/{slug}/` — convention for future case migrations; no placeholder routes
 
-The homepage preserves all the pre-existing Readymag cases as external links and adds a local Finam card. Original homepage artwork lives in `assets/home/`.
+The homepage reproduces the visible Readymag compositions for Beeline Family, AlfaForex and Equilibrium, then presents Finam in the same alternating layout. ST Forex is deliberately hidden, and Readymag's previously hidden archival list is excluded. Original artwork lives in `assets/home/`.
 
 ## Styles and synchronization
 
