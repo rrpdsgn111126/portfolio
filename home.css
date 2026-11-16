@@ -130,8 +130,8 @@ body{overflow-x:clip}
   :root{--pad:6.25vw}
   .home-mark{top:4.375vw;left:2.5vw;width:7.5vw;height:8.125vw;font-size:8.125vw;line-height:1}
   .home-intro{padding-top:15vw;padding-bottom:66px}
-  .home-intro h1.portfolio-display{width:100%;font-size:clamp(27px,7.25vw,36px);line-height:1.24}
-  .home-intro p.portfolio-body{margin-top:24px;font-size:16px;line-height:1.52}
+  .home-intro h1.portfolio-display{width:100%;font:700 7.8125vw/11.25vw var(--font-heading);letter-spacing:normal;font-synthesis:none}
+  .home-intro p.portfolio-body{margin-top:24px;font:400 5vw/7.5vw var(--font-body);letter-spacing:normal;font-synthesis:none}
   .home-work{padding-bottom:75px}
   .home-project{height:auto;min-height:0;margin-bottom:4.375vw;border-radius:16px;overflow:hidden}
   .home-project:not(:first-child){margin-bottom:4.375vw}
@@ -150,7 +150,7 @@ body{overflow-x:clip}
   .home-project__copy h2{font:700 5vw/7.5vw var(--font-heading);padding-bottom:4.0625vw;letter-spacing:normal;font-synthesis:none}
   .home-project__copy p{font:400 5vw/7.5vw var(--font-body);letter-spacing:normal;font-synthesis:none}
   .home-tags{position:static;top:auto;left:auto;width:auto;margin-top:28px;gap:8px}
-  .home-tags li{font:400 5vw/7.5vw var(--font-body);letter-spacing:normal;font-synthesis:none;min-height:7.5vw;padding:0 10px}
+  .home-tags li{font:400 3vw/4.5vw var(--font-body);letter-spacing:normal;font-synthesis:none;min-height:7.5vw;padding:0 10px}
 }
 @media(max-width:375px){
   .home-mark{left:10px}
