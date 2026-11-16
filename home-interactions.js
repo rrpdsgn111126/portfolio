@@ -1,16 +1,53 @@
 (() => {
-  const cards=[...document.querySelectorAll('.home-project')];
-  if (!cards.length || !('IntersectionObserver' in window) ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  document.documentElement.classList.add('home-motion');
-  const observer=new IntersectionObserver(entries => {
-    for(const entry of entries) {
-      if(!entry.isIntersecting) continue;
-      entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
+  const cards = [...document.querySelectorAll('#home-work .home-project')];
+  if (!cards.length || !('IntersectionObserver' in window)) return;
+
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (motion.matches) return;
+
+  let observer;
+  const reveal = card => {
+    card.classList.add('is-visible');
+    observer?.unobserve(card);
+  };
+
+  try {
+    observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.18) reveal(entry.target);
+      }
+    }, { threshold: [0, 0.18] });
+
+    document.documentElement.classList.add('home-motion');
+    cards.forEach(card => observer.observe(card));
+  } catch (_) {
+    observer?.disconnect();
+    document.documentElement.classList.remove('home-motion');
+    return;
+  }
+
+  // Scroll restoration can place cards in view before the first observer update.
+  const revealVisible = () => {
+    if (motion.matches) return;
+    for (const card of cards) {
+      if (card.classList.contains('is-visible')) continue;
+      const rect = card.getBoundingClientRect();
+      if (!rect.width || !rect.height) continue;
+      const visibleHeight = Math.max(0, Math.min(rect.bottom, innerHeight) - Math.max(rect.top, 0));
+      if (visibleHeight / rect.height >= 0.18) reveal(card);
     }
-  },{rootMargin:'0px 0px 60px 0px',threshold:0.08});
-  cards.forEach(card=>observer.observe(card));
+  };
+  window.addEventListener('pageshow', () => requestAnimationFrame(revealVisible));
+  window.addEventListener('load', () => requestAnimationFrame(revealVisible), { once: true });
+
+  // Never leave unrevealed cards hidden if reduced motion is enabled later.
+  const onMotionChange = () => {
+    if (!motion.matches) return;
+    observer?.disconnect();
+    document.documentElement.classList.remove('home-motion');
+  };
+  if (motion.addEventListener) motion.addEventListener('change', onMotionChange);
+  else motion.addListener?.(onMotionChange);
 })();
 
 

@@ -161,10 +161,18 @@ body{overflow-x:clip}
   .home-tags li,.home-tags li::before{transition:none!important}
   .home-project__shot{transition:none!important}
   .home-project:hover .home-project__shot{transform:none!important}
-  .home-motion .home-project:not(.is-visible) .home-project__shot{opacity:1!important;transform:none!important}
 }
-.home-motion .home-project:not(.is-visible) .home-project__shot{opacity:0;transform:translateY(14px)}
-.home-motion .home-project.is-visible .home-project__shot{opacity:1}
+/* Finam image reveal, applied to complete homepage cards rather than images. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-motion #home-work .home-project:not(.is-visible){opacity:0}
+  .home-motion #home-work .home-project.is-visible{
+    animation:home-card-scroll-reveal 1300ms ease-out both;
+  }
+}
+@keyframes home-card-scroll-reveal{
+  from{opacity:0;translate:0 30px;scale:.95}
+  to{opacity:1;translate:0 0;scale:1}
+}
 
 /* Finam's line-roll animation, scoped to the homepage intro. */
 @media (prefers-reduced-motion: no-preference) {
