@@ -53,17 +53,18 @@ body{overflow-x:clip}
 .home-project--right .home-project__shot--second{left:50.946372%;top:71px}
 #equilibrium .home-project__shot--first{top:52px}
 #equilibrium .home-project__shot--second{top:74px}
-/* Center each complete screenshot pair horizontally in its image half.
-   The text stays in the opposite half; the paired images never overlap it. */
+/* Increase the outer margin of each overlapping screenshot pair by 25%.
+   Keep the pair's internal overlap and independent hover movement unchanged. */
 @media(min-width:768px){
+  .home-project__shot{translate:0 var(--home-shot-center-offset,0px)}
   #beeline-family .home-project__shot--first,
-  #equilibrium .home-project__shot--first{left:4.692429%}
+  #equilibrium .home-project__shot--first{left:5.865536%}
   #beeline-family .home-project__shot--second,
-  #equilibrium .home-project__shot--second{left:21.175079%}
+  #equilibrium .home-project__shot--second{left:22.348186%}
   #alfaforex .home-project__shot--first,
-  #finam .home-project__shot--first{left:71.175079%}
+  #finam .home-project__shot--first{left:70.001972%}
   #alfaforex .home-project__shot--second,
-  #finam .home-project__shot--second{left:54.692429%}
+  #finam .home-project__shot--second{left:53.519322%}
 }
 #finam .home-project__shot{
   height:217px;width:24.132492%;object-fit:cover;object-position:top center;
