@@ -53,15 +53,17 @@ body{overflow-x:clip}
 .home-project--right .home-project__shot--second{left:50.946372%;top:71px}
 #equilibrium .home-project__shot--first{top:52px}
 #equilibrium .home-project__shot--second{top:74px}
-/* Center the screenshot pair in the visual column opposite the text.
-   Leave Finam's composition unchanged. */
+/* Center each complete screenshot pair horizontally in its image half.
+   The text stays in the opposite half; the paired images never overlap it. */
 @media(min-width:768px){
   #beeline-family .home-project__shot--first,
-  #equilibrium .home-project__shot--first{left:4.179811%}
+  #equilibrium .home-project__shot--first{left:4.692429%}
   #beeline-family .home-project__shot--second,
-  #equilibrium .home-project__shot--second{left:20.662461%}
-  #alfaforex .home-project__shot--first{left:71.687697%}
-  #alfaforex .home-project__shot--second{left:55.205047%}
+  #equilibrium .home-project__shot--second{left:21.175079%}
+  #alfaforex .home-project__shot--first,
+  #finam .home-project__shot--first{left:71.175079%}
+  #alfaforex .home-project__shot--second,
+  #finam .home-project__shot--second{left:54.692429%}
 }
 #finam .home-project__shot{
   height:217px;width:24.132492%;object-fit:cover;object-position:top center;
@@ -90,8 +92,16 @@ body{overflow-x:clip}
   display:flex;align-items:center;justify-content:center;
   min-height:28px;padding:0 11px;
   font:400 14px/28px var(--font-body);white-space:nowrap;
-  color:rgba(0,0,0,.75);background:#fff;border-radius:100px;
-  transition:background-color 200ms ease,box-shadow 200ms ease;
+  color:rgba(0,0,0,.75);background:transparent;border-radius:100px;
+  position:relative;isolation:isolate;overflow:hidden;
+  box-shadow:inset 0 0 0 1px transparent;
+  transition:box-shadow 350ms ease;
+}
+.home-tags li::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:#fff;border-radius:inherit;
+  transform:translateX(0);
+  transition:transform 350ms cubic-bezier(.22,.61,.36,1);
 }
 @media(hover:hover){
   .home-project--left:hover .home-project__shot--first,
@@ -102,7 +112,8 @@ body{overflow-x:clip}
   #alfaforex:hover .home-project__shot--first{transform:translateY(20px)}
   #alfaforex:hover .home-project__shot--second{transform:translateY(-20px)}
   /* Tag hover does not fade other elements. */
-  .home-tags li:hover{background:transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.7)}
+  .home-tags li:hover{box-shadow:inset 0 0 0 1px #fff}
+  .home-tags li:hover::before{transform:translateX(-101%)}
 }
 @media(max-width:1150px) and (min-width:768px){
   .home-intro{padding-top:80px;padding-bottom:85px}
@@ -126,10 +137,10 @@ body{overflow-x:clip}
   .home-project__link{display:flex;flex-direction:column;height:auto}
   .home-project__media{position:relative;inset:auto;height:clamp(185px,56vw,248px);flex:none;width:100%}
   .home-project__shot{width:64%;max-width:none;filter:drop-shadow(0 8px 12px rgba(0,0,0,.1))}
-  .home-project--left .home-project__shot--first{left:8%;top:20px}
-  .home-project--left .home-project__shot--second{left:35%;top:40px}
-  .home-project--right .home-project__shot--first{left:35%;top:20px}
-  .home-project--right .home-project__shot--second{left:8%;top:40px}
+  .home-project--left .home-project__shot--first{left:4.5%;top:20px}
+  .home-project--left .home-project__shot--second{left:31.5%;top:40px}
+  .home-project--right .home-project__shot--first{left:31.5%;top:20px}
+  .home-project--right .home-project__shot--second{left:4.5%;top:40px}
   #equilibrium .home-project__shot--first{top:23px}
   #equilibrium .home-project__shot--second{top:47px}
   #finam .home-project__shot{width:64%;height:min(43vw,178px)}
@@ -144,6 +155,7 @@ body{overflow-x:clip}
 }
 @media(prefers-reduced-motion:reduce){
   .home-mark:hover{animation:none}
+  .home-tags li,.home-tags li::before{transition:none!important}
   .home-project__shot{transition:none!important}
   .home-project:hover .home-project__shot{transform:none!important}
   .home-motion .home-project:not(.is-visible) .home-project__shot{opacity:1!important;transform:none!important}
