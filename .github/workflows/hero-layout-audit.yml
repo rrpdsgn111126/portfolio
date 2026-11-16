@@ -154,7 +154,7 @@ jobs:
             b=p.chromium.launch(headless=True,args=['--no-sandbox'])
             for width,height in ((390,844),(1440,900)):
               frames={}
-              for name,url in (('local','http://127.0.0.1:4173/cases/finam/'),('published','https://finam-case.pages.dev/')):
+              for name,url in (('local','http://127.0.0.1:4173/cases/finam/'),('published','https://portfolio-rrr.pages.dev/cases/finam/')):
                 c=b.new_context(viewport={'width':width,'height':height},device_scale_factor=1,is_mobile=width<768,has_touch=width<768)
                 page=c.new_page()
                 page.goto(url,wait_until='networkidle',timeout=60000)

@@ -1,0 +1,99 @@
+name: Production portfolio smoke test (Playwright)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'HOME-BLOCK-MAP.md'
+      - '.github/workflows/hero-layout-audit.yml'
+      - '.github/workflows/production-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate repository structure
+        run: |
+          node scripts/verify-portfolio-structure.mjs
+          node scripts/verify-assets.mjs
+          node --check components-carousel.js
+          git diff --check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Playwright and Chromium
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+      - name: Verify published Pages routes, assets and navigation
+        env:
+          PORTFOLIO_BASE: https://portfolio-rrr.pages.dev
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from urllib.parse import urlparse
+          from playwright.sync_api import sync_playwright
+
+          base = os.environ['PORTFOLIO_BASE'].rstrip('/')
+          origin = urlparse(base).netloc
+          screenshots = Path('production-smoke')
+          screenshots.mkdir(exist_ok=True)
+
+          with sync_playwright() as playwright:
+              browser = playwright.chromium.launch(headless=True, args=['--no-sandbox'])
+              for width, height in ((1440, 900), (390, 844)):
+                  mobile = width < 768
+                  context = browser.new_context(
+                      viewport={'width': width, 'height': height},
+                      device_scale_factor=1,
+                      is_mobile=mobile,
+                      has_touch=mobile
+                  )
+                  page = context.new_page()
+                  errors = []
+                  page.on('pageerror', lambda err: errors.append(str(err)))
+
+                  def verify_assets():
+                      urls = page.locator('link[rel="stylesheet"][href],script[src],img[src]').evaluate_all(
+                          '(elements) => elements.map(el => el.href || el.src)'
+                      )
+                      for url in sorted(set(urls)):
+                          if urlparse(url).netloc != origin:
+                              continue
+                          response = context.request.get(url, timeout=30000)
+                          assert response.status == 200, f'Asset {response.status}: {url}'
+
+                  response = page.goto(base + '/', wait_until='domcontentloaded', timeout=45000)
+                  assert response and response.status == 200, f'Homepage HTTP {response.status if response else "no response"}'
+                  assert page.title() == 'Roman Khokhlov — Portfolio', page.title()
+                  assert page.locator('#finam a[href="/cases/finam/"]').count() == 1
+                  verify_assets()
+                  page.screenshot(path=str(screenshots / f'home-{width}.png'))
+                  page.locator('#finam .home-project__link').click()
+                  page.wait_for_url(base + '/cases/finam/', timeout=20000)
+                  assert page.locator('#case-title').inner_text().strip().lower() == 'finam'
+                  assert page.locator('#components-carousel .components-dot').count() == 3
+                  verify_assets()
+                  page.locator('#components-carousel .components-next').click()
+                  page.wait_for_timeout(600)
+                  assert page.locator('#components-carousel .components-dot').nth(1).get_attribute('aria-current') == 'true', 'Components carousel did not advance'
+                  page.screenshot(path=str(screenshots / f'finam-{width}.png'))
+                  page.locator('#portfolio-home-link').click()
+                  page.wait_for_url(base + '/', timeout=20000)
+                  assert not errors, f'Browser exceptions: {errors}'
+                  context.close()
+                  print(f'PRODUCTION_PAGES_OK width={width}: homepage, Finam, assets, carousel, home navigation')
+              browser.close()
+          PY
+      - name: Upload browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-pages-smoke
+          path: production-smoke/
+          if-no-files-found: ignore
