@@ -120,12 +120,13 @@ jobs:
               art=output[str(width)]['finam']['boards'][1]
               panes=output[str(width)]['finam']['imgsFinam']
               content_width=width-80
-              assert abs(art['x']-40)<1.2 and abs(art['w']-content_width)<1.2, (width,art)
+              assert abs(art['w']-content_width/0.820977918)<1.2, (width,art)
+              assert abs((art['x']+art['x']+art['w'])/2-width/2)<1.2, (width,art)
               assert len(panes)==2 and all(p['parent']['w']>0 for p in panes), (width,panes)
               left=min(p['parent']['x'] for p in panes)
               right=max(p['parent']['x']+p['parent']['w'] for p in panes)
-              assert abs((left+right)/2-width/2)<2, (width,left,right)
-              print('TABLET_HERO_CENTER_OK',width,art['x'],art['w'],left,right)
+              assert abs(left-40)<1.2 and abs(right-(width-40))<1.2, (width,left,right)
+              print('TABLET_HERO_VISIBLE_WIDTH_OK',width,art['x'],art['w'],left,right)
               continue
             ref=output[str(width)]['reference']['focus']
             if ref is None and width==768:

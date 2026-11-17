@@ -81,8 +81,8 @@ If a requested composition differs from the registered reference, implement a sc
 
 ## Finam tablet composition (768–1100px)
 
-- Tablet content follows the existing `--pad:40px` outer gutter: `viewport width - 80px`. This aligns the left/right text blocks with the Hero artboard, carousel images, and example artwork.
-- The two Hero tile images retain their source geometry and are centered **as one group** via `#hero-artboard`; do not individually re-center or crop them.
+- Tablet content follows the existing `--pad:40px` outer gutter: `viewport width - 80px`. This aligns the left/right text blocks with the **visible two-image Hero group**, carousel images, and example artwork.
+- The two Hero tile images retain their source geometry and are centered **as one group** via `#hero-artboard`. Their union occupies 82.0977918% of the artboard's width, so the tablet artboard is enlarged by `1 / 0.820977918` while its panel height scales proportionally. Their visible edges meet the existing 40px content gutters. Do not individually re-center or crop them.
 - The three carousel viewports occupy the full readable content width. Their media panels expand to accommodate the tallest source artwork at full width while the existing desktop visible-alpha spacing algorithm keeps top/bottom margins balanced. Do not hardcode different image widths per slide.
 - At tablet widths, the carousel slide hover zoom is disabled so artwork stays aligned with pagination; desktop >=1101px retains the 3% zoom. The Results text precedes a two-column tile grid within the same content width. Mobile <=767px and desktop >=1101px keep their separate rules.
 - Verification: `.github/workflows/tablet-finam-audit.yml` checks 768/800/1024/1100px layout, and the existing carousel/hero workflows validate their own behavior.

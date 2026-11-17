@@ -91,10 +91,14 @@ jobs:
                   assert not errors,(width,errors)
                   if 768<=width<=1100:
                       expected=width-80
-                      assert abs(rect['hero']['x']-40)<1.5 and abs(rect['hero']['w']-expected)<1.5,(width,'hero',rect['hero'])
+                      # The visible two-image group, not the larger artboard,
+                      # must touch both 40px content gutters.
+                      expected_board=expected/0.820977918
+                      assert abs(rect['hero']['w']-expected_board)<1.5,(width,'hero-artboard',rect['hero'])
+                      assert abs((rect['hero']['x']+rect['hero']['right'])/2-width/2)<1.5,(width,'hero-artboard-center',rect['hero'])
                       left=min(t['x'] for t in rect['heroTiles'])
                       right=max(t['x']+t['w'] for t in rect['heroTiles'])
-                      assert abs((left+right)/2-width/2)<2,(width,'hero-center',left,right)
+                      assert abs(left-40)<1.5 and abs(right-(width-40))<1.5,(width,'hero-visible-edges',left,right)
                       for name in ('key','modular','components','examples'):
                           box=rect[name]
                           assert abs(box['x']-40)<1.5 and abs(box['w']-expected)<1.5,(width,name,box)

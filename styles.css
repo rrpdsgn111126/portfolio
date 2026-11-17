@@ -620,15 +620,17 @@ h1{text-transform:lowercase}
   }
 }
 
-/* Tablet Finam composition: the art, galleries and Results share the readable
-   content width (viewport minus the existing 40px gutters). Desktop >1100px
-   and the established mobile layout <=767px are intentionally unchanged. */
+/* Tablet Finam composition. The two Hero tiles cover 82.0977918% of their
+   original artboard's horizontal extent. Scale the whole artboard by
+   1 / .820977918 so the visible image pair, rather than the outer artboard,
+   matches the content width (viewport minus 40px on each side).
+   Desktop >1100px and mobile <=767px remain unchanged. */
 @media (min-width:768px) and (max-width:1100px){
   #hero-showcase{
-    height:calc((100vw - 80px) * .533123);
+    height:calc((100vw - 80px) * .6493756004);
   }
   #hero-showcase #hero-artboard{
-    width:calc(100vw - 80px);
+    width:calc((100vw - 80px) * 1.218059558);
     left:50%;
     margin-inline:0;
     transform:translateX(-50%);
