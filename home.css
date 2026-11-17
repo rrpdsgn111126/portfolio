@@ -71,6 +71,7 @@ body{overflow-x:clip}
 }
 .home-project--left .home-project__copy{right:8.438486%}
 .home-project--right .home-project__copy{left:8.438486%}
+@media(min-width:768px){#finam .home-project__copy{left:7.1655%}}
 .home-project__copy h2{
   font:700 18px/26px var(--font-heading);letter-spacing:0;
   text-transform:lowercase;color:rgba(0,0,0,.95);
