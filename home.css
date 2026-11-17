@@ -105,9 +105,11 @@ body{overflow-x:clip}
   .home-project--right:hover .home-project__shot--second{transform:translateY(20px)}
   .home-project--left:hover .home-project__shot--second,
   .home-project--right:hover .home-project__shot--first{transform:translateY(-20px)}
-  /* AlfaForex: right screenshot down, left screenshot up. */
-  #alfaforex:hover .home-project__shot--first{transform:translateY(20px)}
-  #alfaforex:hover .home-project__shot--second{transform:translateY(-20px)}
+  /* AlfaForex and Finam: left screenshot up, right screenshot down. */
+  #alfaforex:hover .home-project__shot--first,
+  #finam:hover .home-project__shot--first{transform:translateY(20px)}
+  #alfaforex:hover .home-project__shot--second,
+  #finam:hover .home-project__shot--second{transform:translateY(-20px)}
   /* Tag hover does not fade other elements. */
   .home-tags li:hover{box-shadow:inset 0 0 0 1px #fff}
   .home-tags li:hover::before{transform:translateX(-101%)}
