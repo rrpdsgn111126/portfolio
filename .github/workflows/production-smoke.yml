@@ -70,7 +70,7 @@ jobs:
 
                   response = page.goto(base + '/', wait_until='domcontentloaded', timeout=45000)
                   assert response and response.status == 200, f'Homepage HTTP {response.status if response else "no response"}'
-                  assert page.title() == 'roman's portfolio', page.title()
+                  assert page.title() == "roman's portfolio", page.title()
                   assert page.locator('#finam a[href="/cases/finam/"]').count() == 1
                   verify_assets()
                   page.screenshot(path=str(screenshots / f'home-{width}.png'))
