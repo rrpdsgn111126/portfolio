@@ -138,6 +138,9 @@ jobs:
                           page.wait_for_timeout(1400)  # Let scroll-reveal settle
                           for index in range(page.locator(root+' '+slide_class).count()):
                               page.locator(root+' [class$="-pagination"] button').nth(index).click()
+                              # Test the resting image geometry, not the intentional
+                              # 3% zoom triggered by the cursor after clicking a dot.
+                              page.mouse.move(0,0)
                               page.wait_for_function('''arg => {
                                   const slides=[...document.querySelectorAll(arg.root+' '+arg.slide)];
                                   return slides[arg.index]?.classList.contains('is-current');

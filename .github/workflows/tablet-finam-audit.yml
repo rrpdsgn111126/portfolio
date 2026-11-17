@@ -118,25 +118,6 @@ jobs:
                                   [arg.index]?.classList.contains('is-current')''',arg={'root':root,'name':name,'index':index})
                               page.wait_for_timeout(75)
                               assert abs(panel.bounding_box()['height']-original_height)<1,(width,name,index,'panel height changed')
-                              if name=='modular' and index in (1,4) and width==768:
-                                  details=page.evaluate("""arg => {
-                                    const root=document.querySelector(arg.root);
-                                    const slide=[...root.querySelectorAll('.modular-slide')][arg.index];
-                                    const img=slide.querySelector('img');
-                                    const dots=root.querySelector('.modular-pagination');
-                                    const panel=root.closest('.media-frame');
-                                    const rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom}};
-                                    return {slide:rect(slide),image:rect(img),dots:rect(dots),panel:rect(panel),
-                                      inline:slide.getAttribute('style'),
-                                      paddingTop:getComputedStyle(slide).paddingTop,
-                                      transform:getComputedStyle(slide).transform,
-                                      imgTransform:getComputedStyle(img).transform,
-                                      imgNatural:[img.naturalWidth,img.naturalHeight],
-                                      imgOffset:[img.offsetWidth,img.offsetHeight],
-                                      alphaRoot:root.style.getPropertyValue('--carousel-pagination-bottom'),
-                                      visible:img.complete};
-                                  }""",{'root':root,'index':index})
-                                  print('MODULAR_SPACING_DIAGNOSTIC',width,index,details,flush=True)
 
                           print('TABLET_CAROUSEL_OK',width,name,'slides',slides.count(),flush=True)
                       page.screenshot(path=str(out/f'finam-tablet-{width}.png'),full_page=True,
