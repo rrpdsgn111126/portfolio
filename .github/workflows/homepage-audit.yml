@@ -45,7 +45,8 @@ jobs:
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
               for width in (375,390,430,1280,1440,1920):
-                  ctx=browser.new_context(viewport={'width':width,'height':900},device_scale_factor=1)
+                  # Geometry comparisons must not capture different phases of entrance animation.
+                  ctx=browser.new_context(viewport={'width':width,'height':900},device_scale_factor=1,reduced_motion='reduce')
                   page=ctx.new_page()
                   errors=[]
                   page.on('pageerror',lambda e:errors.append(str(e)))
