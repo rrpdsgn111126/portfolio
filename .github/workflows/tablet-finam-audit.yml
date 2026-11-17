@@ -107,15 +107,15 @@ jobs:
                       assert rect['resultsGrid']['y']>=rect['resultsText']['bottom']+20,(width,'results-order',rect)
                       for name in ('key-visual','modular','components'):
                           root='#'+name+'-carousel'
-                          slides=page.locator(root+' [class$="-slide"]')
-                          dots=page.locator(root+' [class$="-pagination"] button')
+                          slides=page.locator(root+' .'+name+'-slide')
+                          dots=page.locator(root+' .'+name+'-pagination button')
                           assert slides.count()==dots.count(),(width,name,'slides/dots')
                           panel=page.locator('#'+name+'-media')
                           original_height=panel.bounding_box()['height']
                           for index in range(slides.count()):
                               dots.nth(index).click()
-                              page.wait_for_function('''arg => [...document.querySelectorAll(arg.root+' [class$="-slide"]')]
-                                  [arg.index]?.classList.contains('is-current')''',arg={'root':root,'index':index})
+                              page.wait_for_function('''arg => [...document.querySelectorAll(arg.root+' .'+arg.name+'-slide')]
+                                  [arg.index]?.classList.contains('is-current')''',arg={'root':root,'name':name,'index':index})
                               page.wait_for_timeout(75)
                               assert abs(panel.bounding_box()['height']-original_height)<1,(width,name,index,'panel height changed')
                           print('TABLET_CAROUSEL_OK',width,name,'slides',slides.count(),flush=True)
