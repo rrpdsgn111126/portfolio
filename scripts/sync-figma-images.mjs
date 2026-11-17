@@ -36,18 +36,16 @@ for (const item of all) {
   results.push({ ...item, filename, before: input.length, after: output.length });
 }
 
-let html = await fs.readFile('cases/finam/index.html', 'utf8');
+// Export images only. The published hero composition and five-slide Modular carousel
+// have approved markup; a Figma asset refresh must not regenerate or reorder it.
 const slides = results.filter((item) => item.name.startsWith('modular-slide-'));
-const slideMarkup = '<div id="modular-carousel-track" class="modular-carousel-track">' + slides.map((item, index) => '<div class="modular-slide" id="modular-slide-' + (index + 1) + '" role="group" aria-label="' + (index + 1) + ' of ' + slides.length + '"><img src="../../assets/' + item.filename + '" alt="Modular Block System layout ' + (index + 1) + '" loading="lazy"></div>').join('') + '</div>';
-html = html.replace(/<!-- MODULAR_SLIDES -->[\s\S]*?<!-- \/MODULAR_SLIDES -->/, '<!-- MODULAR_SLIDES -->' + slideMarkup + '<!-- /MODULAR_SLIDES -->');
-// Figma 2304:1991: the tall 4315:59621 image belongs on the left,
-// the shorter 4315:59451 image belongs on the right.
-html = html.replace(/(<div id="hero-image-left"[^>]*><img[^>]*src=")[^"]+/, '$1../../assets/hero-demo-right.webp');
-html = html.replace(/(<div id="hero-image-right"[^>]*><img[^>]*src=")[^"]+/, '$1../../assets/hero-demo-left.webp');
-await fs.writeFile('cases/finam/index.html', html);
+if (slides.length !== 5) throw new Error('Approved Modular gallery requires five slides');
+const html = await fs.readFile('cases/finam/index.html', 'utf8');
+for (const item of results) {
+  if (!html.includes('../../assets/' + item.filename))
+    throw new Error('Existing HTML asset mapping differs: ' + item.filename);
+}
 
-const keep = new Set(results.map((item) => item.filename));
-for (const file of await fs.readdir(outDir)) if (/^(modular-slide-|hero-demo-).*\.webp$/i.test(file) && !keep.has(file)) await fs.unlink(path.join(outDir, file));
 const before = results.reduce((sum, item) => sum + item.before, 0);
 const after = results.reduce((sum, item) => sum + item.after, 0);
 await fs.writeFile('ASSET-REPORT.md', '# Figma image export\n\n- Source file: ' + spec.fileKey + '\n- Hero images: ' + (spec.hero || []).length + '\n- Modular slides: ' + slides.length + '\n- PNG input: ' + before + ' bytes\n- WebP output: ' + after + ' bytes\n- Reduction: ' + (100 * (1 - after / before)).toFixed(1) + '%\n');

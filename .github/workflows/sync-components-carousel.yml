@@ -2,12 +2,6 @@ name: Sync Components carousel from Figma
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'components-carousel.json'
-      - 'scripts/sync-components-carousel.mjs'
-      - '.github/workflows/sync-components-carousel.yml'
 
 permissions:
   contents: write
@@ -61,7 +55,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- assets cases/finam/index.html COMPONENTS-EXPORT-REPORT.md
+          git add -- assets/components-slide-01.webp assets/components-slide-02.webp assets/components-slide-03.webp COMPONENTS-EXPORT-REPORT.md
           if git diff --cached --quiet; then
             echo "Components carousel already up to date"
           else

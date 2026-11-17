@@ -77,60 +77,17 @@ for (const item of config.frames) {
     pngBytes:input.length, webpBytes:optimized.data.length});
 }
 
-let html = await fs.readFile('cases/finam/index.html', 'utf8');
-const openToken = '<div id="components-media" ';
-const start = html.indexOf(openToken);
-const end = html.indexOf('\n</section>', start);
-if (start < 0 || end < 0 || html.indexOf(openToken, start + 1) !== -1)
-  throw new Error('Cannot safely locate unique #components-media markup');
-if (!html.includes('<script src="../../components-carousel.js" defer></script>'))
-  throw new Error('Components carousel script is not loaded');
+const html = await fs.readFile('cases/finam/index.html', 'utf8');
+for (const item of results) {
+  if (!html.includes('src="../../assets/' + item.filename + '"'))
+    throw new Error('Existing HTML asset mapping differs: ' + item.filename);
+}
+// Preserve the approved HTML, selectors, controls, animations and all unrelated assets.
 
-// Preserve the existing section and description, replace only its media container.
-const slideMarkup = results.map((item, i) =>
-  '<div id="components-slide-' + (i + 1) + '" class="components-slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' of ' + results.length + '">'
-  + '<img id="components-image-' + (i + 1) + '" alt="Finam reusable components — slide ' + (i + 1)
-  + '" src="../../assets/' + item.filename + '" width="' + item.width + '" height="' + item.height
-  + '" loading="lazy" decoding="async"/></div>'
-).join('\n');
-const dots = results.map((item, i) =>
-  '<button type="button" class="components-dot' + (i === 0 ? ' is-current' : '')
-  + '" aria-label="Go to slide ' + (i + 1) + '"' + (i === 0 ? ' aria-current="true"' : '') + '></button>'
-).join('\n');
-const markup = [
-  '<div id="components-media" class="media-frame standard-media components-media full-bleed">',
-  '<div class="media-artboard">',
-  '<div id="components-carousel" class="components-carousel" role="region" aria-roledescription="carousel" aria-label="Finam components gallery" tabindex="0">',
-  '<div id="components-carousel-viewport" class="components-carousel-viewport">',
-  '<div id="components-carousel-track" class="components-carousel-track">',
-  slideMarkup,
-  '</div></div>',
-  '<button class="components-control components-prev" type="button" aria-label="Previous slide">‹</button>',
-  '<button class="components-control components-next" type="button" aria-label="Next slide">›</button>',
-  '<div id="components-carousel-pagination" class="components-pagination" aria-label="Slide navigation">',
-  dots,
-  '</div></div></div></div>'
-].join('\n');
-html = html.slice(0, start) + markup + html.slice(end);
-if ((html.match(/class="components-slide"/g) || []).length !== 3)
-  throw new Error('Wrong number of generated slide elements');
-
-// Perform all network operations and checks first; write to repo only after success.
 const assetDir = 'assets';
 await fs.mkdir(assetDir, {recursive:true});
 for (const [name, data] of binaries) await fs.writeFile(path.join(assetDir, name), data);
-await fs.writeFile('cases/finam/index.html', html);
-
-const keep = new Set(binaries.keys());
-for (const name of await fs.readdir(assetDir)) {
-  if (/^components-slide-\d+\.webp$/.test(name) && !keep.has(name))
-    await fs.unlink(path.join(assetDir, name));
-}
-const css = await fs.readFile('styles.css','utf8');
-for (const oldAsset of ['image-42.webp','image-44.webp']) {
-  if (!html.includes('../../assets/' + oldAsset) && !css.includes('assets/' + oldAsset))
-    await fs.rm(path.join(assetDir, oldAsset), {force:true});
-}
+// Do not modify HTML from an asset export.
 
 const inputBytes = results.reduce((acc,x) => acc + x.pngBytes,0);
 const outputBytes = results.reduce((acc,x) => acc + x.webpBytes,0);

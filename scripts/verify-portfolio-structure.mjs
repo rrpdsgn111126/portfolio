@@ -20,9 +20,22 @@ for (const page of pages) {
   check(existsSync(abs),'Missing page: '+page);
   if (!existsSync(abs)) continue;
   const html=readFileSync(abs,'utf8');
-  check(html.includes(page==='index.html'?'Roman Khokhlov — Portfolio':'Finam — Roman Khokhlov'),'Incorrect page metadata: '+page);
+  check(html.includes(page==='index.html'?"roman's portfolio":'finam portal'),'Incorrect page metadata: '+page);
   for (const sheet of ['tokens','typography','layout','components']) {
     check(html.includes('shared/'+sheet+'.css'),sheet+' CSS not linked in '+page);
+  }
+  const ids = new Set();
+  for (const element of html.matchAll(/<([a-z][\w:-]*)\b([^<>]*)>/gi)) {
+    const matches = [...element[2].matchAll(/\bid\s*=\s*["']([^"']+)["']/gi)];
+    check(matches.length <= 1, page + ' has multiple id attributes on one element: ' + element[0].slice(0, 120));
+    for (const match of matches) {
+      check(!ids.has(match[1]), page + ' has duplicate id: ' + match[1]);
+      ids.add(match[1]);
+    }
+  }
+  if (page === 'cases/finam/index.html') {
+    for (const id of ['insight-card-visual-style','insight-card-hierarchy','insight-card-emotion','key-visual-copy','components-copy','modular-copy','examples-copy','examples-row-one','examples-row-two','examples-row-three'])
+      check(ids.has(id), 'Missing Finam block mapping #' + id);
   }
   const refs=html.matchAll(/\b(?:src|href)=["']([^"']+)["']/g);
   for (const ref of refs) {
@@ -44,11 +57,13 @@ const finam=readFileSync(resolve(root,'cases/finam/index.html'),'utf8');
 check(homepage.includes('href="/cases/finam/"'),'Homepage Finam case link missing');
 check(finam.includes('href="/"'),'Finam home link is not /');
 check(!homepage.includes('id="case-title"'),'Homepage contains Finam-specific markup');
-const scripts=['sync-components-carousel.mjs','sync-examples-media.mjs','sync-figma-images.mjs','sync-key-visual-carousel.mjs','reexport-modular-carousel.mjs'];
+const scripts=['sync-components-carousel.mjs','sync-examples-media.mjs','sync-figma-images.mjs','sync-key-visual-carousel.mjs'];
 for(const script of scripts) {
  const source=readFileSync(resolve(root,'scripts',script),'utf8');
  check(!source.includes("readFile('index.html'") && !source.includes("writeFile('index.html'"),'Figma script targets root index: '+script);
+ check(!source.includes("writeFile('cases/finam/index.html'") && !source.includes('writeFile(htmlPath, html)'),'Asset export rewrites approved Finam HTML: '+script);
 }
 check(!existsSync(resolve(root,'scripts/build-finam-mirror.mjs')),'Retired mirror builder exists');
+check(!existsSync(resolve(root,'scripts/reexport-modular-carousel.mjs')),'Retired competing four-slide exporter exists');
 if (failures) process.exitCode=1;
 else console.log('Portfolio structure: HTML, shared CSS, assets and scripts OK');

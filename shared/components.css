@@ -17,8 +17,8 @@
   .portfolio-info-card p,.portfolio-info-card h3 {font-size:16px}
 }
 @media(max-width:767px) {
-  .portfolio-card-grid{display:flex;flex-direction:column;gap:12px}
-  .portfolio-info-card{min-height:0;padding:20px;border-radius:16px}
-  .portfolio-info-card h3{font-size:16px;line-height:1.45;margin-bottom:12px}
-  .portfolio-info-card p{font-size:15px;line-height:1.55}
+  .portfolio-card-grid{display:flex;flex-direction:column;gap:4.375vw}
+  .portfolio-info-card{min-height:0;padding:var(--pad);border-radius:16px}
+  .portfolio-info-card h3{font-size:5vw;line-height:7.5vw;padding-bottom:4.0625vw;margin-bottom:0}
+  .portfolio-info-card p{font-size:5vw;line-height:7.5vw}
 }

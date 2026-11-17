@@ -52,7 +52,7 @@ jobs:
                   page.on('response',lambda r:errors.append('HTTP '+str(r.status)+' '+r.url) if r.status>=400 and r.url.startswith('http://127.0.0.1:4173') else None)
                   page.goto('http://127.0.0.1:4173/',wait_until='networkidle',timeout=30000)
                   page.evaluate('() => document.fonts.ready')
-                  assert page.title()=='Roman Khokhlov — Portfolio'
+                  assert page.title()=='roman's portfolio'
                   assert page.locator('.home-project').count()==4,('project count',width)
                   assert page.locator('.home-project__shot').count()==8,('screenshots',width)
                   assert page.locator('.home-archive').count()==0
@@ -135,11 +135,11 @@ jobs:
                   page.screenshot(path=str(out/f'homepage-{width}.png'),full_page=True,animations='disabled',timeout=30000)
                   page.locator('#finam a').click()
                   assert page.url.endswith('/cases/finam/')
-                  assert page.title()=='Finam — Roman Khokhlov'
+                  assert page.title()=='finam portal'
                   assert page.locator('#components-carousel .components-slide').count()==3
                   assert page.locator('#portfolio-home-link').get_attribute('href')=='/'
                   page.go_back(wait_until='domcontentloaded')
-                  assert page.title()=='Roman Khokhlov — Portfolio'
+                  assert page.title()=='roman's portfolio'
                   assert not errors,('navigation',width,errors)
                   print('PORTFOLIO_BROWSER_OK',width,flush=True)
                   ctx.close()

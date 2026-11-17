@@ -2,12 +2,6 @@ name: Sync Finam images from Figma
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'figma-assets.json'
-      - 'scripts/sync-figma-images.mjs'
-      - '.github/workflows/sync-figma-images.yml'
 
 permissions:
   contents: write
@@ -47,7 +41,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets cases/finam/index.html styles.css ASSET-REPORT.md
+          git add -- assets/hero-demo-left.webp assets/hero-demo-right.webp assets/modular-slide-01.webp assets/modular-slide-02.webp assets/modular-slide-03.webp assets/modular-slide-04.webp assets/modular-slide-05.webp ASSET-REPORT.md
           if git diff --cached --quiet; then
             echo 'No changes to publish'
           else

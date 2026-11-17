@@ -1,4 +1,11 @@
-# Roman Khokhlov — portfolio
+# portfolio
+
+## Agent instructions
+
+- Figma design edits: [`FIGMA.md`](FIGMA.md)
+- Website and GitHub edits: [`AGENTS.md`](AGENTS.md)
+- Reusable component patterns: [`docs/COMPONENT-REGISTRY.md`](docs/COMPONENT-REGISTRY.md)
+- Figma → website handoff: [`docs/FIGMA-WORKFLOW.md`](docs/FIGMA-WORKFLOW.md)
 
 ## Routes
 
@@ -12,7 +19,7 @@ The homepage reproduces the visible Readymag compositions for Beeline Family, Al
 
 Shared typography, tokens, layout primitives and components are in `shared/`; each page loads the four shared stylesheets before its own layout CSS. Finam uses `styles.css` and existing carousel/image reveal controllers, without homepage layout rules.
 
-All Figma export scripts operate on `cases/finam/index.html` and `assets/`. No process may overwrite homepage `index.html`. The old `build-finam-mirror.mjs` script has been removed.
+Figma export scripts are **manually dispatched asset-only jobs**. They validate current Finam references and write selected WebP files and reports, never `index.html`, `cases/finam/index.html`, or CSS. The conflicting four-slide Modular re-export and old root-to-Finam mirror builder are retired.
 
 ## Checks
 

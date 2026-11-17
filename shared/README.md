@@ -28,3 +28,5 @@ Do not copy carousel IDs across cases. Abstract reusable carousel markup only wh
 implementing a second real instance, after checking the Finam reference.
 
 Finam's canonical HTML is now `cases/finam/index.html` and the root `index.html` is the homepage. Export and QA workflows operate on the nested case.
+
+For new case sections use `docs/COMPONENT-REGISTRY.md` as the reference checklist. Mobile `.portfolio-info-card` now matches the approved Finam `#insights .info-card` typography, padding and card gap; `--pad` is set by the relevant case stylesheet after these shared files.

@@ -77,58 +77,17 @@ for (const item of config.frames) {
   });
 }
 
-const htmlPath = 'cases/finam/index.html';
-let html = await fs.readFile(htmlPath, 'utf8');
-const startToken = '<div id="key-visual-media" ';
-const startIndex = html.indexOf(startToken);
-const endIndex = html.indexOf('\n</section>', startIndex);
-if (startIndex < 0 || endIndex < 0 || html.indexOf(startToken, startIndex + 1) !== -1) {
-  throw new Error('Cannot safely locate the sole key-visual-media container');
+const html = await fs.readFile('cases/finam/index.html', 'utf8');
+for (const item of results) {
+  if (!html.includes('src="../../assets/' + item.filename + '"'))
+    throw new Error('Existing HTML asset mapping differs: ' + item.filename);
 }
-
-const slides = results.map((item, index) =>
-  '<div id="key-visual-slide-' + (index + 1) + '" class="key-visual-slide" role="group" aria-roledescription="slide" aria-label="' + (index + 1) + ' of ' + results.length + '">' +
-  '<img id="key-visual-image-' + (index + 1) + '" src="../../assets/' + item.filename + '" alt="Finam key visual screen ' + (index + 1) + '" loading="lazy" decoding="async" width="' + item.width + '" height="' + item.height + '"/></div>'
-).join('\n');
-const dots = results.map((item, index) =>
-  '<button type="button" class="key-visual-dot' + (index === 0 ? ' is-current' : '') + '" aria-label="Go to slide ' + (index + 1) + '"' + (index === 0 ? ' aria-current="true"' : '') + '></button>'
-).join('\n');
-const markup = [
-  '<div id="key-visual-media" class="media-frame standard-media visual-media full-bleed">',
-  '<div class="media-artboard">',
-  '<div id="key-visual-carousel" class="key-visual-carousel" role="region" aria-roledescription="carousel" aria-label="Key visual gallery" tabindex="0">',
-  '<div id="key-visual-carousel-viewport" class="key-visual-carousel-viewport">',
-  '<div id="key-visual-carousel-track" class="key-visual-carousel-track">',
-  slides,
-  '</div></div>',
-  '<button type="button" class="key-visual-control key-visual-prev" aria-label="Previous slide">‹</button>',
-  '<button type="button" class="key-visual-control key-visual-next" aria-label="Next slide">›</button>',
-  '<div id="key-visual-pagination" class="key-visual-pagination" aria-label="Slide navigation">',
-  dots,
-  '</div></div></div></div>'
-].join('\n');
-html = html.slice(0, startIndex) + markup + html.slice(endIndex);
-if (!html.includes('src="../../components-carousel.js"')) throw new Error('Shared carousel controller must be included before export');
-if ((html.match(/class="key-visual-slide"/g) || []).length !== config.frames.length) throw new Error('Wrong slide count');
+// Preserve the existing six-slide carousel and shared controller.
 
 const assetDir = 'assets';
 await fs.mkdir(assetDir, {recursive: true});
 for (const [filename, bytes] of binaryFiles) await fs.writeFile(path.join(assetDir, filename), bytes);
-await fs.writeFile(htmlPath, html);
-
-const keep = new Set(binaryFiles.keys());
-for (const filename of await fs.readdir(assetDir)) {
-  if (/^key-visual-slide-\d+\.webp$/i.test(filename) && !keep.has(filename)) {
-    await fs.unlink(path.join(assetDir, filename));
-  }
-}
-if (!html.includes('../../assets/image-31.webp')) {
-  // The original stand-alone Key Visual image is no longer used.
-  const css = await fs.readFile('styles.css', 'utf8');
-  if (!css.includes('assets/image-31.webp')) {
-    await fs.rm(path.join(assetDir, 'image-31.webp'), {force: true});
-  }
-}
+// Do not modify HTML from an asset export.
 
 const before = results.reduce((total, file) => total + file.originalPNGBytes, 0);
 const after = results.reduce((total, file) => total + file.optimizedWebPBytes, 0);

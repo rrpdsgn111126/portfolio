@@ -1,75 +1,75 @@
 # Finam — HTML ↔ Figma mapping
 
-Source: Figma file `nCV6hHOEJCYoKib0o0MP5O`, page `2301:627`, root `2301:628`.
+Source: [Cases — Copy](https://www.figma.com/design/zG9GLaQaUXOhPeZC9VOBmx/), Figma file `zG9GLaQaUXOhPeZC9VOBmx`, Finam page `2301:627`, reference desktop root `2301:628`.
 
-All HTML targets are in `index.html`. CSS: `styles.css`. Inspector: `debug-blocks.js`. IDs refer to site elements; parent Figma IDs for containers/cards are *approximate mappings* when no one-to-one frame was verified.
+All HTML targets are in `cases/finam/index.html`. CSS: root `styles.css`. Inspector: root `debug-blocks.js`. IDs refer to site elements; parent Figma IDs for containers/cards are *approximate mappings* when no one-to-one frame was verified. Use `docs/FIGMA-WORKFLOW.md` for scope and export rules.
 
 | Element | HTML ID | GitHub file | Figma Node ID |
 |---|---|---|---|
-| Header / portfolio link | `#site-header` | `index.html` | `2301:628` |
-| Portfolio star | `#portfolio-home-link` | `index.html` | `2301:631` |
-| Finam intro | `#case-intro` | `index.html` | `2301:633` |
-| Finam title | `#case-title` | `index.html` | `2301:634` |
-| Intro copy container | `#intro-copy` | `index.html` | `2301:635` |
-| Intro headline | `#intro-lead` | `index.html` | `2301:636` |
-| Hero showcase | `#hero-showcase` | `index.html` | `2304:1991` |
-| Hero image group | `#hero-artboard` | `index.html` | `2401:2235` |
-| Hero left image | `#hero-image-left` | `index.html` | `2401:2233` |
-| Hero right image | `#hero-image-right` | `index.html` | `2401:2228` |
-| Insights | `#insights` | `index.html` | `2301:644` |
-| Insights heading | `#insights-title` | `index.html` | `2301:646` |
-| Insights cards container | `#insight-grid` | `index.html` | `2301:648` |
-| Visual style insight | `#insight-card-visual-style` | `index.html` | `2301:648` |
-| Hierarchy insight | `#insight-card-hierarchy` | `index.html` | `2301:648` |
-| Emotional insight | `#insight-card-emotion` | `index.html` | `2301:648` |
-| Key visual | `#key-visual` | `index.html` | `2336:2023` |
-| Key visual heading | `#visual-title` | `index.html` | `2301:656` |
-| Key visual copy | `#key-visual-copy` | `index.html` | `2301:654` |
-| Key visual artwork container | `#key-visual-media` | `index.html` | `2304:2007` |
-| Key visual image | `#key-visual-image` | `index.html` | `2333:12271` |
-| Modular Block System | `#modular-block-system` | `index.html` | `2343:1975` |
-| Modular heading | `#block-title` | `index.html` | `2301:664` |
-| Modular copy | `#modular-copy` | `index.html` | `2301:662` |
-| Modular artwork container | `#modular-media` | `index.html` | `2334:2010` |
-| Modular image | `#modular-image` | `index.html` | `2401:2239` |
-| Components | `#components` | `index.html` | `2336:2024` |
-| Components heading | `#components-title` | `index.html` | `2336:2028` |
-| Components copy | `#components-copy` | `index.html` | `2336:2026` |
-| Components artwork container | `#components-media` | `index.html` | `2336:2031` |
-| Page examples | `#page-examples` | `index.html` | `2343:1976` |
-| Page examples heading | `#examples-title` | `index.html` | `2343:1979` |
-| Page examples copy | `#examples-copy` | `index.html` | `2343:1977` |
-| Examples artwork | `#examples-media` | `index.html` | `2344:2011` |
-| Examples grid | `#examples-stack` | `index.html` | `2344:2011` |
-| Example row 1 | `#examples-row-one` | `index.html` | `2344:2011` |
-| Example row 2 | `#examples-row-two` | `index.html` | `2344:2011` |
-| Example row 3 | `#examples-row-three` | `index.html` | `2344:2011` |
-| Page example 1 | `#example-image-one` | `index.html` | `2422:4224` |
-| Page example 2 | `#example-image-two` | `index.html` | `2422:4225` |
-| Page example 3 | `#example-image-three` | `index.html` | `2425:4249` |
-| Page example 4 | `#example-image-four` | `index.html` | `2425:4251` |
-| Page example 5 | `#example-image-five` | `index.html` | `2423:4230` |
-| Page example 6 | `#example-image-six` | `index.html` | `2424:4238` |
-| Results | `#results` | `index.html` | `2301:801` |
-| Results heading | `#results-title` | `index.html` | `2301:805` |
-| Results copy | `#results-intro` | `index.html` | `2301:803` |
-| Results metrics grid | `#results-grid` | `index.html` | `2301:801` |
+| Header / portfolio link | `#site-header` | `cases/finam/index.html` | `2301:628` |
+| Portfolio star | `#portfolio-home-link` | `cases/finam/index.html` | `2301:631` |
+| Finam intro | `#case-intro` | `cases/finam/index.html` | `2301:633` |
+| Finam title | `#case-title` | `cases/finam/index.html` | `2301:634` |
+| Intro copy container | `#intro-copy` | `cases/finam/index.html` | `2301:635` |
+| Intro headline | `#intro-lead` | `cases/finam/index.html` | `2301:636` |
+| Hero showcase | `#hero-showcase` | `cases/finam/index.html` | `2304:1991` |
+| Hero image group | `#hero-artboard` | `cases/finam/index.html` | `2401:2235` |
+| Hero left image | `#hero-image-left` | `cases/finam/index.html` | `2401:2233` |
+| Hero right image | `#hero-image-right` | `cases/finam/index.html` | `2401:2228` |
+| Insights | `#insights` | `cases/finam/index.html` | `2301:644` |
+| Insights heading | `#insights-title` | `cases/finam/index.html` | `2301:646` |
+| Insights cards container | `#insight-grid` | `cases/finam/index.html` | `2301:648` |
+| Visual style insight | `#insight-card-visual-style` | `cases/finam/index.html` | `2301:648` |
+| Hierarchy insight | `#insight-card-hierarchy` | `cases/finam/index.html` | `2301:648` |
+| Emotional insight | `#insight-card-emotion` | `cases/finam/index.html` | `2301:648` |
+| Key visual | `#key-visual` | `cases/finam/index.html` | `2336:2023` |
+| Key visual heading | `#visual-title` | `cases/finam/index.html` | `2301:656` |
+| Key visual copy | `#key-visual-copy` | `cases/finam/index.html` | `2301:654` |
+| Key visual artwork container | `#key-visual-media` | `cases/finam/index.html` | `2304:2007` |
+| Key visual image | `#key-visual-image` | `cases/finam/index.html` | `2333:12271` |
+| Modular Block System | `#modular-block-system` | `cases/finam/index.html` | `2343:1975` |
+| Modular heading | `#block-title` | `cases/finam/index.html` | `2301:664` |
+| Modular copy | `#modular-copy` | `cases/finam/index.html` | `2301:662` |
+| Modular artwork container | `#modular-media` | `cases/finam/index.html` | `2334:2010` |
+| Modular image | `#modular-image` | `cases/finam/index.html` | `2401:2239` |
+| Components | `#components` | `cases/finam/index.html` | `2336:2024` |
+| Components heading | `#components-title` | `cases/finam/index.html` | `2336:2028` |
+| Components copy | `#components-copy` | `cases/finam/index.html` | `2336:2026` |
+| Components artwork container | `#components-media` | `cases/finam/index.html` | `2336:2031` |
+| Page examples | `#page-examples` | `cases/finam/index.html` | `2343:1976` |
+| Page examples heading | `#examples-title` | `cases/finam/index.html` | `2343:1979` |
+| Page examples copy | `#examples-copy` | `cases/finam/index.html` | `2343:1977` |
+| Examples artwork | `#examples-media` | `cases/finam/index.html` | `2344:2011` |
+| Examples grid | `#examples-stack` | `cases/finam/index.html` | `2344:2011` |
+| Example row 1 | `#examples-row-one` | `cases/finam/index.html` | `2344:2011` |
+| Example row 2 | `#examples-row-two` | `cases/finam/index.html` | `2344:2011` |
+| Example row 3 | `#examples-row-three` | `cases/finam/index.html` | `2344:2011` |
+| Page example 1 | `#example-image-one` | `cases/finam/index.html` | `2422:4224` |
+| Page example 2 | `#example-image-two` | `cases/finam/index.html` | `2422:4225` |
+| Page example 3 | `#example-image-three` | `cases/finam/index.html` | `2425:4249` |
+| Page example 4 | `#example-image-four` | `cases/finam/index.html` | `2425:4251` |
+| Page example 5 | `#example-image-five` | `cases/finam/index.html` | `2423:4230` |
+| Page example 6 | `#example-image-six` | `cases/finam/index.html` | `2424:4238` |
+| Results | `#results` | `cases/finam/index.html` | `2301:801` |
+| Results heading | `#results-title` | `cases/finam/index.html` | `2301:805` |
+| Results copy | `#results-intro` | `cases/finam/index.html` | `2301:803` |
+| Results metrics grid | `#results-grid` | `cases/finam/index.html` | `2301:801` |
 
-To inspect the site, open `https://finam-case.pages.dev/?debug=blocks`. Click a labeled block to copy its ID. Without the query parameter the inspector does not run.
+To inspect the site, open `https://portfolio-rrr.pages.dev/cases/finam/?debug=blocks`. Click a labeled block to copy its ID. Without the query parameter the inspector does not run.
 
-## Modular carousel — Figma Section 4
+## Modular carousel — five published slides
 
-Source file: `zG9GLaQaUXOhPeZC9VOBmx`; section: `4315:62167`.
-Four exported PNG frames are ordered by their **left-to-right position** on the Figma canvas, not by the Layers panel order. Frame `4383:41189` has overflowing content; its full render is 1228 × 1012.
+Current exporter: `figma-assets.json` → `scripts/sync-figma-images.mjs`. The live `#modular-carousel` in `cases/finam/index.html` has **five slides**, which must not be replaced by a four-slide HTML generator. The source Figma Section 4 (`4315:62167`) has four direct child frames, but the five-item export list includes **nested child frames**; this is why the old four-slide re-export was retired.
 
-| Slide | Figma frame | Asset | Export dimensions |
-|---|---|---|---|
-| 1 | `4315:62168` | `assets/modular-slide-01.webp` | 1228 × 856 |
-| 2 | `4383:41189` | `assets/modular-slide-02.webp` | 1228 × 1012 |
-| 3 | `4315:62292` | `assets/modular-slide-03.webp` | 1228 × 648 |
-| 4 | `4315:62230` | `assets/modular-slide-04.webp` | 1228 × 592 |
+| Slide | Current configured Figma node | Exported asset |
+|---|---|---|
+| 1 | `4315:62168` | `assets/modular-slide-01.webp` |
+| 2 | `4315:62230` | `assets/modular-slide-02.webp` |
+| 3 | `4315:62292` | `assets/modular-slide-03.webp` |
+| 4 | `4315:62380` | `assets/modular-slide-04.webp` |
+| 5 | `4315:62440` | `assets/modular-slide-05.webp` |
 
-Target HTML: `#modular-carousel` in `index.html`. The shared controller in `components-carousel.js` generates the pagination based on slide count. Desktop CSS retains equal image widths and the approved layout; mobile remains auto-sized.
+These IDs have been verified to exist in Figma; the ordering is that of the export configuration, **not** a newly approved visual redesign. Before updating artwork, inspect the frames against the current website. The manual export updates assets only.
 
 ## Key Visual carousel (Figma Section 6)
 
@@ -94,11 +94,11 @@ Order follows original artboard layout: tall left frame, upper right frame, lowe
 
 | HTML ID | GitHub file | Figma Node ID | Asset |
 |---|---|---|---|
-| `#components-media` | `index.html` | `4337:12973` | Carousel container |
-| `#components-carousel` | `index.html` | `4337:12973` | Carousel region |
-| `#components-carousel-track` | `index.html` | `4337:12973` | Slider track |
-| `#components-slide-1` / `#components-image-1` | `index.html` | `4343:12974` | `components-slide-01.webp` |
-| `#components-slide-2` / `#components-image-2` | `index.html` | `4337:9058` | `components-slide-02.webp` |
-| `#components-slide-3` / `#components-image-3` | `index.html` | `4327:5812` | `components-slide-03.webp` |
+| `#components-media` | `cases/finam/index.html` | `4337:12973` | Carousel container |
+| `#components-carousel` | `cases/finam/index.html` | `4337:12973` | Carousel region |
+| `#components-carousel-track` | `cases/finam/index.html` | `4337:12973` | Slider track |
+| `#components-slide-1` / `#components-image-1` | `cases/finam/index.html` | `4408:41190` | `components-slide-01.webp` |
+| `#components-slide-2` / `#components-image-2` | `cases/finam/index.html` | `4337:9058` | `components-slide-02.webp` |
+| `#components-slide-3` / `#components-image-3` | `cases/finam/index.html` | `4327:5812` | `components-slide-03.webp` |
 
 Controls: `components-carousel.js`. Styles: `styles.css`. Export automation: `components-carousel.json`, `scripts/sync-components-carousel.mjs`, `.github/workflows/sync-components-carousel.yml`.
