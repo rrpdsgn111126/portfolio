@@ -26,7 +26,7 @@ body{overflow-x:clip}
 }
 .home-intro p.portfolio-body{
   margin-top:26px;width:min(100%,1054px);max-width:1054px;
-  font:400 18px/26px var(--font-body);color:rgba(0,0,0,.75);
+  font:400 18px/1.45 var(--font-body);color:rgba(0,0,0,.75);
 }
 .home-work{padding-bottom:94px}
 .home-project{
@@ -81,7 +81,7 @@ body{overflow-x:clip}
   padding:0 0 13px;margin:0;
 }
 .home-project__copy p{
-  font:400 18px/26px var(--font-heading);letter-spacing:0;
+  font:400 18px/1.45 var(--font-body);letter-spacing:normal;
   color:rgba(0,0,0,.75);margin:0;
 }
 .home-tags{
@@ -119,9 +119,8 @@ body{overflow-x:clip}
 @media(max-width:1150px) and (min-width:768px){
   .home-intro{padding-top:80px;padding-bottom:85px}
   .home-intro h1.portfolio-display{font-size:clamp(37px,4.2vw,50px);line-height:1.2}
-  .home-intro p.portfolio-body{font-size:17px;line-height:1.5}
   .home-project__copy{width:35%}
-  .home-project__copy h2,.home-project__copy p{font-size:clamp(14px,1.6vw,18px);line-height:1.43}
+  .home-project__copy h2{font-size:clamp(14px,1.6vw,18px);line-height:1.43}
   .home-project__copy h2{padding-bottom:10px}
   .home-tags{top:158px;gap:7px}
   .home-tags li{font-size:12px;line-height:25px;min-height:25px;padding-inline:9px}
