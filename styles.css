@@ -669,3 +669,13 @@ h1{text-transform:lowercase}
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
 }
+
+/* At tablet widths pointer hover must not move the artwork relative to the
+   pagination. Preserve the approved 3% zoom at >=1101px on desktop. */
+@media (min-width:768px) and (max-width:1100px){
+  #key-visual-carousel .key-visual-slide.is-current:has(> img:hover),
+  #modular-carousel .modular-slide.is-current:has(> img:hover),
+  #components-carousel .components-slide.is-current:has(> img:hover){
+    transform:none;
+  }
+}

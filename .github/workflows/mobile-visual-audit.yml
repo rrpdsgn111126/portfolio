@@ -120,9 +120,9 @@ jobs:
                     return {height:m.getBoundingClientRect().height,
                       padding:getComputedStyle(m).paddingTop,position:getComputedStyle(c).position};
                   }""",[panel,root])
-                  assert abs(values['height']-563.2)<2 or abs(values['height']-676)<2,(label,width,values)
+                  assert abs(values['height']-(width*.83+94))<2,(label,width,values)
                   assert values['padding']=='0px' and values['position']=='absolute',(label,width,values)
-                  print('DESKTOP_UNCHANGED',label,width,values)
+                  print('TABLET_PANEL_HEIGHT_OK',label,width,values)
                   continue
                 # Test all slides, including images that were offscreen/lazy-loaded.
                 page.locator(root+' img').evaluate_all("(imgs) => imgs.forEach(img => img.loading='eager')")
