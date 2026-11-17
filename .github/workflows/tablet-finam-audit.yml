@@ -1,0 +1,138 @@
+name: Finam tablet layout (Playwright / Chromium)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'styles.css'
+      - 'cases/finam/index.html'
+      - 'components-carousel.js'
+      - '.github/workflows/tablet-finam-audit.yml'
+  pull_request:
+    paths:
+      - 'styles.css'
+      - 'cases/finam/index.html'
+      - 'components-carousel.js'
+      - '.github/workflows/tablet-finam-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  tablet:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate site and scripts
+        run: |
+          node scripts/verify-portfolio-structure.mjs
+          node scripts/verify-assets.mjs
+          node --check components-carousel.js
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+      - name: Serve local site
+        run: |
+          python -m http.server 4173 --bind 127.0.0.1 >/tmp/tablet-finam-http.log 2>&1 &
+          sleep 2
+      - name: Inspect tablet layout and carousel slides
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out=Path('tablet-finam-audit')
+          out.mkdir(exist_ok=True)
+          with sync_playwright() as playwright:
+              browser=playwright.chromium.launch(headless=True,args=['--no-sandbox'])
+              for width in (767,768,800,1024,1100,1101,1440):
+                  context=browser.new_context(viewport={'width':width,'height':900},
+                      device_scale_factor=1,reduced_motion='reduce')
+                  page=context.new_page()
+                  errors=[]
+                  page.on('pageerror',lambda err: errors.append(str(err)))
+                  page.goto('http://127.0.0.1:4173/cases/finam/',
+                      wait_until='networkidle',timeout=45000)
+                  page.evaluate('() => document.fonts.ready')
+                  page.wait_for_function('''() => [...document.querySelectorAll(
+                      '#hero-artboard img, #key-visual-carousel img, #modular-carousel img, #components-carousel img'
+                      )].every(el=>{el.loading='eager'; return true})''')
+                  page.wait_for_function('''() => [...document.querySelectorAll(
+                      '#hero-artboard img, #key-visual-carousel img, #modular-carousel img, #components-carousel img'
+                      )].every(el=>el.complete && el.naturalWidth>0)''',timeout=30000)
+                  page.wait_for_timeout(500)
+                  rect=page.evaluate('''() => {
+                    const b=s=>{const r=document.querySelector(s).getBoundingClientRect();
+                      return {x:r.x,y:r.y+scrollY,w:r.width,h:r.height,right:r.right,bottom:r.bottom+scrollY}};
+                    const imgs=s=>[...document.querySelectorAll(s)].map(e=>{
+                      const r=e.getBoundingClientRect();
+                      return {x:r.x,y:r.y+scrollY,w:r.width,h:r.height}});
+                    return {
+                      hero:b('#hero-artboard'),
+                      heroTiles:imgs('#hero-artboard .hero-tile'),
+                      key:b('#key-visual-carousel-viewport'),
+                      modular:b('#modular-carousel-viewport'),
+                      components:b('#components-carousel-viewport'),
+                      examples:b('#examples-stack'),
+                      keyImages:imgs('#key-visual-carousel .key-visual-slide img'),
+                      modularImages:imgs('#modular-carousel .modular-slide img'),
+                      componentsImages:imgs('#components-carousel .components-slide img'),
+                      results:b('#results'),resultsText:b('#results-intro'),
+                      resultsGrid:b('#results-grid'),
+                      copyLeft:b('#modular-copy'),copyRight:b('#key-visual-copy'),
+                      panels:['#key-visual-media','#modular-media','#components-media'].map(b),
+                      overflow:document.documentElement.scrollWidth-innerWidth
+                    };
+                  }''')
+                  assert not errors,(width,errors)
+                  if 768<=width<=1100:
+                      expected=width-80
+                      assert abs(rect['hero']['x']-40)<1.5 and abs(rect['hero']['w']-expected)<1.5,(width,'hero',rect['hero'])
+                      left=min(t['x'] for t in rect['heroTiles'])
+                      right=max(t['x']+t['w'] for t in rect['heroTiles'])
+                      assert abs((left+right)/2-width/2)<2,(width,'hero-center',left,right)
+                      for name in ('key','modular','components','examples'):
+                          box=rect[name]
+                          assert abs(box['x']-40)<1.5 and abs(box['w']-expected)<1.5,(width,name,box)
+                      for name in ('keyImages','modularImages','componentsImages'):
+                          for index,box in enumerate(rect[name]):
+                              assert abs(box['w']-expected)<2,(width,name,index,box)
+                      assert abs(rect['copyLeft']['x']-40)<1.5,(width,'left copy',rect['copyLeft'])
+                      assert abs(rect['copyRight']['right']-(width-40))<1.5,(width,'right copy',rect['copyRight'])
+                      assert abs(rect['resultsGrid']['x']-40)<1.5 and abs(rect['resultsGrid']['w']-expected)<1.5,(width,'results-grid',rect['resultsGrid'])
+                      assert rect['resultsGrid']['y']>=rect['resultsText']['bottom']+20,(width,'results-order',rect)
+                      for name in ('key-visual','modular','components'):
+                          root='#'+name+'-carousel'
+                          slides=page.locator(root+' [class$="-slide"]')
+                          dots=page.locator(root+' [class$="-pagination"] button')
+                          assert slides.count()==dots.count(),(width,name,'slides/dots')
+                          panel=page.locator('#'+name+'-media')
+                          original_height=panel.bounding_box()['height']
+                          for index in range(slides.count()):
+                              dots.nth(index).click()
+                              page.wait_for_function('''arg => [...document.querySelectorAll(arg.root+' [class$="-slide"]')]
+                                  [arg.index]?.classList.contains('is-current')''',arg={'root':root,'index':index})
+                              page.wait_for_timeout(75)
+                              assert abs(panel.bounding_box()['height']-original_height)<1,(width,name,index,'panel height changed')
+                          print('TABLET_CAROUSEL_OK',width,name,'slides',slides.count(),flush=True)
+                      page.screenshot(path=str(out/f'finam-tablet-{width}.png'),full_page=True,
+                          animations='disabled',timeout=35000)
+                      print('TABLET_LAYOUT_OK',width,'content',expected,'hero',rect['hero'],flush=True)
+                  else:
+                      # Guard against accidental inheritance by the mobile/desktop rules.
+                      assert not (abs(rect['key']['w']-(width-80))<.5 and abs(rect['key']['x']-40)<.5),(width,'tablet styles leaked')
+                      print('NON_TABLET_UNCHANGED_BREAKPOINT',width,flush=True)
+                  context.close()
+              browser.close()
+          PY
+      - name: Attach tablet screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finam-tablet-layout
+          path: tablet-finam-audit/
+          if-no-files-found: warn

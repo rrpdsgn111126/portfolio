@@ -619,3 +619,53 @@ h1{text-transform:lowercase}
     max-height:calc(100cqh - var(--carousel-slide-top) - var(--carousel-slide-bottom));
   }
 }
+
+/* Tablet Finam composition: the art, galleries and Results share the readable
+   content width (viewport minus the existing 40px gutters). Desktop >1100px
+   and the established mobile layout <=767px are intentionally unchanged. */
+@media (min-width:768px) and (max-width:1100px){
+  #hero-showcase{
+    height:calc((100vw - 80px) * .533123);
+  }
+  #hero-showcase #hero-artboard{
+    width:calc(100vw - 80px);
+    left:50%;
+    margin-inline:0;
+    transform:translateX(-50%);
+  }
+
+  /* Keep right/left copy aligned to the same inner edges as the artwork. */
+  .feature-copy.right-aligned{margin-right:0;}
+  .feature-copy.left-inset{margin-left:0;}
+
+  /* All source images retain their natural aspect ratio. The panel is tall
+     enough for the largest Modular frame at the full readable width. */
+  #key-visual-media,
+  #modular-media,
+  #components-media{
+    height:calc(83vw + 94px);
+  }
+  #key-visual-carousel-viewport,
+  #modular-carousel-viewport,
+  #components-carousel-viewport{
+    width:calc(100% - 80px);
+  }
+  #examples-stack{
+    width:calc(100% - 80px);
+  }
+
+  /* Results follows the normal document flow rather than a compressed
+     40%/60% two-column layout. */
+  #results{
+    display:block;
+    margin-left:0;
+    width:100%;
+  }
+  #results-intro{max-width:100%;}
+  #results-intro p{max-width:var(--copy-width);}
+  #results-grid{
+    width:100%;
+    margin-top:32px;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
