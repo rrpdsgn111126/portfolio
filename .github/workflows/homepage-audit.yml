@@ -64,7 +64,9 @@ jobs:
                   images=page.locator('.home-project__shot')
                   for image in images.all():
                       image.evaluate("(e)=>e.loading='eager'")
-                      image.scroll_into_view_if_needed()
+                      # A mobile project card intentionally hides its second image.
+                      if image.is_visible():
+                          image.scroll_into_view_if_needed()
                   page.wait_for_function("() => [...document.querySelectorAll('.home-project__shot')].every(x=>x.complete && x.naturalWidth>0)",timeout=25000)
                   page.wait_for_timeout(550)
                   assert not errors,('errors',width,errors)
