@@ -26,7 +26,7 @@ body{overflow-x:clip}
 }
 .home-intro p.portfolio-body{
   margin-top:26px;width:min(100%,1054px);max-width:1054px;
-  font:700 18px/1.45 var(--font-heading);letter-spacing:normal;font-synthesis:none;color:rgba(0,0,0,.75);
+  font:400 18px/26px var(--font-body);color:rgba(0,0,0,.75);
 }
 .home-work{padding-bottom:94px}
 .home-project{
@@ -81,7 +81,7 @@ body{overflow-x:clip}
   padding:0 0 13px;margin:0;
 }
 .home-project__copy p{
-  font:700 18px/1.45 var(--font-heading);letter-spacing:normal;font-synthesis:none;
+  font:400 18px/26px var(--font-heading);letter-spacing:0;
   color:rgba(0,0,0,.75);margin:0;
 }
 .home-tags{
@@ -119,8 +119,9 @@ body{overflow-x:clip}
 @media(max-width:1150px) and (min-width:768px){
   .home-intro{padding-top:80px;padding-bottom:85px}
   .home-intro h1.portfolio-display{font-size:clamp(37px,4.2vw,50px);line-height:1.2}
+  .home-intro p.portfolio-body{font-size:17px;line-height:1.5}
   .home-project__copy{width:35%}
-  .home-project__copy h2{font-size:clamp(14px,1.6vw,18px);line-height:1.43}
+  .home-project__copy h2,.home-project__copy p{font-size:clamp(14px,1.6vw,18px);line-height:1.43}
   .home-project__copy h2{padding-bottom:10px}
   .home-tags{top:158px;gap:7px}
   .home-tags li{font-size:12px;line-height:25px;min-height:25px;padding-inline:9px}
@@ -130,7 +131,7 @@ body{overflow-x:clip}
   .home-mark{top:4.375vw;left:2.5vw;width:7.5vw;height:8.125vw;font-size:8.125vw;line-height:1}
   .home-intro{padding-top:15vw;padding-bottom:66px}
   .home-intro h1.portfolio-display{width:100%;font:700 7.8125vw/11.25vw var(--font-heading);letter-spacing:normal;font-synthesis:none}
-  .home-intro p.portfolio-body{margin-top:24px;font:700 5vw/7.5vw var(--font-heading);letter-spacing:normal;font-synthesis:none}
+  .home-intro p.portfolio-body{margin-top:24px;font:400 5vw/7.5vw var(--font-body);letter-spacing:normal;font-synthesis:none}
   .home-work{padding-bottom:75px}
   .home-project{height:auto;min-height:0;margin-bottom:4.375vw;border-radius:16px;overflow:hidden}
   .home-project:not(:first-child){margin-bottom:4.375vw}
@@ -148,7 +149,7 @@ body{overflow-x:clip}
   .home-project:hover .home-project__shot--first{transform:none!important}
   .home-project__copy{position:relative;top:auto;left:auto!important;right:auto!important;width:100%;padding:0}
   .home-project__copy h2{font:700 5vw/7.5vw var(--font-heading);padding-bottom:4.0625vw;letter-spacing:normal;font-synthesis:none}
-  .home-project__copy p{font:700 5vw/7.5vw var(--font-heading);letter-spacing:normal;font-synthesis:none}
+  .home-project__copy p{font:400 5vw/7.5vw var(--font-body);letter-spacing:normal;font-synthesis:none}
   .home-tags{position:static;top:auto;left:auto;width:auto;margin-top:28px;gap:8px}
   .home-tags li{font:400 4vw/4.5vw var(--font-body);letter-spacing:normal;font-synthesis:none;min-height:7.5vw;padding:0 10px}
 }
