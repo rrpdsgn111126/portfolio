@@ -82,6 +82,30 @@
     .overlay-navbar { top: 4.926108%; }
     .overlay-content { top: 11.576355%; }
     .phone.is-paused .background-animated { animation-play-state: paused; }
+    /* Diagnostic mode: a fixed source frame, a ruler, and no guessing from appearance. */
+    .debug-control-set { margin-top: 24px; padding-top: 17px; border-top: 1px solid #363b3e; }
+    .debug-control-set .group-title { margin-top: 0; }
+    .debug-frame-tools { display: none; }
+    .debug-control-set.is-open .debug-frame-tools { display: block; }
+    .debug-readout { max-width: 340px; font: 12px/1.65 ui-monospace, Consolas, monospace; margin-top: 12px; color: #a9f4e3; }
+    .phone.is-debug .background-animated { animation: none !important; opacity: 0 !important; }
+    .phone.is-debug[data-debug-frame="2"] .background-two,
+    .phone.is-debug[data-debug-frame="3"] .background-three { opacity: 1 !important; }
+    .phone.is-debug.no-ui .overlay { visibility: hidden; }
+    .debug-overlay { display: none; position: absolute; inset: 0; pointer-events: none; z-index: 10;
+      box-shadow: inset 0 0 0 2px #4ff4c2; }
+    .phone.is-debug .debug-overlay { display: block; }
+    .debug-origin { position: absolute; left: 0; top: 0; width: 100%; border-top: 3px solid #4ff4c2; }
+    .debug-guide { position: absolute; left: 0; width: 100%; border-top: 1px dashed #ffbd59; }
+    .debug-guide-nav { top: 4.926108%; }
+    .debug-guide-content { top: 11.576355%; border-color: #ad9dff; }
+    .debug-guide-photo-end { top: 96.6749%; border-color: #fa729f; }
+    .debug-chip { display: block; position: absolute; right: 3px; top: 3px; padding: 4px 6px;
+      max-width: 97%; font: 600 10px/1.25 ui-monospace, Consolas, monospace; letter-spacing: -.02em;
+      color: #101719; background: #4ff4c2; border-radius: 3px; white-space: nowrap; }
+    .debug-guide .debug-chip { top: 2px; background: #ffbd59; }
+    .debug-guide-content .debug-chip { background: #ad9dff; }
+    .debug-guide-photo-end .debug-chip { background: #fa729f; }
     @media (max-width: 740px) {
       .layout { grid-template-columns: 1fr; gap: 26px; padding: 26px 18px 44px; }
       .info { max-width: 375px; margin-inline: auto; }
@@ -117,6 +141,21 @@
         <p class="group-title">Воспроизведение</p>
         <button class="control" id="play-pause" type="button" aria-pressed="false">Пауза</button>
         <p class="summary" id="timing">3×: каждый фон — 4 с, переход — 1,67 с.</p>
+        <div class="debug-control-set" id="debug-controls">
+          <p class="group-title">Разметка положения фонового изображения</p>
+          <button class="control" id="debug-toggle" type="button" aria-pressed="false">Показать границы и координаты</button>
+          <div class="debug-frame-tools" id="debug-frame-tools">
+            <p class="group-title" style="margin-top: 17px">Проверить каждую фотографию отдельно</p>
+            <div class="control-row" role="group" aria-label="Фотография для проверки">
+              <button class="control" type="button" data-debug-frame="1" aria-pressed="true">Фото 1</button>
+              <button class="control" type="button" data-debug-frame="2" aria-pressed="false">Фото 2</button>
+              <button class="control" type="button" data-debug-frame="3" aria-pressed="false">Фото 3</button>
+            </div>
+            <p class="group-title" style="margin-top: 17px">Прозрачный слой интерфейса</p>
+            <button class="control" id="debug-ui-toggle" type="button" aria-pressed="false">Скрыть интерфейс</button>
+            <p class="debug-readout" id="debug-readout" aria-live="polite"></p>
+          </div>
+        </div>
       </div>
       <p class="details">Отдельная тестовая страница, без изменения основной версии портфолио.<br>
         <a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17848-5446" target="_blank" rel="noopener noreferrer">Исходный экран</a>
@@ -132,6 +171,12 @@
         <img class="overlay overlay-status" src="./assets/status.png" width="375" height="40" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-navbar" src="./assets/navbar.png" width="375" height="54" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" aria-hidden="true" decoding="async">
+        <div class="debug-overlay" aria-hidden="true">
+          <div class="debug-origin"><span class="debug-chip">НАЧАЛО ФОТО / ЭКРАНА · Y=0</span></div>
+          <div class="debug-guide debug-guide-nav"><span class="debug-chip">NAVBAR · Y=40</span></div>
+          <div class="debug-guide debug-guide-content"><span class="debug-chip">КОНТЕНТ · Y=94</span></div>
+          <div class="debug-guide debug-guide-photo-end" id="debug-photo-end"><span class="debug-chip" id="debug-photo-end-label">КОНЕЦ ФОТО 1 · Y=785</span></div>
+        </div>
       </div>
     </section>
   </main>
@@ -142,7 +187,64 @@
       const speedButtons = [...document.querySelectorAll('[data-speed]')];
       const playPause = document.getElementById('play-pause');
       const timing = document.getElementById('timing');
+      const debugToggle = document.getElementById('debug-toggle');
+      const debugUiToggle = document.getElementById('debug-ui-toggle');
+      const debugControls = document.getElementById('debug-controls');
+      const debugReadout = document.getElementById('debug-readout');
+      const photoEnd = document.getElementById('debug-photo-end');
+      const photoEndLabel = document.getElementById('debug-photo-end-label');
+      const frameButtons = [...document.querySelectorAll('[data-debug-frame]')];
+      const photoHeights = [785, 750, 573];
+      let frame = 1;
+      let debugging = false;
+      let uiHidden = false;
       let paused = false;
+
+      function updateDebugReadout() {
+        if (!debugging) return;
+        const screenRect = screen.getBoundingClientRect();
+        const layer = screen.querySelector('.background-base');
+        const layerRect = layer.getBoundingClientRect();
+        const scale = 812 / screenRect.height;
+        const top = Math.round((layerRect.top - screenRect.top) * scale * 10) / 10;
+        const backgroundY = getComputedStyle(layer).backgroundPositionY;
+        const height = photoHeights[frame - 1];
+        photoEnd.style.top = (height / 812 * 100) + '%';
+        photoEndLabel.textContent = 'КОНЕЦ ФОТО ' + frame + ' · Y=' + height;
+        debugReadout.textContent = 'Вычисленная координата фона: Y=' + top +
+          ' px; background-position-y: ' + backgroundY +
+          '; экран: 375×812; фото ' + frame + ': 375×' + height +
+          '; navbar: Y=40; контент: Y=94. ' +
+          (uiHidden ? 'Интерфейс скрыт.' : 'Интерфейс поверх фона.');
+      }
+
+      function setDebug(enabled) {
+        debugging = enabled;
+        screen.classList.toggle('is-debug', enabled);
+        debugControls.classList.toggle('is-open', enabled);
+        debugToggle.setAttribute('aria-pressed', String(enabled));
+        debugToggle.textContent = enabled ? 'Скрыть разметку' : 'Показать границы и координаты';
+        updateDebugReadout();
+      }
+      function selectFrame(next) {
+        frame = next;
+        screen.dataset.debugFrame = String(frame);
+        frameButtons.forEach(item =>
+          item.setAttribute('aria-pressed', String(Number(item.dataset.debugFrame) === frame)));
+        updateDebugReadout();
+      }
+      debugToggle.addEventListener('click', () => setDebug(!debugging));
+      frameButtons.forEach(button => button.addEventListener('click', () => selectFrame(Number(button.dataset.debugFrame))));
+      debugUiToggle.addEventListener('click', () => {
+        uiHidden = !uiHidden;
+        screen.classList.toggle('no-ui', uiHidden);
+        debugUiToggle.setAttribute('aria-pressed', String(uiHidden));
+        debugUiToggle.textContent = uiHidden ? 'Показать интерфейс' : 'Скрыть интерфейс';
+        updateDebugReadout();
+      });
+      window.addEventListener('resize', updateDebugReadout);
+      selectFrame(1);
+      if (new URLSearchParams(window.location.search).get('debug') === '1') setDebug(true);
 
       speedButtons.forEach(button => button.addEventListener('click', () => {
         const speed = Number(button.dataset.speed);
