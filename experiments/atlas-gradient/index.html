@@ -31,8 +31,20 @@
     .phone-bg-fill { position: absolute; inset: 0; z-index: 0; background: #1f1f1f; pointer-events: none; }
     .phone-bg-stack { position: absolute; inset: 0; z-index: 1; pointer-events: none; isolation: isolate; overflow: hidden; }
     .phone-ui-stack { position: absolute; inset: 0; z-index: 2; pointer-events: none; isolation: isolate; }
-    /* All frames own their full 375×812 background. No transform, margin, mask,
-       navbar offset, or foreground text container can move their origin. */
+    /* Figma Rectangle 1837: blurred black opacity .9, kept separate from exported UI.
+       Source screen 375×812: x=-324, y=521, w=1054, h=480, blur=100. */
+    .figma-bottom-shade {
+      position: absolute;
+      left: -86.4%;
+      top: 64.16256%;
+      width: 281.0667%;
+      height: 59.1133%;
+      background: #000;
+      opacity: .9;
+      filter: blur(100px);
+      pointer-events: none;
+    }
+    /* The background belongs exclusively to the 375×812 root, never to status/navbar/content. */
     .background {
       position: absolute;
       top: 0;
@@ -45,8 +57,8 @@
       pointer-events: none;
       background-color: #1f1f1f;
       background-repeat: no-repeat;
-      /* Forced image shift: 40px + 40px status bar, toward screen top. */
-      background-position: center -80px;
+      /* The Figma photo crop starts at the top edge; no workaround offset. */
+      background-position: center top;
       background-size: 100% auto;
     }
     .background-base, .background-one { background-image: url("./assets/bg-1.png"); }
@@ -82,11 +94,12 @@
       0%, 86.111111% { opacity: 0; }
       100% { opacity: 1; }
     }
-    /* The Figma lower-screen blur stays in the transparent static foreground. */
+    /* Re-exported UI fragments are alpha-transparent; the lower blur is an independent CSS layer. */
     .overlay { z-index: 4; }
     .overlay-status { top: 0; }
     .overlay-navbar { top: 4.926108%; }
-    .overlay-content { top: 11.576355%; }
+    .overlay-form { top: 13.5468%; left: 4.26667%; width: 91.46667%; }
+    .overlay-button { top: 91.37931%; left: 4.26667%; width: 91.46667%; }
     /* Anchors in the screen's top-level UI stack: status Y=0, navbar Y=40, content Y=94. */
     .phone.is-paused .background-animated { animation-play-state: paused; }
     /* Diagnostic mode: a fixed source frame, a ruler, and no guessing from appearance. */
@@ -179,12 +192,14 @@
           <div class="background background-animated background-one"></div>
         </div>
         <div class="phone-ui-stack" aria-hidden="true">
-          <img class="overlay overlay-status" src="./assets/status.png" width="375" height="40" alt="" draggable="false" decoding="async">
-          <img class="overlay overlay-navbar" src="./assets/navbar.png" width="375" height="54" alt="" draggable="false" decoding="async">
-          <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" draggable="false" decoding="async">
+          <div class="figma-bottom-shade"></div>
+          <img class="overlay overlay-status" src="./assets/status.png?v=transparent-ui" width="375" height="40" alt="" draggable="false" decoding="async">
+          <img class="overlay overlay-navbar" src="./assets/navbar.png?v=transparent-ui" width="375" height="54" alt="" draggable="false" decoding="async">
+          <img class="overlay overlay-form" src="./assets/form.png?v=transparent-ui" width="343" height="620" alt="" draggable="false" decoding="async">
+          <img class="overlay overlay-button" src="./assets/button.png?v=transparent-ui" width="343" height="54" alt="" draggable="false" decoding="async">
         </div>
         <div class="debug-overlay" aria-hidden="true">
-          <div class="debug-origin"><span class="debug-chip">ЭКРАН Y=0 · ФОТО СДВИНУТО −80px</span></div>
+          <div class="debug-origin"><span class="debug-chip">НАЧАЛО ФОТО / ЭКРАНА · Y=0</span></div>
           <div class="debug-guide debug-guide-nav"><span class="debug-chip">NAVBAR · Y=40</span></div>
           <div class="debug-guide debug-guide-content"><span class="debug-chip">КОНТЕНТ · Y=94</span></div>
           <div class="debug-guide debug-guide-photo-end" id="debug-photo-end"><span class="debug-chip" id="debug-photo-end-label">КОНЕЦ ФОТО 1 · Y=785</span></div>
@@ -223,8 +238,8 @@
         const root = screen.querySelector('.phone-bg-stack');
         const rootTop = Math.round((root.getBoundingClientRect().top - screenRect.top) * scale * 10) / 10;
         const height = photoHeights[frame - 1];
-        photoEnd.style.top = ((height - 80) / 812 * 100) + '%';
-        photoEndLabel.textContent = 'КОНЕЦ ФОТО ' + frame + ' · Y=' + (height - 80);
+        photoEnd.style.top = (height / 812 * 100) + '%';
+        photoEndLabel.textContent = 'КОНЕЦ ФОТО ' + frame + ' · Y=' + height;
         debugReadout.textContent = 'Начало нижнего слоя: Y=' + rootTop +
           ' px; текущий кадр: Y=' + top + ' px; background-position-y: ' + backgroundY +
           '; экран: 375×812; фото ' + frame + ': 375×' + height +
