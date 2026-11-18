@@ -3,247 +3,278 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>Atlas · Animated gradient test</title>
+  <meta name="color-scheme" content="dark">
+  <title>Atlas — анимация фотофона · тест</title>
   <style>
-    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f1f1f; background: #ededed; }
-    * { box-sizing: border-box; }
-    body { min-height: 100vh; margin: 0; }
+    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #f3f3f3; background: #151719; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { min-width: 280px; min-height: 100vh; margin: 0; }
     button { font: inherit; cursor: pointer; }
-    .layout { min-height: 100vh; display: grid; grid-template-columns: minmax(270px, 360px) minmax(0, 1fr); gap: clamp(24px, 6vw, 100px); align-items: center; max-width: 1120px; margin: auto; padding: 44px 38px; }
-    .info { align-self: center; }
-    .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #757575; }
-    h1 { margin: 17px 0 16px; font-size: clamp(30px, 3.8vw, 48px); line-height: 1.08; letter-spacing: -0.045em; font-weight: 650; }
-    .description { margin: 0; max-width: 32ch; line-height: 1.55; font-size: 15px; color: #626262; }
-    .controls { margin-top: 34px; }
-    .control-label { margin: 0 0 12px; font-size: 13px; font-weight: 650; }
-    .button-row { display: flex; flex-wrap: wrap; gap: 9px; }
-    .control { border: 1px solid #d0d0d0; color: #202020; background: #f8f8f8; border-radius: 10px; padding: 10px 16px; min-height: 42px; transition: background-color 120ms ease, border-color 120ms ease; }
-    .control:hover { background: #fff; border-color: #999; }
-    .control[aria-pressed="true"] { background: #1f1f1f; color: white; border-color: #1f1f1f; }
-    .control:focus-visible { outline: 3px solid #37c5a6; outline-offset: 3px; }
-    .divider { height: 1px; max-width: 290px; margin: 24px 0; background: #d7d7d7; }
-    .meta { margin: 0; font-size: 12px; line-height: 1.6; color: #7d7d7d; }
-    .meta a { color: inherit; text-underline-offset: 3px; }
-    .stage { display: flex; justify-content: center; align-items: center; min-width: 0; }
-    .phone { width: min(375px, 100%); aspect-ratio: 375 / 812; position: relative; flex: none; isolation: isolate; overflow: hidden; border-radius: min(20px, 5.333%); background: #f7f7f7; box-shadow: 0 20px 70px rgba(0,0,0,0.13), 0 2px 12px rgba(0,0,0,0.05); }
-    /* One elongated oval, not a stack of independently animated gradients. */
-    .glow-stage {
-      position: absolute;
-      z-index: 0;
-      inset: 0 auto auto 0;
-      width: 100%;
-      height: 40%;
-      overflow: hidden;
-      pointer-events: none;
-      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
-      mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
-    }
-    .glow {
-      --glow-rgb: 84, 255, 189;
+    .layout { display: grid; grid-template-columns: minmax(0, 365px) minmax(0, 1fr); align-items: center; gap: clamp(32px, 8vw, 110px); max-width: 1120px; min-height: 100vh; margin: auto; padding: 36px clamp(20px, 5vw, 68px); }
+    .eyebrow { color: #899196; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; }
+    h1 { margin: 16px 0 16px; font-size: clamp(29px, 3.8vw, 44px); font-weight: 620; line-height: 1.08; letter-spacing: -.04em; }
+    .description { margin: 0; max-width: 34ch; color: #aab0b4; font-size: 15px; line-height: 1.55; }
+    .controls { margin-top: 32px; }
+    .group-title { margin: 20px 0 10px; font-size: 13px; font-weight: 600; }
+    .control-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .control { min-height: 42px; padding: 9px 15px; border: 1px solid #42474b; border-radius: 10px; background: #24282b; color: #f5f5f5; transition: border-color .15s ease, background-color .15s ease; }
+    .control:hover { border-color: #8b9297; }
+    .control:focus-visible { outline: 3px solid #4fd6c8; outline-offset: 3px; }
+    .control[aria-pressed="true"] { background: #f3f3f3; color: #202326; border-color: #f3f3f3; }
+    .summary { margin: 14px 0 0; font-size: 12px; color: #90999f; line-height: 1.5; }
+    .details { margin: 28px 0 0; padding-top: 17px; border-top: 1px solid #363b3e; color: #828a90; font-size: 12px; line-height: 1.7; }
+    a { color: #bcc8cb; text-underline-offset: 3px; }
+    .stage { display: flex; min-width: 0; justify-content: center; align-items: center; }
+    .phone { position: relative; width: min(375px, 100%); aspect-ratio: 375 / 812; flex: none; isolation: isolate; overflow: hidden; border-radius: 20px; background: #1f1f1f; box-shadow: 0 24px 70px rgba(0, 0, 0, .44); }
+    /* The background is a separate full-screen root, not a child of navbar/content.
+       Its coordinates are measured from the phone's TOP-LEFT at screen Y=0. */
+    .phone-bg-fill { position: absolute; inset: 0; z-index: 0; background: #1f1f1f; pointer-events: none; }
+    .phone-bg-stack { position: absolute; inset: 0; z-index: 1; pointer-events: none; isolation: isolate; overflow: hidden; }
+    .phone-ui-stack { position: absolute; inset: 0; z-index: 2; pointer-events: none; isolation: isolate; }
+    /* All frames own their full 375×812 background. No transform, margin, mask,
+       navbar offset, or foreground text container can move their origin. */
+    .background {
       position: absolute;
       top: 0;
+      right: 0;
+      bottom: 0;
       left: 0;
-      width: 95%;
-      height: 38%;
+      display: block;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
+      background-color: #1f1f1f;
+      background-repeat: no-repeat;
+      background-position: center top;
+      background-size: 100% auto;
     }
-    .glow-shape {
+    .background-base, .background-one { background-image: url("./assets/bg-1.png"); }
+    .background-two { background-image: url("./assets/bg-2.png"); }
+    .background-three { background-image: url("./assets/bg-3.png"); }
+    .background-base { opacity: 1; }
+    .overlay {
       position: absolute;
-      inset: 0;
-      border-radius: 50%;
+      display: block;
+      width: 100%;
+      height: auto;
+      left: 0;
       pointer-events: none;
-      transform-origin: center center;
-      background: radial-gradient(ellipse at center,
-        rgba(var(--glow-rgb), .96) 0%,
-        rgba(var(--glow-rgb), .70) 30%,
-        rgba(var(--glow-rgb), .30) 51%,
-        rgba(var(--glow-rgb), 0) 80%
-      );
-      filter: blur(21px);
-      will-change: transform;
-      transform: rotate(0deg) scale(1, 1);
+      user-select: none;
+      -webkit-user-drag: none;
     }
-    .ui { position: absolute; display: block; left: 0; z-index: 1; height: auto; user-select: none; pointer-events: none; }
-    .ui-top { top: 0; width: 100%; }
-    .ui-content { top: 27.0936%; width: 100%; }
-    .ui-navigation { top: 91.7488%; width: 100.2667%; }
-    @media (max-width: 730px) {
-      .layout { grid-template-columns: 1fr; gap: 30px; padding: 26px max(18px, 4vw) 45px; }
-      .info { width: 100%; max-width: 375px; margin: 0 auto; }
-      h1 { font-size: 30px; margin: 10px 0; }
-      .description { font-size: 13px; max-width: none; }
-      .controls { margin-top: 20px; }
-      .divider { margin: 18px 0; }
+    .background-animated { opacity: 0; animation-duration: 12s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-fill-mode: both; }
+    .background-two { z-index: 1; animation-name: dissolve-two; }
+    .background-three { z-index: 2; animation-name: dissolve-three; }
+    .background-one { z-index: 3; animation-name: dissolve-one; }
+    /* Each complete opaque Figma-style slide dissolves in; 3× speed is the default. */
+    @keyframes dissolve-two {
+      0%, 19.444444% { opacity: 0; }
+      33.333333%, 99.999% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes dissolve-three {
+      0%, 52.777778% { opacity: 0; }
+      66.666667%, 99.999% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes dissolve-one {
+      0%, 86.111111% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    /* The Figma lower-screen blur stays in the transparent static foreground. */
+    .overlay { z-index: 4; }
+    .overlay-status { top: 0; }
+    .overlay-navbar { top: 4.926108%; }
+    .overlay-content { top: 11.576355%; }
+    /* Anchors in the screen's top-level UI stack: status Y=0, navbar Y=40, content Y=94. */
+    .phone.is-paused .background-animated { animation-play-state: paused; }
+    /* Diagnostic mode: a fixed source frame, a ruler, and no guessing from appearance. */
+    .debug-control-set { margin-top: 24px; padding-top: 17px; border-top: 1px solid #363b3e; }
+    .debug-control-set .group-title { margin-top: 0; }
+    .debug-frame-tools { display: none; }
+    .debug-control-set.is-open .debug-frame-tools { display: block; }
+    .debug-readout { max-width: 340px; font: 12px/1.65 ui-monospace, Consolas, monospace; margin-top: 12px; color: #a9f4e3; }
+    .phone.is-debug .background-animated { animation: none !important; opacity: 0 !important; }
+    .phone.is-debug[data-debug-frame="2"] .background-two,
+    .phone.is-debug[data-debug-frame="3"] .background-three { opacity: 1 !important; }
+    .phone.is-debug.no-ui .phone-ui-stack { visibility: hidden; }
+    .debug-overlay { display: none; position: absolute; inset: 0; pointer-events: none; z-index: 10;
+      box-shadow: inset 0 0 0 2px #4ff4c2; }
+    .phone.is-debug .debug-overlay { display: block; }
+    .debug-origin { position: absolute; left: 0; top: 0; width: 100%; border-top: 3px solid #4ff4c2; }
+    .debug-guide { position: absolute; left: 0; width: 100%; border-top: 1px dashed #ffbd59; }
+    .debug-guide-nav { top: 4.926108%; }
+    .debug-guide-content { top: 11.576355%; border-color: #ad9dff; }
+    .debug-guide-photo-end { top: 96.6749%; border-color: #fa729f; }
+    .debug-chip { display: block; position: absolute; right: 3px; top: 3px; padding: 4px 6px;
+      max-width: 97%; font: 600 10px/1.25 ui-monospace, Consolas, monospace; letter-spacing: -.02em;
+      color: #101719; background: #4ff4c2; border-radius: 3px; white-space: nowrap; }
+    .debug-guide .debug-chip { top: 2px; background: #ffbd59; }
+    .debug-guide-content .debug-chip { background: #ad9dff; }
+    .debug-guide-photo-end .debug-chip { background: #fa729f; }
+    @media (max-width: 740px) {
+      .layout { grid-template-columns: 1fr; gap: 26px; padding: 26px 18px 44px; }
+      .info { max-width: 375px; margin-inline: auto; }
+      h1 { margin: 12px 0; font-size: 30px; }
+      .description { font-size: 14px; }
+      .controls { margin-top: 18px; }
+      .details { margin-top: 18px; }
       .stage { grid-row: 2; }
       .phone { width: min(375px, 100%); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .glow, .glow-shape { will-change: auto; }
+      .background-animated { animation: none !important; opacity: 0; }
+      .background-base { opacity: 1; }
       .control { transition: none; }
     }
   </style>
 </head>
 <body>
   <main class="layout">
-    <section class="info" aria-label="Управление анимацией">
-      <div class="eyebrow">Atlas / motion test</div>
-      <h1>Живой градиент</h1>
-      <p class="description">Один вытянутый градиент свободно перемещается по верхним 40% экрана и плавно меняет цвет. Скорость — 3×, интерфейс неподвижен.</p>
+    <section class="info" aria-label="Настройки тестовой анимации">
+      <div class="eyebrow">Atlas / animation test</div>
+      <h1>Плавная смена фона</h1>
+      <p class="description">Три фотографии из Figma сменяются через затухание. Интерфейс первого экрана остаётся неподвижным поверх них.</p>
       <div class="controls">
-        <p class="control-label">Скорость движения</p>
-        <div class="button-row" role="group" aria-label="Скорость движения">
+        <p class="group-title">Скорость</p>
+        <div class="control-row" role="group" aria-label="Скорость смены изображений">
           <button class="control" type="button" data-speed="0.5" aria-pressed="false">0,5×</button>
           <button class="control" type="button" data-speed="1" aria-pressed="false">1×</button>
           <button class="control" type="button" data-speed="2" aria-pressed="false">2×</button>
           <button class="control" type="button" data-speed="3" aria-pressed="true">3×</button>
+          <button class="control" type="button" data-speed="4" aria-pressed="false">4×</button>
         </div>
-        <p class="control-label" style="margin-top: 22px">Воспроизведение</p>
+        <p class="group-title">Воспроизведение</p>
         <button class="control" id="play-pause" type="button" aria-pressed="false">Пауза</button>
-      </div>
-      <div class="divider"></div>
-      <p class="meta">Изолированный эксперимент. Основные страницы портфолио не изменены.<br><a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17898-25872" target="_blank" rel="noopener noreferrer">Исходный фрейм Figma</a></p>
-    </section>
-    <section class="stage" aria-label="Предпросмотр экрана Atlas">
-      <div class="phone" id="atlas-screen" role="img" aria-label="Экран кошелька Atlas с неподвижным интерфейсом и плавно меняющимся градиентом в верхней части">
-        <div class="glow-stage" aria-hidden="true">
-          <div class="glow" id="atlas-glow"><div class="glow-shape" id="atlas-glow-shape"></div></div>
+        <p class="summary" id="timing">3×: каждый фон — 4 с, переход — 1,67 с.</p>
+        <div class="debug-control-set" id="debug-controls">
+          <p class="group-title">Разметка положения фонового изображения</p>
+          <button class="control" id="debug-toggle" type="button" aria-pressed="false">Показать границы и координаты</button>
+          <div class="debug-frame-tools" id="debug-frame-tools">
+            <p class="group-title" style="margin-top: 17px">Проверить каждую фотографию отдельно</p>
+            <div class="control-row" role="group" aria-label="Фотография для проверки">
+              <button class="control" type="button" data-debug-frame="1" aria-pressed="true">Фото 1</button>
+              <button class="control" type="button" data-debug-frame="2" aria-pressed="false">Фото 2</button>
+              <button class="control" type="button" data-debug-frame="3" aria-pressed="false">Фото 3</button>
+            </div>
+            <p class="group-title" style="margin-top: 17px">Прозрачный слой интерфейса</p>
+            <button class="control" id="debug-ui-toggle" type="button" aria-pressed="false">Скрыть интерфейс</button>
+            <p class="debug-readout" id="debug-readout" aria-live="polite"></p>
+          </div>
         </div>
-        <img class="ui ui-top" src="./ui-top.png?v=3x-2" width="1125" height="660" alt="" draggable="false" decoding="async">
-        <img class="ui ui-content" src="./ui-content.png?v=3x-2" width="1125" height="1776" alt="" draggable="false" decoding="async">
-        <img class="ui ui-navigation" src="./ui-navigation.png?v=3x-2" width="1125" height="201" alt="" draggable="false" decoding="async">
+      </div>
+      <p class="details">Обновлённый тест Atlas: фотофон закреплён от Y=0. <a href="./glow.html">Предыдущий тест градиента</a> сохранён отдельно.<br>
+        <a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17848-5446" target="_blank" rel="noopener noreferrer">Исходный экран</a>
+        · <a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17908-56145" target="_blank" rel="noopener noreferrer">Три фотографии</a>
+      </p>
+    </section>
+    <section class="stage" aria-label="Предпросмотр экрана 375 на 812">
+      <div class="phone" id="atlas-screen" data-debug-frame="1" role="img" aria-label="Экран Atlas: фотографии от верхнего края Y=0, неподвижный интерфейс поверх">
+        <div class="phone-bg-fill" aria-hidden="true"></div>
+        <div class="phone-bg-stack" aria-hidden="true">
+          <div class="background background-base"></div>
+          <div class="background background-animated background-two"></div>
+          <div class="background background-animated background-three"></div>
+          <div class="background background-animated background-one"></div>
+        </div>
+        <div class="phone-ui-stack" aria-hidden="true">
+          <img class="overlay overlay-status" src="./assets/status.png" width="375" height="40" alt="" draggable="false" decoding="async">
+          <img class="overlay overlay-navbar" src="./assets/navbar.png" width="375" height="54" alt="" draggable="false" decoding="async">
+          <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" draggable="false" decoding="async">
+        </div>
+        <div class="debug-overlay" aria-hidden="true">
+          <div class="debug-origin"><span class="debug-chip">НАЧАЛО ФОТО / ЭКРАНА · Y=0</span></div>
+          <div class="debug-guide debug-guide-nav"><span class="debug-chip">NAVBAR · Y=40</span></div>
+          <div class="debug-guide debug-guide-content"><span class="debug-chip">КОНТЕНТ · Y=94</span></div>
+          <div class="debug-guide debug-guide-photo-end" id="debug-photo-end"><span class="debug-chip" id="debug-photo-end-label">КОНЕЦ ФОТО 1 · Y=785</span></div>
+        </div>
       </div>
     </section>
   </main>
   <script>
     (() => {
       const screen = document.getElementById('atlas-screen');
-      const stage = screen.querySelector('.glow-stage');
-      const glow = document.getElementById('atlas-glow');
-      const glowShape = document.getElementById('atlas-glow-shape');
+      const layers = [...screen.querySelectorAll('.background-animated')];
+      const speedButtons = [...document.querySelectorAll('[data-speed]')];
       const playPause = document.getElementById('play-pause');
-      const speedButtons = Array.from(document.querySelectorAll('[data-speed]'));
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const palette = [
-        [84, 255, 189],  // mint, from Figma
-        [70, 241, 239],  // cyan
-        [255, 246, 125]  // soft yellow
-      ];
+      const timing = document.getElementById('timing');
+      const debugToggle = document.getElementById('debug-toggle');
+      const debugUiToggle = document.getElementById('debug-ui-toggle');
+      const debugControls = document.getElementById('debug-controls');
+      const debugReadout = document.getElementById('debug-readout');
+      const photoEnd = document.getElementById('debug-photo-end');
+      const photoEndLabel = document.getElementById('debug-photo-end-label');
+      const frameButtons = [...document.querySelectorAll('[data-debug-frame]')];
+      const photoHeights = [785, 750, 573];
+      let frame = 1;
+      let debugging = false;
+      let uiHidden = false;
+      let paused = false;
 
-      // Inertial random walk: no preset waypoints, no looping keyframe path.
-      const motion = {
-        x: 0.45, y: 0.24,
-        angle: -0.55, turnRate: 0, desiredTurnRate: 0,
-        untilSteer: 0.9,
-        from: 0, to: 1, colorElapsed: 0, colorDuration: 7,
-        shapeX: 1, shapeY: 1, shapeRotation: 0,
-        targetShapeX: 1, targetShapeY: 1, targetShapeRotation: 0,
-        nextShapeChange: 1.5,
-        speed: 3, paused: false
-      };
-
-      const random = (min, max) => min + Math.random() * (max - min);
-      const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-      const ease = (t) => t * t * (3 - 2 * t);
-
-      function render() {
-        const width = stage.clientWidth;
-        const height = stage.clientHeight;
-        // The ellipse centre travels around the top 40% but cannot leave that region.
-        const x = (-0.32 + motion.x * 0.66) * width;
-        const y = (-0.06 + motion.y * 0.62) * height;
-        glow.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
-        glowShape.style.transform = `rotate(${motion.shapeRotation.toFixed(2)}deg) scale(${motion.shapeX.toFixed(3)}, ${motion.shapeY.toFixed(3)})`;
-
-        const t = ease(clamp(motion.colorElapsed / motion.colorDuration, 0, 1));
-        const a = palette[motion.from];
-        const b = palette[motion.to];
-        const rgb = a.map((channel, i) => Math.round(channel + (b[i] - channel) * t));
-        glow.style.setProperty('--glow-rgb', rgb.join(', '));
+      function updateDebugReadout() {
+        if (!debugging) return;
+        const screenRect = screen.getBoundingClientRect();
+        const layer = screen.querySelector(frame === 1 ? '.background-base' : frame === 2 ? '.background-two' : '.background-three');
+        const layerRect = layer.getBoundingClientRect();
+        const scale = 812 / screenRect.height;
+        const top = Math.round((layerRect.top - screenRect.top) * scale * 10) / 10;
+        const backgroundY = getComputedStyle(layer).backgroundPositionY;
+        const root = screen.querySelector('.phone-bg-stack');
+        const rootTop = Math.round((root.getBoundingClientRect().top - screenRect.top) * scale * 10) / 10;
+        const height = photoHeights[frame - 1];
+        photoEnd.style.top = (height / 812 * 100) + '%';
+        photoEndLabel.textContent = 'КОНЕЦ ФОТО ' + frame + ' · Y=' + height;
+        debugReadout.textContent = 'Начало нижнего слоя: Y=' + rootTop +
+          ' px; текущий кадр: Y=' + top + ' px; background-position-y: ' + backgroundY +
+          '; экран: 375×812; фото ' + frame + ': 375×' + height +
+          '; navbar: Y=40; контент: Y=94. ' +
+          (uiHidden ? 'Интерфейс скрыт.' : 'Интерфейс поверх фона.');
       }
 
-      function advance(dt) {
-        motion.untilSteer -= dt;
-        if (motion.untilSteer <= 0) {
-          // Gently vary heading while keeping momentum; the path never resets.
-          motion.desiredTurnRate = random(-1.15, 1.15);
-          motion.untilSteer = random(1.1, 2.8);
-        }
-        motion.turnRate += (motion.desiredTurnRate - motion.turnRate) * (1 - Math.exp(-dt * 0.95));
-        motion.angle += motion.turnRate * dt;
-
-        const stride = dt * 0.075;
-        let x = motion.x + Math.cos(motion.angle) * stride;
-        let y = motion.y + Math.sin(motion.angle) * stride;
-        // Reflect instead of snapping to a new target when a boundary is reached.
-        if (x < 0 || x > 1) {
-          x = x < 0 ? -x : 2 - x;
-          motion.angle = Math.PI - motion.angle;
-          motion.turnRate *= -0.5;
-        }
-        if (y < 0 || y > 1) {
-          y = y < 0 ? -y : 2 - y;
-          motion.angle = -motion.angle;
-          motion.turnRate *= -0.5;
-        }
-        motion.x = clamp(x, 0, 1);
-        motion.y = clamp(y, 0, 1);
-
-        // Independent continuous shape morph; original position and color logic is untouched.
-        motion.nextShapeChange -= dt;
-        if (motion.nextShapeChange <= 0) {
-          const elongation = random(0, 1);
-          const size = random(0.92, 1.08);
-          motion.targetShapeX = (0.58 + elongation * 0.85) * size;
-          motion.targetShapeY = (1.58 - elongation * 0.88) * size;
-          motion.targetShapeRotation = random(-45, 45);
-          motion.nextShapeChange = random(2.8, 5);
-        }
-        const shapeBlend = 1 - Math.exp(-dt * 0.72);
-        motion.shapeX += (motion.targetShapeX - motion.shapeX) * shapeBlend;
-        motion.shapeY += (motion.targetShapeY - motion.shapeY) * shapeBlend;
-        motion.shapeRotation += (motion.targetShapeRotation - motion.shapeRotation) * shapeBlend;
-
-        motion.colorElapsed += dt;
-        if (motion.colorElapsed >= motion.colorDuration) {
-          motion.colorElapsed %= motion.colorDuration;
-          motion.from = motion.to;
-          // Next color is selected at random; still only ONE rendered gradient.
-          motion.to = (motion.from + (Math.random() < 0.5 ? 1 : 2)) % palette.length;
-          motion.colorDuration = random(6, 9);
-        }
+      function setDebug(enabled) {
+        debugging = enabled;
+        screen.classList.toggle('is-debug', enabled);
+        debugControls.classList.toggle('is-open', enabled);
+        debugToggle.setAttribute('aria-pressed', String(enabled));
+        debugToggle.textContent = enabled ? 'Скрыть разметку' : 'Показать границы и координаты';
+        updateDebugReadout();
       }
-
-      speedButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          const next = Number(button.dataset.speed);
-          if (!Number.isFinite(next) || next <= 0) return;
-          motion.speed = next;
-          speedButtons.forEach((item) => {
-            item.setAttribute('aria-pressed', String(item === button));
-          });
-        });
+      function selectFrame(next) {
+        frame = next;
+        screen.dataset.debugFrame = String(frame);
+        frameButtons.forEach(item =>
+          item.setAttribute('aria-pressed', String(Number(item.dataset.debugFrame) === frame)));
+        updateDebugReadout();
+      }
+      debugToggle.addEventListener('click', () => setDebug(!debugging));
+      frameButtons.forEach(button => button.addEventListener('click', () => selectFrame(Number(button.dataset.debugFrame))));
+      debugUiToggle.addEventListener('click', () => {
+        uiHidden = !uiHidden;
+        screen.classList.toggle('no-ui', uiHidden);
+        debugUiToggle.setAttribute('aria-pressed', String(uiHidden));
+        debugUiToggle.textContent = uiHidden ? 'Показать интерфейс' : 'Скрыть интерфейс';
+        updateDebugReadout();
       });
+      window.addEventListener('resize', updateDebugReadout);
+      selectFrame(1);
+      if (new URLSearchParams(window.location.search).get('debug') === '1') setDebug(true);
+
+      speedButtons.forEach(button => button.addEventListener('click', () => {
+        const speed = Number(button.dataset.speed);
+        if (!Number.isFinite(speed) || speed <= 0) return;
+        const period = 36 / speed;
+        layers.forEach(layer => { layer.style.animationDuration = period + 's'; });
+        speedButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        const format = number => Number.isInteger(number) ? String(number) : number.toLocaleString('ru-RU', {maximumFractionDigits: 2});
+        timing.textContent = format(speed) + '×: каждый фон — ' + format(12 / speed) + ' с, переход — ' + format(5 / speed) + ' с.';
+      }));
 
       playPause.addEventListener('click', () => {
-        motion.paused = !motion.paused;
-        playPause.setAttribute('aria-pressed', String(motion.paused));
-        playPause.textContent = motion.paused ? 'Продолжить' : 'Пауза';
+        paused = !paused;
+        screen.classList.toggle('is-paused', paused);
+        playPause.setAttribute('aria-pressed', String(paused));
+        playPause.textContent = paused ? 'Продолжить' : 'Пауза';
       });
-
-      let previous = null;
-      function frame(timestamp) {
-        if (previous === null) previous = timestamp;
-        const elapsed = clamp((timestamp - previous) / 1000, 0, 0.05);
-        previous = timestamp;
-        if (!motion.paused && !reducedMotion.matches) advance(elapsed * motion.speed);
-        render();
-        requestAnimationFrame(frame);
-      }
-      render();
-      requestAnimationFrame(frame);
     })();
   </script>
 </body>

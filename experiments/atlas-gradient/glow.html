@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Atlas · Animated gradient test</title>
+  <style>
+    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f1f1f; background: #ededed; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; }
+    button { font: inherit; cursor: pointer; }
+    .layout { min-height: 100vh; display: grid; grid-template-columns: minmax(270px, 360px) minmax(0, 1fr); gap: clamp(24px, 6vw, 100px); align-items: center; max-width: 1120px; margin: auto; padding: 44px 38px; }
+    .info { align-self: center; }
+    .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #757575; }
+    h1 { margin: 17px 0 16px; font-size: clamp(30px, 3.8vw, 48px); line-height: 1.08; letter-spacing: -0.045em; font-weight: 650; }
+    .description { margin: 0; max-width: 32ch; line-height: 1.55; font-size: 15px; color: #626262; }
+    .controls { margin-top: 34px; }
+    .control-label { margin: 0 0 12px; font-size: 13px; font-weight: 650; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; }
+    .control { border: 1px solid #d0d0d0; color: #202020; background: #f8f8f8; border-radius: 10px; padding: 10px 16px; min-height: 42px; transition: background-color 120ms ease, border-color 120ms ease; }
+    .control:hover { background: #fff; border-color: #999; }
+    .control[aria-pressed="true"] { background: #1f1f1f; color: white; border-color: #1f1f1f; }
+    .control:focus-visible { outline: 3px solid #37c5a6; outline-offset: 3px; }
+    .divider { height: 1px; max-width: 290px; margin: 24px 0; background: #d7d7d7; }
+    .meta { margin: 0; font-size: 12px; line-height: 1.6; color: #7d7d7d; }
+    .meta a { color: inherit; text-underline-offset: 3px; }
+    .stage { display: flex; justify-content: center; align-items: center; min-width: 0; }
+    .phone { width: min(375px, 100%); aspect-ratio: 375 / 812; position: relative; flex: none; isolation: isolate; overflow: hidden; border-radius: min(20px, 5.333%); background: #f7f7f7; box-shadow: 0 20px 70px rgba(0,0,0,0.13), 0 2px 12px rgba(0,0,0,0.05); }
+    /* One elongated oval, not a stack of independently animated gradients. */
+    .glow-stage {
+      position: absolute;
+      z-index: 0;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 40%;
+      overflow: hidden;
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+    }
+    .glow {
+      --glow-rgb: 84, 255, 189;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 95%;
+      height: 38%;
+      pointer-events: none;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+    }
+    .glow-shape {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      transform-origin: center center;
+      background: radial-gradient(ellipse at center,
+        rgba(var(--glow-rgb), .96) 0%,
+        rgba(var(--glow-rgb), .70) 30%,
+        rgba(var(--glow-rgb), .30) 51%,
+        rgba(var(--glow-rgb), 0) 80%
+      );
+      filter: blur(21px);
+      will-change: transform;
+      transform: rotate(0deg) scale(1, 1);
+    }
+    .ui { position: absolute; display: block; left: 0; z-index: 1; height: auto; user-select: none; pointer-events: none; }
+    .ui-top { top: 0; width: 100%; }
+    .ui-content { top: 27.0936%; width: 100%; }
+    .ui-navigation { top: 91.7488%; width: 100.2667%; }
+    @media (max-width: 730px) {
+      .layout { grid-template-columns: 1fr; gap: 30px; padding: 26px max(18px, 4vw) 45px; }
+      .info { width: 100%; max-width: 375px; margin: 0 auto; }
+      h1 { font-size: 30px; margin: 10px 0; }
+      .description { font-size: 13px; max-width: none; }
+      .controls { margin-top: 20px; }
+      .divider { margin: 18px 0; }
+      .stage { grid-row: 2; }
+      .phone { width: min(375px, 100%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .glow, .glow-shape { will-change: auto; }
+      .control { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="info" aria-label="Управление анимацией">
+      <div class="eyebrow">Atlas / motion test</div>
+      <h1>Живой градиент</h1>
+      <p class="description">Один вытянутый градиент свободно перемещается по верхним 40% экрана и плавно меняет цвет. Скорость — 3×, интерфейс неподвижен.</p>
+      <div class="controls">
+        <p class="control-label">Скорость движения</p>
+        <div class="button-row" role="group" aria-label="Скорость движения">
+          <button class="control" type="button" data-speed="0.5" aria-pressed="false">0,5×</button>
+          <button class="control" type="button" data-speed="1" aria-pressed="false">1×</button>
+          <button class="control" type="button" data-speed="2" aria-pressed="false">2×</button>
+          <button class="control" type="button" data-speed="3" aria-pressed="true">3×</button>
+        </div>
+        <p class="control-label" style="margin-top: 22px">Воспроизведение</p>
+        <button class="control" id="play-pause" type="button" aria-pressed="false">Пауза</button>
+      </div>
+      <div class="divider"></div>
+      <p class="meta">Изолированный эксперимент. Основные страницы портфолио не изменены.<br><a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17898-25872" target="_blank" rel="noopener noreferrer">Исходный фрейм Figma</a></p>
+    </section>
+    <section class="stage" aria-label="Предпросмотр экрана Atlas">
+      <div class="phone" id="atlas-screen" role="img" aria-label="Экран кошелька Atlas с неподвижным интерфейсом и плавно меняющимся градиентом в верхней части">
+        <div class="glow-stage" aria-hidden="true">
+          <div class="glow" id="atlas-glow"><div class="glow-shape" id="atlas-glow-shape"></div></div>
+        </div>
+        <img class="ui ui-top" src="./ui-top.png?v=3x-2" width="1125" height="660" alt="" draggable="false" decoding="async">
+        <img class="ui ui-content" src="./ui-content.png?v=3x-2" width="1125" height="1776" alt="" draggable="false" decoding="async">
+        <img class="ui ui-navigation" src="./ui-navigation.png?v=3x-2" width="1125" height="201" alt="" draggable="false" decoding="async">
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const screen = document.getElementById('atlas-screen');
+      const stage = screen.querySelector('.glow-stage');
+      const glow = document.getElementById('atlas-glow');
+      const glowShape = document.getElementById('atlas-glow-shape');
+      const playPause = document.getElementById('play-pause');
+      const speedButtons = Array.from(document.querySelectorAll('[data-speed]'));
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const palette = [
+        [84, 255, 189],  // mint, from Figma
+        [70, 241, 239],  // cyan
+        [255, 246, 125]  // soft yellow
+      ];
+
+      // Inertial random walk: no preset waypoints, no looping keyframe path.
+      const motion = {
+        x: 0.45, y: 0.24,
+        angle: -0.55, turnRate: 0, desiredTurnRate: 0,
+        untilSteer: 0.9,
+        from: 0, to: 1, colorElapsed: 0, colorDuration: 7,
+        shapeX: 1, shapeY: 1, shapeRotation: 0,
+        targetShapeX: 1, targetShapeY: 1, targetShapeRotation: 0,
+        nextShapeChange: 1.5,
+        speed: 3, paused: false
+      };
+
+      const random = (min, max) => min + Math.random() * (max - min);
+      const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+      const ease = (t) => t * t * (3 - 2 * t);
+
+      function render() {
+        const width = stage.clientWidth;
+        const height = stage.clientHeight;
+        // The ellipse centre travels around the top 40% but cannot leave that region.
+        const x = (-0.32 + motion.x * 0.66) * width;
+        const y = (-0.06 + motion.y * 0.62) * height;
+        glow.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+        glowShape.style.transform = `rotate(${motion.shapeRotation.toFixed(2)}deg) scale(${motion.shapeX.toFixed(3)}, ${motion.shapeY.toFixed(3)})`;
+
+        const t = ease(clamp(motion.colorElapsed / motion.colorDuration, 0, 1));
+        const a = palette[motion.from];
+        const b = palette[motion.to];
+        const rgb = a.map((channel, i) => Math.round(channel + (b[i] - channel) * t));
+        glow.style.setProperty('--glow-rgb', rgb.join(', '));
+      }
+
+      function advance(dt) {
+        motion.untilSteer -= dt;
+        if (motion.untilSteer <= 0) {
+          // Gently vary heading while keeping momentum; the path never resets.
+          motion.desiredTurnRate = random(-1.15, 1.15);
+          motion.untilSteer = random(1.1, 2.8);
+        }
+        motion.turnRate += (motion.desiredTurnRate - motion.turnRate) * (1 - Math.exp(-dt * 0.95));
+        motion.angle += motion.turnRate * dt;
+
+        const stride = dt * 0.075;
+        let x = motion.x + Math.cos(motion.angle) * stride;
+        let y = motion.y + Math.sin(motion.angle) * stride;
+        // Reflect instead of snapping to a new target when a boundary is reached.
+        if (x < 0 || x > 1) {
+          x = x < 0 ? -x : 2 - x;
+          motion.angle = Math.PI - motion.angle;
+          motion.turnRate *= -0.5;
+        }
+        if (y < 0 || y > 1) {
+          y = y < 0 ? -y : 2 - y;
+          motion.angle = -motion.angle;
+          motion.turnRate *= -0.5;
+        }
+        motion.x = clamp(x, 0, 1);
+        motion.y = clamp(y, 0, 1);
+
+        // Independent continuous shape morph; original position and color logic is untouched.
+        motion.nextShapeChange -= dt;
+        if (motion.nextShapeChange <= 0) {
+          const elongation = random(0, 1);
+          const size = random(0.92, 1.08);
+          motion.targetShapeX = (0.58 + elongation * 0.85) * size;
+          motion.targetShapeY = (1.58 - elongation * 0.88) * size;
+          motion.targetShapeRotation = random(-45, 45);
+          motion.nextShapeChange = random(2.8, 5);
+        }
+        const shapeBlend = 1 - Math.exp(-dt * 0.72);
+        motion.shapeX += (motion.targetShapeX - motion.shapeX) * shapeBlend;
+        motion.shapeY += (motion.targetShapeY - motion.shapeY) * shapeBlend;
+        motion.shapeRotation += (motion.targetShapeRotation - motion.shapeRotation) * shapeBlend;
+
+        motion.colorElapsed += dt;
+        if (motion.colorElapsed >= motion.colorDuration) {
+          motion.colorElapsed %= motion.colorDuration;
+          motion.from = motion.to;
+          // Next color is selected at random; still only ONE rendered gradient.
+          motion.to = (motion.from + (Math.random() < 0.5 ? 1 : 2)) % palette.length;
+          motion.colorDuration = random(6, 9);
+        }
+      }
+
+      speedButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const next = Number(button.dataset.speed);
+          if (!Number.isFinite(next) || next <= 0) return;
+          motion.speed = next;
+          speedButtons.forEach((item) => {
+            item.setAttribute('aria-pressed', String(item === button));
+          });
+        });
+      });
+
+      playPause.addEventListener('click', () => {
+        motion.paused = !motion.paused;
+        playPause.setAttribute('aria-pressed', String(motion.paused));
+        playPause.textContent = motion.paused ? 'Продолжить' : 'Пауза';
+      });
+
+      let previous = null;
+      function frame(timestamp) {
+        if (previous === null) previous = timestamp;
+        const elapsed = clamp((timestamp - previous) / 1000, 0, 0.05);
+        previous = timestamp;
+        if (!motion.paused && !reducedMotion.matches) advance(elapsed * motion.speed);
+        render();
+        requestAnimationFrame(frame);
+      }
+      render();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>
