@@ -27,21 +27,33 @@
     .stage { display: flex; min-width: 0; justify-content: center; align-items: center; }
     .phone { position: relative; width: min(375px, 100%); aspect-ratio: 375 / 812; flex: none; isolation: isolate; overflow: hidden; border-radius: 20px; background: #1f1f1f; box-shadow: 0 24px 70px rgba(0, 0, 0, .44); }
     .background, .overlay { position: absolute; display: block; width: 100%; height: auto; left: 0; pointer-events: none; user-select: none; -webkit-user-drag: none; }
-    .background { top: 0; height: 100%; object-fit: fill; z-index: 0; opacity: 0; animation: crossfade 36s ease-in-out infinite both; }
-    .background:nth-child(1) { animation-delay: 0s; }
-    .background:nth-child(2) { animation-delay: -24s; }
-    .background:nth-child(3) { animation-delay: -12s; }
-    /* 7 seconds static, then a 5-second dissolve to the next photo, repeated for 3 photos. */
-    @keyframes crossfade {
-      0%, 19.444444% { opacity: 1; }
-      33.333333%, 86.111111% { opacity: 0; }
+    .background { top: 0; height: 100%; object-fit: fill; z-index: 0; }
+    .background-base { opacity: 1; }
+    .background-animated { opacity: 0; animation-duration: 36s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-fill-mode: both; }
+    .background-two { z-index: 1; animation-name: dissolve-two; }
+    .background-three { z-index: 2; animation-name: dissolve-three; }
+    .background-one { z-index: 3; animation-name: dissolve-one; }
+    /* The lower photograph stays fully opaque while the next one fades in.
+       Each photograph is still for 7 seconds and dissolves over the next 5 seconds. */
+    @keyframes dissolve-two {
+      0%, 19.444444% { opacity: 0; }
+      33.333333%, 99.999% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes dissolve-three {
+      0%, 52.777778% { opacity: 0; }
+      66.666667%, 99.999% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes dissolve-one {
+      0%, 86.111111% { opacity: 0; }
       100% { opacity: 1; }
     }
-    .overlay { z-index: 1; }
+    .overlay { z-index: 4; }
     .overlay-status { top: 0; }
     .overlay-navbar { top: 4.926108%; }
     .overlay-content { top: 11.576355%; }
-    .phone.is-paused .background { animation-play-state: paused; }
+    .phone.is-paused .background-animated { animation-play-state: paused; }
     @media (max-width: 740px) {
       .layout { grid-template-columns: 1fr; gap: 26px; padding: 26px 18px 44px; }
       .info { max-width: 375px; margin-inline: auto; }
@@ -53,9 +65,8 @@
       .phone { width: min(375px, 100%); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .background { animation: none !important; }
-      .background:nth-child(1) { opacity: 1; }
-      .background:nth-child(n + 2) { opacity: 0; }
+      .background-animated { animation: none !important; opacity: 0; }
+      .background-base { opacity: 1; }
       .control { transition: none; }
     }
   </style>
@@ -85,9 +96,10 @@
     </section>
     <section class="stage" aria-label="Предпросмотр экрана 375 на 812">
       <div class="phone" id="atlas-screen" role="img" aria-label="Экран Atlas: три фотографии плавно сменяются под статичным интерфейсом">
-        <img class="background" src="./assets/bg-1.png" width="375" height="812" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
-        <img class="background" src="./assets/bg-2.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
-        <img class="background" src="./assets/bg-3.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
+        <img class="background background-base" src="./assets/bg-1.png" width="375" height="812" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+        <img class="background background-animated background-two" src="./assets/bg-2.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
+        <img class="background background-animated background-three" src="./assets/bg-3.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
+        <img class="background background-animated background-one" src="./assets/bg-1.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-status" src="./assets/status.png" width="375" height="40" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-navbar" src="./assets/navbar.png" width="375" height="54" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" aria-hidden="true" decoding="async">
@@ -97,7 +109,7 @@
   <script>
     (() => {
       const screen = document.getElementById('atlas-screen');
-      const layers = [...screen.querySelectorAll('.background')];
+      const layers = [...screen.querySelectorAll('.background-animated')];
       const speedButtons = [...document.querySelectorAll('[data-speed]')];
       const playPause = document.getElementById('play-pause');
       const timing = document.getElementById('timing');
@@ -107,11 +119,7 @@
         const speed = Number(button.dataset.speed);
         if (!Number.isFinite(speed) || speed <= 0) return;
         const period = 36 / speed;
-        const offsets = [0, 24, 12];
-        layers.forEach((layer, index) => {
-          layer.style.animationDuration = period + 's';
-          layer.style.animationDelay = -offsets[index] / speed + 's';
-        });
+        layers.forEach(layer => { layer.style.animationDuration = period + 's'; });
         speedButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
         const format = number => Number.isInteger(number) ? String(number) : number.toLocaleString('ru-RU', {maximumFractionDigits: 2});
         timing.textContent = format(speed) + '×: каждый фон — ' + format(12 / speed) + ' с, переход — ' + format(5 / speed) + ' с.';
