@@ -27,16 +27,19 @@
     .stage { display: flex; min-width: 0; justify-content: center; align-items: center; }
     .phone { position: relative; width: min(375px, 100%); aspect-ratio: 375 / 812; flex: none; isolation: isolate; overflow: hidden; border-radius: 20px; background: #000; box-shadow: 0 24px 70px rgba(0, 0, 0, .44); }
     .background, .overlay { position: absolute; display: block; width: 100%; height: auto; left: 0; pointer-events: none; user-select: none; -webkit-user-drag: none; }
-    /* Exact Figma photo crops, top-aligned: 375×785 / 375×750 / 375×573.
-       The black screen base and gradient replace Figma's empty gray export area. */
-    .background { top: 0; height: auto; object-fit: contain; z-index: 0; }
+    /* Each Figma frame owns a complete 375 × 812 background: clipped source photo
+       above the original #1f1f1f canvas. Never crossfade bare, unequal-height images. */
+    .background { position: absolute; inset: 0; background: #1f1f1f; }
+    .background img { position: absolute; left: 0; top: 0; display: block; width: 100%; height: auto;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 72px), transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 72px), transparent 100%);
+    }
     .background-base { opacity: 1; }
     .background-animated { opacity: 0; animation-duration: 12s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-fill-mode: both; }
     .background-two { z-index: 1; animation-name: dissolve-two; }
     .background-three { z-index: 2; animation-name: dissolve-three; }
     .background-one { z-index: 3; animation-name: dissolve-one; }
-    /* The lower photograph stays fully opaque while the next one fades in.
-       Each photograph is still for 7 seconds and dissolves over the next 5 seconds. */
+    /* Each complete opaque Figma-style slide dissolves in; 3× speed is the default. */
     @keyframes dissolve-two {
       0%, 19.444444% { opacity: 0; }
       33.333333%, 99.999% { opacity: 1; }
@@ -51,18 +54,9 @@
       0%, 86.111111% { opacity: 0; }
       100% { opacity: 1; }
     }
-    /* Static shading stays above photos and below the UI, for every animation state. */
-    .photo-shade {
-      position: absolute; inset: 0; z-index: 4; pointer-events: none;
-      background: linear-gradient(to bottom,
-        rgba(0,0,0,.10) 0%,
-        rgba(0,0,0,.10) 43%,
-        rgba(0,0,0,.25) 49%,
-        rgba(0,0,0,.62) 58%,
-        rgba(0,0,0,.92) 65%,
-        #000 70%);
-    }
-    .overlay { z-index: 5; }
+    /* The source Figma layer Rectangle 1837 (90% black, 100px blur) is already
+       in foreground.png. Do not double-darken photos with an extra CSS gradient. */
+    .overlay { z-index: 4; }
     .overlay-status { top: 0; }
     .overlay-navbar { top: 4.926108%; }
     .overlay-content { top: 11.576355%; }
@@ -110,11 +104,18 @@
     </section>
     <section class="stage" aria-label="Предпросмотр экрана 375 на 812">
       <div class="phone" id="atlas-screen" role="img" aria-label="Экран Atlas: три фотографии плавно сменяются под статичным интерфейсом">
-        <img class="background background-base" src="./assets/bg-1.png" width="375" height="785" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
-        <img class="background background-animated background-two" src="./assets/bg-2.png" width="375" height="750" alt="" aria-hidden="true" decoding="async">
-        <img class="background background-animated background-three" src="./assets/bg-3.png" width="375" height="573" alt="" aria-hidden="true" decoding="async">
-        <img class="background background-animated background-one" src="./assets/bg-1.png" width="375" height="785" alt="" aria-hidden="true" decoding="async">
-        <div class="photo-shade" aria-hidden="true"></div>
+        <div class="background background-base" aria-hidden="true">
+          <img src="./assets/bg-1.png" width="375" height="785" alt="" draggable="false" decoding="async" fetchpriority="high">
+        </div>
+        <div class="background background-animated background-two" aria-hidden="true">
+          <img src="./assets/bg-2.png" width="375" height="750" alt="" draggable="false" decoding="async">
+        </div>
+        <div class="background background-animated background-three" aria-hidden="true">
+          <img src="./assets/bg-3.png" width="375" height="573" alt="" draggable="false" decoding="async">
+        </div>
+        <div class="background background-animated background-one" aria-hidden="true">
+          <img src="./assets/bg-1.png" width="375" height="785" alt="" draggable="false" decoding="async">
+        </div>
         <img class="overlay overlay-status" src="./assets/status.png" width="375" height="40" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-navbar" src="./assets/navbar.png" width="375" height="54" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" aria-hidden="true" decoding="async">
