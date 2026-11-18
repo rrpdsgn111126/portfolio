@@ -25,11 +25,13 @@
     .details { margin: 28px 0 0; padding-top: 17px; border-top: 1px solid #363b3e; color: #828a90; font-size: 12px; line-height: 1.7; }
     a { color: #bcc8cb; text-underline-offset: 3px; }
     .stage { display: flex; min-width: 0; justify-content: center; align-items: center; }
-    .phone { position: relative; width: min(375px, 100%); aspect-ratio: 375 / 812; flex: none; isolation: isolate; overflow: hidden; border-radius: 20px; background: #1f1f1f; box-shadow: 0 24px 70px rgba(0, 0, 0, .44); }
+    .phone { position: relative; width: min(375px, 100%); aspect-ratio: 375 / 812; flex: none; isolation: isolate; overflow: hidden; border-radius: 20px; background: #000; box-shadow: 0 24px 70px rgba(0, 0, 0, .44); }
     .background, .overlay { position: absolute; display: block; width: 100%; height: auto; left: 0; pointer-events: none; user-select: none; -webkit-user-drag: none; }
-    .background { top: 0; height: 100%; object-fit: fill; z-index: 0; }
+    /* Exact Figma photo crops, top-aligned: 375×785 / 375×750 / 375×573.
+       The black screen base and gradient replace Figma's empty gray export area. */
+    .background { top: 0; height: auto; object-fit: contain; z-index: 0; }
     .background-base { opacity: 1; }
-    .background-animated { opacity: 0; animation-duration: 36s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-fill-mode: both; }
+    .background-animated { opacity: 0; animation-duration: 12s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-fill-mode: both; }
     .background-two { z-index: 1; animation-name: dissolve-two; }
     .background-three { z-index: 2; animation-name: dissolve-three; }
     .background-one { z-index: 3; animation-name: dissolve-one; }
@@ -49,7 +51,18 @@
       0%, 86.111111% { opacity: 0; }
       100% { opacity: 1; }
     }
-    .overlay { z-index: 4; }
+    /* Static shading stays above photos and below the UI, for every animation state. */
+    .photo-shade {
+      position: absolute; inset: 0; z-index: 4; pointer-events: none;
+      background: linear-gradient(to bottom,
+        rgba(0,0,0,.10) 0%,
+        rgba(0,0,0,.10) 43%,
+        rgba(0,0,0,.25) 49%,
+        rgba(0,0,0,.62) 58%,
+        rgba(0,0,0,.92) 65%,
+        #000 70%);
+    }
+    .overlay { z-index: 5; }
     .overlay-status { top: 0; }
     .overlay-navbar { top: 4.926108%; }
     .overlay-content { top: 11.576355%; }
@@ -81,13 +94,14 @@
         <p class="group-title">Скорость</p>
         <div class="control-row" role="group" aria-label="Скорость смены изображений">
           <button class="control" type="button" data-speed="0.5" aria-pressed="false">0,5×</button>
-          <button class="control" type="button" data-speed="1" aria-pressed="true">1×</button>
+          <button class="control" type="button" data-speed="1" aria-pressed="false">1×</button>
           <button class="control" type="button" data-speed="2" aria-pressed="false">2×</button>
+          <button class="control" type="button" data-speed="3" aria-pressed="true">3×</button>
           <button class="control" type="button" data-speed="4" aria-pressed="false">4×</button>
         </div>
         <p class="group-title">Воспроизведение</p>
         <button class="control" id="play-pause" type="button" aria-pressed="false">Пауза</button>
-        <p class="summary" id="timing">1×: каждый фон — 12 с, переход — 5 с.</p>
+        <p class="summary" id="timing">3×: каждый фон — 4 с, переход — 1,67 с.</p>
       </div>
       <p class="details">Отдельная тестовая страница, без изменения основной версии портфолио.<br>
         <a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17848-5446" target="_blank" rel="noopener noreferrer">Исходный экран</a>
@@ -96,10 +110,11 @@
     </section>
     <section class="stage" aria-label="Предпросмотр экрана 375 на 812">
       <div class="phone" id="atlas-screen" role="img" aria-label="Экран Atlas: три фотографии плавно сменяются под статичным интерфейсом">
-        <img class="background background-base" src="./assets/bg-1.png" width="375" height="812" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
-        <img class="background background-animated background-two" src="./assets/bg-2.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
-        <img class="background background-animated background-three" src="./assets/bg-3.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
-        <img class="background background-animated background-one" src="./assets/bg-1.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
+        <img class="background background-base" src="./assets/bg-1.png" width="375" height="785" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+        <img class="background background-animated background-two" src="./assets/bg-2.png" width="375" height="750" alt="" aria-hidden="true" decoding="async">
+        <img class="background background-animated background-three" src="./assets/bg-3.png" width="375" height="573" alt="" aria-hidden="true" decoding="async">
+        <img class="background background-animated background-one" src="./assets/bg-1.png" width="375" height="785" alt="" aria-hidden="true" decoding="async">
+        <div class="photo-shade" aria-hidden="true"></div>
         <img class="overlay overlay-status" src="./assets/status.png" width="375" height="40" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-navbar" src="./assets/navbar.png" width="375" height="54" alt="" aria-hidden="true" decoding="async">
         <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" aria-hidden="true" decoding="async">
