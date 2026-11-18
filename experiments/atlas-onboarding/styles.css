@@ -86,35 +86,29 @@ button { font: inherit; }
   display: flex; flex-direction: column; gap: 48px; align-items: center;
   text-align: center;
 }
-/* Copy moves first; artwork starts 150ms later with a small spring settle.
-   Both entrance animations finish before the 500ms screen slide completes. */
+/* Text enters first; artwork follows 150ms later. Both use ease-in-out
+   and complete before the 500ms screen transition ends. */
 .slide.is-entering {
   --entrance-offset: 24px;
-  --art-offset: 120px;
-  --art-overshoot: -6px;
-  --art-recoil: 2px;
+  --art-offset: 180px;
 }
 .slide.is-entering.is-entering-backward {
   --entrance-offset: -24px;
-  --art-offset: -120px;
-  --art-overshoot: 6px;
-  --art-recoil: -2px;
+  --art-offset: -180px;
 }
 .slide.is-entering .copy {
-  animation: onboarding-copy-in 300ms cubic-bezier(.2,.75,.2,1) both;
+  animation: onboarding-copy-in 300ms ease-in-out both;
 }
 .slide.is-entering .artwork {
-  animation: onboarding-art-in 300ms cubic-bezier(.2,.75,.32,1) 150ms both;
+  animation: onboarding-art-in 300ms ease-in-out 150ms both;
 }
 @keyframes onboarding-copy-in {
   from { opacity: 0; transform: translate3d(var(--entrance-offset),0,0); }
   to { opacity: 1; transform: translate3d(0,0,0); }
 }
 @keyframes onboarding-art-in {
-  0% { opacity: 0; transform: translate3d(var(--art-offset),0,0); }
-  68% { opacity: 1; transform: translate3d(var(--art-overshoot),0,0); }
-  84% { opacity: 1; transform: translate3d(var(--art-recoil),0,0); }
-  100% { opacity: 1; transform: translate3d(0,0,0); }
+  from { opacity: 0; transform: translate3d(var(--art-offset),0,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
 }
 .artwork { flex: 0 0 250px; width: 250px; height: 250px; display: grid; place-items: center; }
 .artwork img { display: block; width: 250px; height: 250px; object-fit: contain; }
