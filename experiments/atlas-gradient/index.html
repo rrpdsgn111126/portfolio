@@ -45,7 +45,8 @@
       pointer-events: none;
       background-color: #1f1f1f;
       background-repeat: no-repeat;
-      background-position: center top;
+      /* Forced image shift: 40px + 40px status bar, toward screen top. */
+      background-position: center -80px;
       background-size: 100% auto;
     }
     .background-base, .background-one { background-image: url("./assets/bg-1.png"); }
@@ -183,7 +184,7 @@
           <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" draggable="false" decoding="async">
         </div>
         <div class="debug-overlay" aria-hidden="true">
-          <div class="debug-origin"><span class="debug-chip">НАЧАЛО ФОТО / ЭКРАНА · Y=0</span></div>
+          <div class="debug-origin"><span class="debug-chip">ЭКРАН Y=0 · ФОТО СДВИНУТО −80px</span></div>
           <div class="debug-guide debug-guide-nav"><span class="debug-chip">NAVBAR · Y=40</span></div>
           <div class="debug-guide debug-guide-content"><span class="debug-chip">КОНТЕНТ · Y=94</span></div>
           <div class="debug-guide debug-guide-photo-end" id="debug-photo-end"><span class="debug-chip" id="debug-photo-end-label">КОНЕЦ ФОТО 1 · Y=785</span></div>
@@ -222,8 +223,8 @@
         const root = screen.querySelector('.phone-bg-stack');
         const rootTop = Math.round((root.getBoundingClientRect().top - screenRect.top) * scale * 10) / 10;
         const height = photoHeights[frame - 1];
-        photoEnd.style.top = (height / 812 * 100) + '%';
-        photoEndLabel.textContent = 'КОНЕЦ ФОТО ' + frame + ' · Y=' + height;
+        photoEnd.style.top = ((height - 80) / 812 * 100) + '%';
+        photoEndLabel.textContent = 'КОНЕЦ ФОТО ' + frame + ' · Y=' + (height - 80);
         debugReadout.textContent = 'Начало нижнего слоя: Y=' + rootTop +
           ' px; текущий кадр: Y=' + top + ' px; background-position-y: ' + backgroundY +
           '; экран: 375×812; фото ' + frame + ': 375×' + height +
