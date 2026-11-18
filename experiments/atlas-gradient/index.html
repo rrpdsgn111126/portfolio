@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Atlas · Animated gradient test</title>
+  <style>
+    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f1f1f; background: #ededed; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; }
+    button { font: inherit; cursor: pointer; }
+    .layout { min-height: 100vh; display: grid; grid-template-columns: minmax(270px, 360px) minmax(0, 1fr); gap: clamp(24px, 6vw, 100px); align-items: center; max-width: 1120px; margin: auto; padding: 44px 38px; }
+    .info { align-self: center; }
+    .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #757575; }
+    h1 { margin: 17px 0 16px; font-size: clamp(30px, 3.8vw, 48px); line-height: 1.08; letter-spacing: -0.045em; font-weight: 650; }
+    .description { margin: 0; max-width: 32ch; line-height: 1.55; font-size: 15px; color: #626262; }
+    .controls { margin-top: 34px; }
+    .control-label { margin: 0 0 12px; font-size: 13px; font-weight: 650; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; }
+    .control { border: 1px solid #d0d0d0; color: #202020; background: #f8f8f8; border-radius: 10px; padding: 10px 16px; min-height: 42px; transition: background-color 120ms ease, border-color 120ms ease; }
+    .control:hover { background: #fff; border-color: #999; }
+    .control[aria-pressed="true"] { background: #1f1f1f; color: white; border-color: #1f1f1f; }
+    .control:focus-visible { outline: 3px solid #37c5a6; outline-offset: 3px; }
+    .divider { height: 1px; max-width: 290px; margin: 24px 0; background: #d7d7d7; }
+    .meta { margin: 0; font-size: 12px; line-height: 1.6; color: #7d7d7d; }
+    .meta a { color: inherit; text-underline-offset: 3px; }
+    .stage { display: flex; justify-content: center; align-items: center; min-width: 0; }
+    .phone { width: min(375px, 100%); aspect-ratio: 375 / 812; position: relative; flex: none; isolation: isolate; overflow: hidden; border-radius: min(20px, 5.333%); background: #f7f7f7; box-shadow: 0 20px 70px rgba(0,0,0,0.13), 0 2px 12px rgba(0,0,0,0.05); }
+    .glow-stage { position: absolute; z-index: 0; top: 0; left: 0; width: 100%; height: 39.409%; overflow: hidden; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%); }
+    .glow { position: absolute; border-radius: 50%; pointer-events: none; will-change: transform, opacity; filter: blur(19px); animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; animation-play-state: running; }
+    .glow-mint { width: 92%; height: 84%; left: 21%; top: -28%; background: radial-gradient(ellipse at 50% 46%, rgba(84,255,189,.95) 0%, rgba(119,253,204,.72) 24%, rgba(170,251,217,.35) 50%, transparent 78%); animation-name: float-mint; animation-duration: 38s; }
+    .glow-cyan { width: 88%; height: 90%; left: -25%; top: -38%; background: radial-gradient(ellipse at center, rgba(70,241,239,.75), rgba(126,253,250,.35) 37%, transparent 74%); animation-name: float-cyan; animation-duration: 52s; }
+    .glow-lemon { width: 94%; height: 82%; left: 5%; top: -49%; background: radial-gradient(ellipse at center, rgba(255,246,125,.66), rgba(250,246,174,.25) 43%, transparent 75%); animation-name: float-lemon; animation-duration: 61s; }
+    @keyframes float-mint {
+      0% { transform: translate(0%, 0%) scale(1); opacity: .95; }
+      50% { transform: translate(-17%, 15%) scale(1.12); opacity: .76; }
+      100% { transform: translate(-31%, -3%) scale(1.02); opacity: .88; }
+    }
+    @keyframes float-cyan {
+      0% { transform: translate(-9%, -12%) scale(1); opacity: .2; }
+      50% { transform: translate(34%, 11%) scale(1.05); opacity: .42; }
+      100% { transform: translate(55%, -6%) scale(1.14); opacity: .7; }
+    }
+    @keyframes float-lemon {
+      0% { transform: translate(-25%, -17%) scale(.92); opacity: .09; }
+      50% { transform: translate(11%, -1%) scale(1.08); opacity: .23; }
+      100% { transform: translate(34%, 14%) scale(1.04); opacity: .48; }
+    }
+    .phone.is-paused .glow { animation-play-state: paused; }
+    .ui { position: absolute; display: block; left: 0; z-index: 1; height: auto; user-select: none; pointer-events: none; }
+    .ui-top { top: 0; width: 100%; }
+    .ui-content { top: 27.0936%; width: 100%; }
+    .ui-navigation { top: 91.7488%; width: 100.2667%; }
+    @media (max-width: 730px) {
+      .layout { grid-template-columns: 1fr; gap: 30px; padding: 26px max(18px, 4vw) 45px; }
+      .info { width: 100%; max-width: 375px; margin: 0 auto; }
+      h1 { font-size: 30px; margin: 10px 0; }
+      .description { font-size: 13px; max-width: none; }
+      .controls { margin-top: 20px; }
+      .divider { margin: 18px 0; }
+      .stage { grid-row: 2; }
+      .phone { width: min(375px, 100%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .glow { animation: none !important; will-change: auto; }
+      .control { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="info" aria-label="Управление анимацией">
+      <div class="eyebrow">Atlas / motion test</div>
+      <h1>Живой градиент</h1>
+      <p class="description">Интерфейс экспортирован из Figma отдельными прозрачными слоями. Двигается только градиентная подложка.</p>
+      <div class="controls">
+        <p class="control-label">Скорость движения</p>
+        <div class="button-row" role="group" aria-label="Скорость движения">
+          <button class="control" type="button" data-speed="0.5" aria-pressed="false">0,5×</button>
+          <button class="control" type="button" data-speed="1" aria-pressed="true">1×</button>
+          <button class="control" type="button" data-speed="2" aria-pressed="false">2×</button>
+        </div>
+        <p class="control-label" style="margin-top: 22px">Воспроизведение</p>
+        <button class="control" id="play-pause" type="button" aria-pressed="false">Пауза</button>
+      </div>
+      <div class="divider"></div>
+      <p class="meta">Изолированный эксперимент. Основные страницы портфолио не изменены.<br><a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17898-25872" target="_blank" rel="noopener noreferrer">Исходный фрейм Figma</a></p>
+    </section>
+    <section class="stage" aria-label="Предпросмотр экрана Atlas">
+      <div class="phone" id="atlas-screen" role="img" aria-label="Экран кошелька Atlas с неподвижным интерфейсом и плавно меняющимся градиентом в верхней части">
+        <div class="glow-stage" aria-hidden="true">
+          <div class="glow glow-mint" data-duration="38"></div>
+          <div class="glow glow-cyan" data-duration="52"></div>
+          <div class="glow glow-lemon" data-duration="61"></div>
+        </div>
+        <img class="ui ui-top" src="./ui-top.png" width="375" height="220" alt="" draggable="false" decoding="async">
+        <img class="ui ui-content" src="./ui-content.png" width="375" height="592" alt="" draggable="false" decoding="async">
+        <img class="ui ui-navigation" src="./ui-navigation.png" width="376" height="67" alt="" draggable="false" decoding="async">
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const screen = document.getElementById('atlas-screen');
+      const playPause = document.getElementById('play-pause');
+      const speedButtons = Array.from(document.querySelectorAll('[data-speed]'));
+      const glows = Array.from(screen.querySelectorAll('[data-duration]'));
+      let paused = false;
+
+      speedButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const speed = Number(button.dataset.speed);
+          if (!Number.isFinite(speed) || speed <= 0) return;
+          glows.forEach((glow) => {
+            glow.style.animationDuration = `${Number(glow.dataset.duration) / speed}s`;
+          });
+          speedButtons.forEach((item) => {
+            item.setAttribute('aria-pressed', String(item === button));
+          });
+        });
+      });
+
+      playPause.addEventListener('click', () => {
+        paused = !paused;
+        screen.classList.toggle('is-paused', paused);
+        playPause.setAttribute('aria-pressed', String(paused));
+        playPause.textContent = paused ? 'Продолжить' : 'Пауза';
+      });
+    })();
+  </script>
+</body>
+</html>
