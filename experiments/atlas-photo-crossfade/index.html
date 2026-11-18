@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Atlas — медленная смена фотофонов · тест</title>
+  <style>
+    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #f3f3f3; background: #151719; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { min-width: 280px; min-height: 100vh; margin: 0; }
+    button { font: inherit; cursor: pointer; }
+    .layout { display: grid; grid-template-columns: minmax(0, 365px) minmax(0, 1fr); align-items: center; gap: clamp(32px, 8vw, 110px); max-width: 1120px; min-height: 100vh; margin: auto; padding: 36px clamp(20px, 5vw, 68px); }
+    .eyebrow { color: #899196; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; }
+    h1 { margin: 16px 0 16px; font-size: clamp(29px, 3.8vw, 44px); font-weight: 620; line-height: 1.08; letter-spacing: -.04em; }
+    .description { margin: 0; max-width: 34ch; color: #aab0b4; font-size: 15px; line-height: 1.55; }
+    .controls { margin-top: 32px; }
+    .group-title { margin: 20px 0 10px; font-size: 13px; font-weight: 600; }
+    .control-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .control { min-height: 42px; padding: 9px 15px; border: 1px solid #42474b; border-radius: 10px; background: #24282b; color: #f5f5f5; transition: border-color .15s ease, background-color .15s ease; }
+    .control:hover { border-color: #8b9297; }
+    .control:focus-visible { outline: 3px solid #4fd6c8; outline-offset: 3px; }
+    .control[aria-pressed="true"] { background: #f3f3f3; color: #202326; border-color: #f3f3f3; }
+    .summary { margin: 14px 0 0; font-size: 12px; color: #90999f; line-height: 1.5; }
+    .details { margin: 28px 0 0; padding-top: 17px; border-top: 1px solid #363b3e; color: #828a90; font-size: 12px; line-height: 1.7; }
+    a { color: #bcc8cb; text-underline-offset: 3px; }
+    .stage { display: flex; min-width: 0; justify-content: center; align-items: center; }
+    .phone { position: relative; width: min(375px, 100%); aspect-ratio: 375 / 812; flex: none; isolation: isolate; overflow: hidden; border-radius: 20px; background: #1f1f1f; box-shadow: 0 24px 70px rgba(0, 0, 0, .44); }
+    .background, .overlay { position: absolute; display: block; width: 100%; height: auto; left: 0; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+    .background { top: 0; height: 100%; object-fit: fill; z-index: 0; opacity: 0; animation: crossfade 36s ease-in-out infinite both; }
+    .background:nth-child(1) { animation-delay: 0s; }
+    .background:nth-child(2) { animation-delay: -24s; }
+    .background:nth-child(3) { animation-delay: -12s; }
+    /* 7 seconds static, then a 5-second dissolve to the next photo, repeated for 3 photos. */
+    @keyframes crossfade {
+      0%, 19.444444% { opacity: 1; }
+      33.333333%, 86.111111% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .overlay { z-index: 1; }
+    .overlay-status { top: 0; }
+    .overlay-navbar { top: 4.926108%; }
+    .overlay-content { top: 11.576355%; }
+    .phone.is-paused .background { animation-play-state: paused; }
+    @media (max-width: 740px) {
+      .layout { grid-template-columns: 1fr; gap: 26px; padding: 26px 18px 44px; }
+      .info { max-width: 375px; margin-inline: auto; }
+      h1 { margin: 12px 0; font-size: 30px; }
+      .description { font-size: 14px; }
+      .controls { margin-top: 18px; }
+      .details { margin-top: 18px; }
+      .stage { grid-row: 2; }
+      .phone { width: min(375px, 100%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .background { animation: none !important; }
+      .background:nth-child(1) { opacity: 1; }
+      .background:nth-child(n + 2) { opacity: 0; }
+      .control { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="info" aria-label="Настройки тестовой анимации">
+      <div class="eyebrow">Atlas / animation test</div>
+      <h1>Плавная смена фона</h1>
+      <p class="description">Три фотографии из Figma сменяются через затухание. Интерфейс первого экрана остаётся неподвижным поверх них.</p>
+      <div class="controls">
+        <p class="group-title">Скорость</p>
+        <div class="control-row" role="group" aria-label="Скорость смены изображений">
+          <button class="control" type="button" data-speed="0.5" aria-pressed="false">0,5×</button>
+          <button class="control" type="button" data-speed="1" aria-pressed="true">1×</button>
+          <button class="control" type="button" data-speed="2" aria-pressed="false">2×</button>
+          <button class="control" type="button" data-speed="4" aria-pressed="false">4×</button>
+        </div>
+        <p class="group-title">Воспроизведение</p>
+        <button class="control" id="play-pause" type="button" aria-pressed="false">Пауза</button>
+        <p class="summary" id="timing">1×: каждый фон — 12 с, переход — 5 с.</p>
+      </div>
+      <p class="details">Отдельная тестовая страница, без изменения основной версии портфолио.<br>
+        <a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17848-5446" target="_blank" rel="noopener noreferrer">Исходный экран</a>
+        · <a href="https://www.figma.com/design/6sBVAK6kmxac1SfD5w8gUw/?node-id=17908-56145" target="_blank" rel="noopener noreferrer">Три фотографии</a>
+      </p>
+    </section>
+    <section class="stage" aria-label="Предпросмотр экрана 375 на 812">
+      <div class="phone" id="atlas-screen" role="img" aria-label="Экран Atlas: три фотографии плавно сменяются под статичным интерфейсом">
+        <img class="background" src="./assets/bg-1.png" width="375" height="812" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+        <img class="background" src="./assets/bg-2.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
+        <img class="background" src="./assets/bg-3.png" width="375" height="812" alt="" aria-hidden="true" decoding="async">
+        <img class="overlay overlay-status" src="./assets/status.png" width="375" height="40" alt="" aria-hidden="true" decoding="async">
+        <img class="overlay overlay-navbar" src="./assets/navbar.png" width="375" height="54" alt="" aria-hidden="true" decoding="async">
+        <img class="overlay overlay-content" src="./assets/foreground.png" width="375" height="718" alt="" aria-hidden="true" decoding="async">
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const screen = document.getElementById('atlas-screen');
+      const layers = [...screen.querySelectorAll('.background')];
+      const speedButtons = [...document.querySelectorAll('[data-speed]')];
+      const playPause = document.getElementById('play-pause');
+      const timing = document.getElementById('timing');
+      let paused = false;
+
+      speedButtons.forEach(button => button.addEventListener('click', () => {
+        const speed = Number(button.dataset.speed);
+        if (!Number.isFinite(speed) || speed <= 0) return;
+        const period = 36 / speed;
+        const offsets = [0, 24, 12];
+        layers.forEach((layer, index) => {
+          layer.style.animationDuration = period + 's';
+          layer.style.animationDelay = -offsets[index] / speed + 's';
+        });
+        speedButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        const format = number => Number.isInteger(number) ? String(number) : number.toLocaleString('ru-RU', {maximumFractionDigits: 2});
+        timing.textContent = format(speed) + '×: каждый фон — ' + format(12 / speed) + ' с, переход — ' + format(5 / speed) + ' с.';
+      }));
+
+      playPause.addEventListener('click', () => {
+        paused = !paused;
+        screen.classList.toggle('is-paused', paused);
+        playPause.setAttribute('aria-pressed', String(paused));
+        playPause.textContent = paused ? 'Продолжить' : 'Пауза';
+      });
+    })();
+  </script>
+</body>
+</html>
