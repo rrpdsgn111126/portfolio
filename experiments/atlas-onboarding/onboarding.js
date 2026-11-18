@@ -27,7 +27,7 @@
   ];
 
   const HOLD_MS = 1800;
-  const MOVE_MS = 310;
+  const MOVE_MS = 390;
   const embedMode = new URLSearchParams(location.search).get('embed') === '1';
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const root = document.getElementById('onboarding');

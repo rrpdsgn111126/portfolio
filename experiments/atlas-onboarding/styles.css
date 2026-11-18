@@ -3,7 +3,7 @@
   --phone-width: 375px;
   --phone-height: 812px;
   --phone-scale: 1;
-  --move-ms: 310ms;
+  --move-ms: 390ms;
   --hold-ms: 1800ms;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -86,23 +86,35 @@ button { font: inherit; }
   display: flex; flex-direction: column; gap: 48px; align-items: center;
   text-align: center;
 }
-/* The copy precedes the art by 100ms during each incoming horizontal slide.
-   Both animations finish before the track's 310ms transition completes. */
-.slide.is-entering { --entrance-offset: 24px; --art-offset: 60px; }
-.slide.is-entering.is-entering-backward { --entrance-offset: -24px; --art-offset: -60px; }
+/* Copy moves first; artwork starts 150ms later with a small spring settle.
+   Both entrance animations finish before the 390ms screen slide completes. */
+.slide.is-entering {
+  --entrance-offset: 24px;
+  --art-offset: 60px;
+  --art-overshoot: -6px;
+  --art-recoil: 2px;
+}
+.slide.is-entering.is-entering-backward {
+  --entrance-offset: -24px;
+  --art-offset: -60px;
+  --art-overshoot: 6px;
+  --art-recoil: -2px;
+}
 .slide.is-entering .copy {
   animation: onboarding-copy-in 230ms cubic-bezier(.2,.75,.2,1) both;
 }
 .slide.is-entering .artwork {
-  animation: onboarding-art-in 200ms cubic-bezier(.2,.75,.2,1) 100ms both;
+  animation: onboarding-art-in 220ms cubic-bezier(.2,.75,.32,1) 150ms both;
 }
 @keyframes onboarding-copy-in {
   from { opacity: 0; transform: translate3d(var(--entrance-offset),0,0); }
   to { opacity: 1; transform: translate3d(0,0,0); }
 }
 @keyframes onboarding-art-in {
-  from { opacity: 0; transform: translate3d(var(--art-offset),0,0); }
-  to { opacity: 1; transform: translate3d(0,0,0); }
+  0% { opacity: 0; transform: translate3d(var(--art-offset),0,0) scale(.985); }
+  68% { opacity: 1; transform: translate3d(var(--art-overshoot),0,0) scale(1.012); }
+  84% { opacity: 1; transform: translate3d(var(--art-recoil),0,0) scale(.998); }
+  100% { opacity: 1; transform: translate3d(0,0,0) scale(1); }
 }
 .artwork { flex: 0 0 250px; width: 250px; height: 250px; display: grid; place-items: center; }
 .artwork img { display: block; width: 250px; height: 250px; object-fit: contain; }
