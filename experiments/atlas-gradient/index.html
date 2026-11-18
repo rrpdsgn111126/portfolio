@@ -46,8 +46,16 @@
       left: 0;
       width: 95%;
       height: 38%;
+      pointer-events: none;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+    }
+    .glow-shape {
+      position: absolute;
+      inset: 0;
       border-radius: 50%;
       pointer-events: none;
+      transform-origin: center center;
       background: radial-gradient(ellipse at center,
         rgba(var(--glow-rgb), .96) 0%,
         rgba(var(--glow-rgb), .70) 30%,
@@ -56,7 +64,7 @@
       );
       filter: blur(21px);
       will-change: transform;
-      transform: translate3d(0, 0, 0);
+      transform: rotate(0deg) scale(1, 1);
     }
     .ui { position: absolute; display: block; left: 0; z-index: 1; height: auto; user-select: none; pointer-events: none; }
     .ui-top { top: 0; width: 100%; }
@@ -73,7 +81,7 @@
       .phone { width: min(375px, 100%); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .glow { will-change: auto; }
+      .glow, .glow-shape { will-change: auto; }
       .control { transition: none; }
     }
   </style>
@@ -101,7 +109,7 @@
     <section class="stage" aria-label="Предпросмотр экрана Atlas">
       <div class="phone" id="atlas-screen" role="img" aria-label="Экран кошелька Atlas с неподвижным интерфейсом и плавно меняющимся градиентом в верхней части">
         <div class="glow-stage" aria-hidden="true">
-          <div class="glow" id="atlas-glow"></div>
+          <div class="glow" id="atlas-glow"><div class="glow-shape" id="atlas-glow-shape"></div></div>
         </div>
         <img class="ui ui-top" src="./ui-top.png?v=3x-2" width="1125" height="660" alt="" draggable="false" decoding="async">
         <img class="ui ui-content" src="./ui-content.png?v=3x-2" width="1125" height="1776" alt="" draggable="false" decoding="async">
@@ -114,6 +122,7 @@
       const screen = document.getElementById('atlas-screen');
       const stage = screen.querySelector('.glow-stage');
       const glow = document.getElementById('atlas-glow');
+      const glowShape = document.getElementById('atlas-glow-shape');
       const playPause = document.getElementById('play-pause');
       const speedButtons = Array.from(document.querySelectorAll('[data-speed]'));
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -129,6 +138,9 @@
         angle: -0.55, turnRate: 0, desiredTurnRate: 0,
         untilSteer: 0.9,
         from: 0, to: 1, colorElapsed: 0, colorDuration: 7,
+        shapeX: 1, shapeY: 1, shapeRotation: 0,
+        targetShapeX: 1, targetShapeY: 1, targetShapeRotation: 0,
+        nextShapeChange: 1.5,
         speed: 3, paused: false
       };
 
@@ -143,6 +155,7 @@
         const x = (-0.32 + motion.x * 0.66) * width;
         const y = (-0.06 + motion.y * 0.62) * height;
         glow.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+        glowShape.style.transform = `rotate(${motion.shapeRotation.toFixed(2)}deg) scale(${motion.shapeX.toFixed(3)}, ${motion.shapeY.toFixed(3)})`;
 
         const t = ease(clamp(motion.colorElapsed / motion.colorDuration, 0, 1));
         const a = palette[motion.from];
@@ -177,6 +190,21 @@
         }
         motion.x = clamp(x, 0, 1);
         motion.y = clamp(y, 0, 1);
+
+        // Independent continuous shape morph; original position and color logic is untouched.
+        motion.nextShapeChange -= dt;
+        if (motion.nextShapeChange <= 0) {
+          const elongation = random(0, 1);
+          const size = random(0.92, 1.08);
+          motion.targetShapeX = (0.58 + elongation * 0.85) * size;
+          motion.targetShapeY = (1.58 - elongation * 0.88) * size;
+          motion.targetShapeRotation = random(-45, 45);
+          motion.nextShapeChange = random(2.8, 5);
+        }
+        const shapeBlend = 1 - Math.exp(-dt * 0.72);
+        motion.shapeX += (motion.targetShapeX - motion.shapeX) * shapeBlend;
+        motion.shapeY += (motion.targetShapeY - motion.shapeY) * shapeBlend;
+        motion.shapeRotation += (motion.targetShapeRotation - motion.shapeRotation) * shapeBlend;
 
         motion.colorElapsed += dt;
         if (motion.colorElapsed >= motion.colorDuration) {
