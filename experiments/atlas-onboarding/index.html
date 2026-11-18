@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f3f5">
+  <meta name="description" content="Atlas App — looping onboarding animation prototype">
+  <title>Atlas — Onboarding Motion Test</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./onboarding.js" defer></script>
+</head>
+<body>
+  <main class="demo-stage" id="atlas-demo">
+    <div class="mockup-box" id="mockup-box">
+      <section class="phone" id="onboarding" aria-label="Atlas four-screen onboarding" aria-roledescription="carousel" tabindex="0">
+        <div class="status-bar" aria-hidden="true">
+          <span class="system-time">9:30</span>
+          <span class="camera-cutout"></span>
+          <span class="system-icons">
+            <span class="signal-group">
+              <img src="./assets/wifi.svg" alt="" width="16" height="16">
+              <img src="./assets/signal.svg" alt="" width="16" height="16">
+            </span>
+            <img src="./assets/battery.svg" alt="" width="16" height="16">
+          </span>
+        </div>
+
+        <div class="slides-window" id="slides-window" aria-live="off">
+          <div class="slides-track" id="slides-track"></div>
+        </div>
+
+        <div class="screen-footer">
+          <div class="wizard-wrap" role="group" aria-label="Onboarding progress">
+            <div class="wizard" id="wizard"></div>
+          </div>
+          <div class="screen-actions" id="screen-actions">
+            <button type="button" class="action-button button-skip" id="skip-button">Skip</button>
+            <button type="button" class="action-button button-next" id="next-button">Next</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
