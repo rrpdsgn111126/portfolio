@@ -107,7 +107,8 @@ h1{text-transform:lowercase}
 #examples-media .page-previews{min-height:0}
 /* Preserve image dimensions before lazy-loaded WebP assets become available.
    The intrinsic source ratio takes precedence after loading. */
-#example-image-one,#example-image-two{aspect-ratio:auto 888 / 2458}
+/* Figma exports 444 × 1053 at 2× (888 × 2106); use intrinsic ratio when loaded. */
+#example-image-one,#example-image-two{aspect-ratio:auto 888 / 2106}
 #example-image-three,#example-image-four{aspect-ratio:auto 888 / 2534}
 #example-image-five,#example-image-six{aspect-ratio:auto 888 / 1792}
 
@@ -291,7 +292,7 @@ h1{text-transform:lowercase}
     display:block;width:100%;height:auto;max-width:100%;object-fit:contain;
   }
   /* Intrinsic WebP sizes measured after load: no letterboxing or cropping. */
-  #example-image-one,#example-image-two{aspect-ratio:888 / 2458}
+  #example-image-one,#example-image-two{aspect-ratio:auto 888 / 2106}
   #example-image-three,#example-image-four{aspect-ratio:888 / 2534}
   #example-image-five,#example-image-six{aspect-ratio:888 / 1792}
 
