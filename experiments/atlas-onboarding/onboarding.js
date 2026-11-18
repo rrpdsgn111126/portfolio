@@ -26,8 +26,8 @@
     },
   ];
 
-  const HOLD_MS = 3600;
-  const MOVE_MS = 620;
+  const HOLD_MS = 1800;
+  const MOVE_MS = 310;
   const embedMode = new URLSearchParams(location.search).get('embed') === '1';
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const root = document.getElementById('onboarding');
@@ -59,9 +59,23 @@
   let screenIndex = 0;
   let trackIndex = 1;
   let timeoutId = null;
+  let transitionFallbackId = null;
   let moving = false;
   let swipeStartX = null;
   let swipeStartY = null;
+
+  // Stage the incoming copy slightly before its illustration. The entrance
+  // finishes within the track transition so resetting a loop clone is seamless.
+  function setIncomingSlide(direction) {
+    track.querySelectorAll('.slide.is-entering').forEach(slide => {
+      slide.classList.remove('is-entering', 'is-entering-backward');
+    });
+    if (reducedMotion.matches) return;
+    const incoming = track.children[trackIndex];
+    if (!incoming) return;
+    incoming.classList.toggle('is-entering-backward', direction < 0);
+    incoming.classList.add('is-entering');
+  }
 
   function fit() {
     const horizontal = Math.max(0.3, (window.innerWidth - (embedMode ? 0 : 32)) / 375);
@@ -108,22 +122,40 @@
   }
 
   function resetIfCloned() {
+    // An entrance animation must not survive an instant clone-to-real jump.
+    track.querySelectorAll('.slide.is-entering').forEach(slide => {
+      slide.classList.remove('is-entering', 'is-entering-backward');
+    });
     if (trackIndex === 5) trackIndex = 1;
     if (trackIndex === 0) trackIndex = 4;
     placeTrack(false);
     moving = false;
   }
 
+  function finishMotion() {
+    clearTimeout(transitionFallbackId);
+    transitionFallbackId = null;
+    if (moving) resetIfCloned();
+  }
+
   function advance(direction) {
     if (moving) return;
     const next = (screenIndex + direction + SCREENS.length) % SCREENS.length;
     clearTimeout(timeoutId);
+    // Commit an immediately preceding non-animated jump (e.g. Skip) before
+    // animating again, otherwise a same-frame click may not fire transitionend.
+    if (!reducedMotion.matches) void track.offsetWidth;
     moving = !reducedMotion.matches;
     screenIndex = next;
     trackIndex += direction;
     updateControls();
+    setIncomingSlide(direction);
     placeTrack(true);
-    if (!moving) resetIfCloned();
+    if (moving) {
+      // A transitionend is not guaranteed if a tab is backgrounded or a jump
+      // is interrupted; prevent a permanent 'moving' lock in those cases.
+      transitionFallbackId = setTimeout(finishMotion, MOVE_MS + 65);
+    } else resetIfCloned();
     schedule();
   }
 
@@ -145,7 +177,7 @@
 
   track.addEventListener('transitionend', event => {
     if (event.target !== track || event.propertyName !== 'transform') return;
-    resetIfCloned();
+    finishMotion();
   });
 
   nextButton.addEventListener('click', () => advance(1));
@@ -177,7 +209,8 @@
 
   document.addEventListener('visibilitychange', schedule);
   reducedMotion.addEventListener('change', () => {
-    placeTrack(false);
+    clearTimeout(transitionFallbackId);
+    resetIfCloned();
     updateControls();
     schedule();
   });

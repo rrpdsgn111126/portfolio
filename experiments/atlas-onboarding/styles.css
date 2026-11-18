@@ -3,8 +3,8 @@
   --phone-width: 375px;
   --phone-height: 812px;
   --phone-scale: 1;
-  --move-ms: 620ms;
-  --hold-ms: 3600ms;
+  --move-ms: 310ms;
+  --hold-ms: 1800ms;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -86,6 +86,24 @@ button { font: inherit; }
   display: flex; flex-direction: column; gap: 48px; align-items: center;
   text-align: center;
 }
+/* The copy precedes the art by 100ms during each incoming horizontal slide.
+   Both animations finish before the track's 310ms transition completes. */
+.slide.is-entering { --entrance-offset: 24px; --art-offset: 60px; }
+.slide.is-entering.is-entering-backward { --entrance-offset: -24px; --art-offset: -60px; }
+.slide.is-entering .copy {
+  animation: onboarding-copy-in 230ms cubic-bezier(.2,.75,.2,1) both;
+}
+.slide.is-entering .artwork {
+  animation: onboarding-art-in 200ms cubic-bezier(.2,.75,.2,1) 100ms both;
+}
+@keyframes onboarding-copy-in {
+  from { opacity: 0; transform: translate3d(var(--entrance-offset),0,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+@keyframes onboarding-art-in {
+  from { opacity: 0; transform: translate3d(var(--art-offset),0,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
 .artwork { flex: 0 0 250px; width: 250px; height: 250px; display: grid; place-items: center; }
 .artwork img { display: block; width: 250px; height: 250px; object-fit: contain; }
 .copy { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
@@ -130,6 +148,9 @@ body.is-embed .demo-stage { min-height: 100dvh; padding: 0; }
 body.is-embed .phone { box-shadow: none; }
 @media (prefers-reduced-motion: reduce) {
   .slides-track { transition: none !important; }
+  .slide.is-entering .copy, .slide.is-entering .artwork {
+    animation: none !important;
+  }
   .step, .step::before { transition: none !important; animation: none !important; }
   .step.is-active::before { width: 100%; }
 }
