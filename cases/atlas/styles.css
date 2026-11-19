@@ -1,0 +1,129 @@
+/* Atlas case: Finam grid and typography, Atlas board-specific composition and colors.
+   Design: Cases — Copy / Atlas App — Desktop 1440 / 4377:28865. */
+:root {
+  --background:#f9f9fa;
+  --primary:#191d17;
+  --secondary:#43483f;
+  --surface:#e7f1f2;
+  --atlas-ink:#191d17;
+  --atlas-muted:#43483f;
+  --atlas-surface:#e7f1f2;
+}
+body {background:var(--background);color:var(--atlas-ink)}
+.site-header {position:fixed;z-index:60;inset:0 auto auto 0;width:0;height:0;pointer-events:none}
+.home-symbol {
+  position:fixed;top:15px;left:max(18px,calc((100vw - 1440px)/2 + 20px));
+  display:flex;align-items:center;justify-content:center;width:62px;height:60px;
+  font:400 67px/1 var(--font-body);color:#666b64;pointer-events:auto;
+  text-decoration:none;transform-origin:center;
+}
+.home-symbol:hover {animation:atlas-star-spin 10s linear infinite}
+@keyframes atlas-star-spin {to{transform:rotate(360deg)}}
+.home-symbol:focus-visible {outline:2px solid var(--atlas-ink);outline-offset:5px;border-radius:6px}
+.atlas-intro {
+  display:grid;grid-template-columns:minmax(0,307px) minmax(0,1fr);column-gap:25px;
+  padding-top:72px;min-height:333px;align-content:start;
+}
+.atlas-intro h1 {font:700 50px/60px var(--font-heading);letter-spacing:0;text-transform:lowercase}
+.atlas-intro-copy {min-width:0}
+.atlas-intro .portfolio-lead {font:400 50px/60px var(--font-heading);margin-bottom:24px;color:var(--atlas-ink)}
+.atlas-intro .portfolio-body {font:400 18px/1.45 var(--font-body);color:var(--atlas-muted)}
+.atlas-hero {height:720px;background:var(--atlas-surface);display:flex;align-items:center;justify-content:center}
+.atlas-hero-stage {width:min(979px,calc(100% - 2 * var(--pad)));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:68px;align-items:center}
+.atlas-hero-tile {
+  width:100%;aspect-ratio:375/812;min-width:0;position:relative;overflow:hidden;border-radius:14px;
+  box-shadow:0 0 30px rgba(0,0,0,.25);background:#fff;
+}
+.atlas-hero-tile iframe {position:absolute;inset:0;width:100%;height:100%;display:block;border:0;border-radius:inherit}
+.atlas-narrow {width:calc(100% - 212px);max-width:1056px;margin-inline:auto}
+.portfolio-section-title {color:var(--atlas-ink);font-size:18px;line-height:26.1px;margin-bottom:12px;padding:0;text-transform:lowercase}
+.atlas-challenges {padding:120px 0 64px}
+.atlas-challenges .portfolio-section-title {margin-bottom:24px}
+.atlas-challenges .portfolio-info-card {min-height:168px}
+.atlas-challenges .portfolio-card-grid,.atlas-results .portfolio-card-grid {gap:24px}
+.portfolio-info-card {background:var(--atlas-surface);border-radius:20px;padding:24px}
+.portfolio-info-card h3 {color:var(--atlas-ink);font:700 18px/26.1px var(--font-heading);padding:0;margin:0 0 14px}
+.portfolio-info-card p {color:var(--atlas-muted);font:400 18px/26.1px var(--font-body)}
+.atlas-feature-copy {width:min(516px,100%);margin-bottom:24px}
+.atlas-feature-copy--right {margin-left:auto}
+.atlas-feature-copy--left {margin-right:auto}
+.atlas-feature-copy .portfolio-body {font:400 18px/26.1px var(--font-body);color:var(--atlas-muted)}
+.atlas-feature {margin:0}
+.atlas-identity {padding:96px 0 48px}
+.atlas-money {padding:120px 0 48px}
+.atlas-cards {padding:120px 0 48px}
+.atlas-panel {width:100%;background:var(--atlas-surface);border-radius:0;isolation:isolate}
+.atlas-panel--kyc {min-height:610px}
+.atlas-panel--money {min-height:660px}
+.atlas-screen-row {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:start;padding:50px 24px}
+.atlas-panel--money .atlas-screen-row {padding:70px 25px;gap:25px}
+.atlas-screen-row img,.atlas-card-showcase img {
+  display:block;width:100%;max-width:100%;height:auto;aspect-ratio:375/812;
+  object-fit:contain;border-radius:13px;box-shadow:0 0 30px rgba(0,0,0,.2);
+}
+.atlas-panel--cards {min-height:1110px}
+.atlas-card-showcase {
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+  align-items:start;column-gap:24px;row-gap:28px;padding:42px 65px 48px;
+}
+.atlas-card-showcase img {grid-column:span 2}
+.atlas-card-showcase img:nth-child(4) {grid-column:2 / span 2}
+.atlas-card-showcase img:nth-child(5) {grid-column:4 / span 2}
+.atlas-card-showcase img:nth-child(n+4) {width:89%;justify-self:center}
+.atlas-results {padding:120px 0 80px}
+.atlas-results .atlas-feature-copy {margin-bottom:24px}
+.atlas-results .portfolio-info-card {min-height:217px}
+@media(min-width:1101px) {
+  .atlas-card-showcase img {max-width:255px}
+}
+@media(max-width:1100px) {
+  :root {--pad:40px}
+  .atlas-intro {grid-template-columns:240px minmax(0,1fr)}
+  .atlas-intro h1,.atlas-intro .portfolio-lead {font-size:clamp(36px,4vw,50px);line-height:1.2}
+  .atlas-narrow {width:100%;max-width:none}
+  .atlas-hero {height:min(75vw,720px)}
+  .atlas-hero-stage {gap:clamp(16px,4.7vw,68px)}
+  .atlas-screen-row {gap:2.1%;padding:5% 2.3%}
+  .atlas-panel--money .atlas-screen-row {gap:2.4%;padding:6.6% 2.4%}
+  .atlas-panel--kyc,.atlas-panel--money,.atlas-panel--cards {min-height:0}
+  .atlas-card-showcase {padding:4% 5%;gap:2.4%}
+  .portfolio-info-card h3,.portfolio-info-card p {font-size:16px}
+}
+@media(max-width:767px) {
+  :root {--pad:6.25vw}
+  .home-symbol {top:4.375vw;left:2.5vw;width:7.5vw;height:8.125vw;font-size:8.125vw}
+  .atlas-intro {display:flex;flex-direction:column;gap:19px;padding-top:15vw;padding-bottom:48px;min-height:0}
+  .atlas-intro h1 {font-size:7.8125vw;line-height:11.25vw}
+  .atlas-intro .portfolio-lead {font-size:7.8125vw;line-height:11.25vw;margin-bottom:7.5vw}
+  .atlas-intro .portfolio-body,.atlas-feature-copy .portfolio-body {font-size:5vw;line-height:7.5vw}
+  .atlas-hero {height:auto;min-height:0;padding:30px 0;display:block}
+  .atlas-hero-stage {
+    width:100%;display:flex;gap:18px;overflow-x:auto;overscroll-behavior-x:contain;
+    padding:0 var(--pad) 4px;scroll-snap-type:x mandatory;scroll-padding-inline:var(--pad);
+    scrollbar-width:none;
+  }
+  .atlas-hero-stage::-webkit-scrollbar {display:none}
+  .atlas-hero-tile {flex:0 0 min(70vw,281px);scroll-snap-align:start;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.25)}
+  .atlas-challenges {padding:96px 0 0}
+  .atlas-challenges .portfolio-section-title {margin-bottom:3.4375vw}
+  .portfolio-section-title {font-size:5vw;line-height:7.5vw}
+  .atlas-challenges .portfolio-card-grid,.atlas-results .portfolio-card-grid {gap:4.375vw}
+  .portfolio-info-card {padding:var(--pad);border-radius:16px}
+  .portfolio-info-card h3 {font-size:5vw;line-height:7.5vw;margin-bottom:4.0625vw}
+  .portfolio-info-card p {font-size:5vw;line-height:7.5vw}
+  .atlas-identity,.atlas-money,.atlas-cards {padding:96px 0 0}
+  .atlas-feature-copy {width:100%;margin-bottom:28px}
+  .atlas-screen-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
+  .atlas-panel--money .atlas-screen-row {gap:4vw;padding:6vw}
+  .atlas-screen-row img,.atlas-card-showcase img {border-radius:8px;box-shadow:0 0 15px rgba(0,0,0,.25)}
+  .atlas-card-showcase {grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
+  .atlas-card-showcase img,.atlas-card-showcase img:nth-child(4),.atlas-card-showcase img:nth-child(5) {
+    grid-column:auto;width:100%;justify-self:stretch;max-width:none
+  }
+  .atlas-card-showcase img:last-child {grid-column:1 / -1;width:calc(50% - 2vw);justify-self:center}
+  .atlas-results {padding:96px 0 94px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .home-symbol:hover {animation:none}
+  .atlas-hero-stage {scroll-behavior:auto}
+}

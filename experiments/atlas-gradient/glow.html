@@ -84,9 +84,18 @@
       .glow, .glow-shape { will-change: auto; }
       .control { transition: none; }
     }
+  
+    /* Isolated live embed for portfolio hero; standalone test controls remain unchanged. */
+    html:has(body.is-embed),body.is-embed { min-width:0; width:100%; height:100%; background:transparent; overflow:hidden; }
+    body.is-embed .layout { display:block; width:100%; height:100dvh; min-height:0; max-width:none; margin:0; padding:0; }
+    body.is-embed .layout > .info { display:none; }
+    body.is-embed .stage { display:flex; width:100%; height:100dvh; margin:0; padding:0; align-items:center; justify-content:center; }
+    body.is-embed .phone { width:min(100%,calc(100dvh * 375 / 812)); max-width:100%; border-radius:0; box-shadow:none; }
+
   </style>
 </head>
 <body>
+  <script>if(new URLSearchParams(location.search).get('embed')==='1')document.body.classList.add('is-embed');</script>
   <main class="layout">
     <section class="info" aria-label="Управление анимацией">
       <div class="eyebrow">Atlas / motion test</div>

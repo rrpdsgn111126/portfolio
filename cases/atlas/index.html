@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f9f9fa">
+  <meta name="description" content="Atlas — a unified crypto-fiat wallet experience. Product design case study.">
+  <title>atlas app</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&family=Unbounded:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="../../shared/typography.css">
+  <link rel="stylesheet" href="../../shared/layout.css">
+  <link rel="stylesheet" href="../../shared/components.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="page-shell" id="top">
+  <header class="site-header" id="site-header" aria-label="Portfolio navigation">
+    <a id="portfolio-home-link" class="home-symbol" href="/" aria-label="Back to portfolio" title="Back to portfolio">✻</a>
+  </header>
+  <main class="wrap">
+    <section id="case-intro" class="atlas-intro" data-figma-node="4377:28866" aria-labelledby="case-title">
+      <h1 id="case-title">atlas</h1>
+      <div class="atlas-intro-copy" id="intro-copy">
+        <p class="portfolio-lead" id="intro-lead">Designing a unified financial experience from the ground up</p>
+        <p class="portfolio-body">Atlas is a crypto-fiat wallet for buying and selling digital dollars, making fiat transfers, and handling everyday payments</p>
+      </div>
+    </section>
+    <section id="hero-showcase" class="media-frame atlas-hero full-bleed" data-figma-node="4377:28871" aria-label="Atlas animated product experiences">
+      <div class="atlas-hero-stage" id="hero-artboard">
+        <div id="atlas-hero-onboarding" class="atlas-hero-tile">
+          <iframe title="Atlas onboarding — live motion prototype" src="../../experiments/atlas-onboarding/?embed=1" loading="eager"></iframe>
+        </div>
+        <div id="atlas-hero-glow" class="atlas-hero-tile">
+          <iframe title="Atlas animated gradient — live motion prototype" src="../../experiments/atlas-gradient/glow.html?embed=1" loading="eager"></iframe>
+        </div>
+        <div id="atlas-hero-photo" class="atlas-hero-tile">
+          <iframe title="Atlas photo transitions — live motion prototype" src="../../experiments/atlas-photo-crossfade/?embed=1" loading="eager"></iframe>
+        </div>
+      </div>
+    </section>
+    <section id="product-challenges" class="atlas-challenges" data-figma-node="4377:28931" aria-labelledby="challenges-title">
+      <div class="atlas-narrow">
+        <h2 class="portfolio-section-title" id="challenges-title">product challenges</h2>
+        <div class="portfolio-card-grid" id="challenges-grid">
+          <article class="portfolio-info-card" id="challenge-consistency"><h3>mvp consistency</h3><p>Keep different financial flows simple and consistent</p></article>
+          <article class="portfolio-info-card" id="challenge-transparency"><h3>transparency</h3><p>Make fees, transaction details, and processing states easy to understand</p></article>
+          <article class="portfolio-info-card" id="challenge-crypto-fiat"><h3>crypto and fiat</h3><p>Make buying and selling digital dollars seamless with everyday fiat payments and transfers</p></article>
+        </div>
+      </div>
+    </section>
+    <section id="identity-verification" class="atlas-feature atlas-identity" data-figma-node="4377:28946" aria-labelledby="identity-title">
+      <div class="atlas-narrow">
+        <div class="atlas-feature-copy atlas-feature-copy--right" id="identity-copy">
+          <h2 id="identity-title" class="portfolio-section-title">identity verification</h2>
+          <p class="portfolio-body">Guide users through document submission, verification status, and next steps when a check fails</p>
+        </div>
+        <div id="identity-media" class="media-frame atlas-panel atlas-panel--kyc">
+          <div class="atlas-screen-row">
+            <img id="kyc-capture" src="./assets/kyc-capture.png" alt="Atlas identity document capture" width="375" height="812" loading="lazy" decoding="async">
+            <img id="kyc-review" src="./assets/kyc-review.png" alt="Review identity document photo" width="375" height="812" loading="lazy" decoding="async">
+            <img id="kyc-pending" src="./assets/kyc-pending.png" alt="Identity verification under review" width="375" height="812" loading="lazy" decoding="async">
+            <img id="kyc-start" src="./assets/kyc-start.png" alt="Identity verification entry screen" width="375" height="812" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="money-movement" class="atlas-feature atlas-money" data-figma-node="4377:29046" aria-labelledby="money-title">
+      <div class="atlas-narrow">
+        <div class="atlas-feature-copy atlas-feature-copy--left" id="money-copy">
+          <h2 id="money-title" class="portfolio-section-title">money movement</h2>
+          <p class="portfolio-body">Unify USDT and bank operations with clear amounts, fees, confirmations, and transaction receipts</p>
+        </div>
+        <div id="money-media" class="media-frame atlas-panel atlas-panel--money">
+          <div class="atlas-screen-row">
+            <img id="transfer-request" src="./assets/transfer-request.png" alt="Atlas USDT withdrawal request" width="375" height="812" loading="lazy" decoding="async">
+            <img id="transfer-complete" src="./assets/transfer-complete.png" alt="Completed withdrawal details" width="375" height="812" loading="lazy" decoding="async">
+            <img id="transfer-card" src="./assets/transfer-card.png" alt="Withdrawal method and card" width="375" height="812" loading="lazy" decoding="async">
+            <img id="transfer-usdt" src="./assets/transfer-usdt.png" alt="USDT transaction amount and details" width="375" height="812" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="virtual-cards" class="atlas-feature atlas-cards" data-figma-node="4377:31177" aria-labelledby="cards-title">
+      <div class="atlas-narrow">
+        <div class="atlas-feature-copy atlas-feature-copy--right" id="cards-copy">
+          <h2 id="cards-title" class="portfolio-section-title">virtual cards</h2>
+          <p class="portfolio-body">Make card issuance and everyday management straightforward, from reviewing fees to accessing protected details and spending limits</p>
+        </div>
+        <div id="cards-media" class="media-frame atlas-panel atlas-panel--cards">
+          <div class="atlas-card-showcase">
+            <img id="card-issue" src="./assets/card-issue.png" alt="Virtual card issuance and limits" width="375" height="812" loading="lazy" decoding="async">
+            <img id="card-view" src="./assets/card-view.png" alt="Card-related wallet flow" width="375" height="812" loading="lazy" decoding="async">
+            <img id="card-context" src="./assets/transfer-card.png" alt="Card selection within money movement" width="375" height="812" loading="lazy" decoding="async">
+            <img id="account-main" src="./assets/home-account.png" alt="Atlas main account and balance" width="375" height="812" loading="lazy" decoding="async">
+            <img id="account-alt" src="./assets/home-account-alt.png" alt="Atlas account overview and activity" width="375" height="812" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="results" class="atlas-results" data-figma-node="4377:31443" aria-labelledby="results-title">
+      <div class="atlas-narrow">
+        <div class="atlas-feature-copy atlas-feature-copy--left" id="results-copy">
+          <h2 id="results-title" class="portfolio-section-title">results</h2>
+          <p class="portfolio-body">A unified MVP design covering core wallet operations and reusable financial interaction patterns</p>
+        </div>
+        <div class="portfolio-card-grid" id="results-grid">
+          <article class="portfolio-info-card" id="result-flows"><h3>core flows</h3><p>Verification, deposits, withdrawals, transfers, and cards</p></article>
+          <article class="portfolio-info-card" id="result-transactions"><h3>clear transactions</h3><p>Consistent confirmations, statuses, and receipts</p></article>
+          <article class="portfolio-info-card" id="result-patterns"><h3>shared patterns</h3><p>Reusable approaches to financial details and security controls</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="../../portfolio-home-spin.js" defer></script>
+<script src="../../text-reveal.js" defer></script>
+<script src="../../image-reveal.js" defer></script>
+<script src="../../debug-blocks.js" defer></script>
+</body>
+</html>
