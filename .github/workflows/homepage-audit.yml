@@ -54,12 +54,13 @@ jobs:
                   page.goto('http://127.0.0.1:4173/',wait_until='networkidle',timeout=30000)
                   page.evaluate('() => document.fonts.ready')
                   assert page.title()=="roman's portfolio"
-                  assert page.locator('.home-project').count()==4,('project count',width)
-                  assert page.locator('.home-project__shot').count()==8,('screenshots',width)
+                  assert page.locator('.home-project').count()==5,('project count',width)
+                  assert page.locator('.home-project__shot').count()==10,('screenshots',width)
                   assert page.locator('.home-archive').count()==0
                   assert page.locator('#stforex').count()==0
                   assert page.locator('.home-project__arrow').count()==0
                   assert page.locator('#finam a[href="/cases/finam/"]').count()==1
+                  assert page.locator('#atlas a[href="/cases/atlas/"]').count()==1
                   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),('horizontal overflow',width)
                   assert page.evaluate("getComputedStyle(document.body).backgroundColor")=='rgb(249, 249, 250)'
                   images=page.locator('.home-project__shot')
@@ -85,7 +86,7 @@ jobs:
                       assert abs(data['title']['h']-120)<2,('title height',data['title'])
                       assert abs(data['lead']['x']-86)<1 and abs(data['lead']['y']-218)<2,('lead',data['lead'])
                       cards=data['cards']
-                      for idx,expected in enumerate((426,804,1184,1564)):
+                      for idx,expected in enumerate((426,804,1184,1564,1918)):
                           box=cards[idx]['rect']
                           assert abs(box['x']-86)<1 and abs(box['y']-expected)<3 and abs(box['w']-1268)<1 and abs(box['h']-328)<1,('card',idx,box)
                           assert cards[idx]['size']=='18px' and cards[idx]['weight']=='700'
@@ -107,7 +108,7 @@ jobs:
                   debug.on('pageerror',lambda error:debug_errors.append(str(error)))
                   debug.goto('http://127.0.0.1:4173/?debug=blocks',wait_until='networkidle',timeout=30000)
                   assert debug.locator('#block-debug-overlay').count()==1,('missing inspector',width)
-                  assert debug.locator('#block-debug-overlay .block-debug-label').count()==37,('wrong block labels',width)
+                  assert debug.locator('#block-debug-overlay .block-debug-label').count()==45,('wrong block labels',width)
                   for selector in ('#home-intro','#home-title','#home-description','#home-work',
                                    '#beeline-family-media','#beeline-family-image-1','#beeline-family-image-2',
                                    '#beeline-family-copy','#beeline-family-title','#beeline-family-description','#beeline-family-tags',
