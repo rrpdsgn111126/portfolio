@@ -1,0 +1,93 @@
+name: Atlas case browser audit
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'cases/atlas/**'
+      - 'experiments/atlas-gradient/glow.html'
+      - 'experiments/atlas-photo-crossfade/index.html'
+      - 'experiments/atlas-onboarding/**'
+      - '.github/workflows/atlas-case-audit.yml'
+  pull_request:
+    paths:
+      - 'cases/atlas/**'
+      - 'experiments/atlas-gradient/glow.html'
+      - 'experiments/atlas-photo-crossfade/index.html'
+      - 'experiments/atlas-onboarding/**'
+      - '.github/workflows/atlas-case-audit.yml'
+permissions:
+  contents: read
+jobs:
+  atlas-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+      - name: Start local static server
+        run: |
+          python -m http.server 4173 --bind 127.0.0.1 >/tmp/atlas-http.log 2>&1 &
+          sleep 2
+      - name: Check all Atlas sections, assets, live sources and responsive geometry
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out=Path('atlas-audit');out.mkdir(exist_ok=True)
+          sections=('#case-intro','#hero-showcase','#product-challenges','#identity-verification',
+                    '#money-movement','#virtual-cards','#results')
+          embeds=[
+            ('#atlas-hero-onboarding iframe','#onboarding'),
+            ('#atlas-hero-glow iframe','#atlas-screen'),
+            ('#atlas-hero-photo iframe','#atlas-screen'),
+          ]
+          with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
+            for width in (375,390,430,768,1280,1440):
+              ctx=browser.new_context(viewport={'width':width,'height':900},device_scale_factor=1,reduced_motion='reduce')
+              page=ctx.new_page()
+              problems=[]
+              page.on('pageerror',lambda err:problems.append('JS '+str(err)))
+              page.on('response',lambda r:problems.append('HTTP '+str(r.status)+' '+r.url) if r.status>=400 and '127.0.0.1:4173' in r.url else None)
+              page.goto('http://127.0.0.1:4173/cases/atlas/',wait_until='domcontentloaded',timeout=30000)
+              assert page.title()=='atlas app'
+              assert page.locator('#case-title').inner_text()=='atlas'
+              for selector in sections:
+                assert page.locator(selector).count()==1,(width,'missing section',selector)
+              assert page.locator('#hero-showcase iframe').count()==3
+              for frame_selector,screen_selector in embeds:
+                assert page.locator(frame_selector).get_attribute('src').endswith('embed=1')
+                page.frame_locator(frame_selector).locator(screen_selector).wait_for(state='attached',timeout=20000)
+              assert page.locator('#identity-media img').count()==4
+              assert page.locator('#money-media img').count()==4
+              assert page.locator('#cards-media img').count()==5
+              page.locator('main img').evaluate_all("(imgs)=>imgs.forEach(img=>img.loading='eager')")
+              page.wait_for_function("() => [...document.querySelectorAll('main img')].every(i=>i.complete&&i.naturalWidth>0)",timeout=20000)
+              page.evaluate('() => document.fonts.ready')
+              assert not problems,(width,problems)
+              assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),('horizontal overflow',width)
+              if width==1440:
+                hero=page.locator('#hero-showcase').bounding_box()
+                assert abs(hero['height']-720)<2,('hero',hero)
+                for tile in page.locator('.atlas-hero-tile').all():
+                  rect=tile.bounding_box()
+                  assert abs(rect['width']-281)<2 and abs(rect['height']-609)<3,('hero tile',rect)
+                cards=page.locator('#cards-media').bounding_box()
+                assert abs(cards['width']-1056)<2 and abs(cards['height']-1110)<3,('card media',cards)
+              if width in (390,768,1440):
+                page.screenshot(path=str(out/f'atlas-{width}.png'),full_page=True,animations='disabled')
+              print('ATLAS_BROWSER_OK',width,flush=True)
+              ctx.close()
+            browser.close()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-browser-screenshots
+          path: atlas-audit/
+          if-no-files-found: ignore

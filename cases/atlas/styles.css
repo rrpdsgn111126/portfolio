@@ -61,21 +61,19 @@ body {background:var(--background);color:var(--atlas-ink)}
   display:block;width:100%;max-width:100%;height:auto;aspect-ratio:375/812;
   object-fit:contain;border-radius:13px;box-shadow:0 0 30px rgba(0,0,0,.2);
 }
-.atlas-panel--cards {min-height:1110px}
-.atlas-card-showcase {
-  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
-  align-items:start;column-gap:24px;row-gap:28px;padding:42px 65px 48px;
-}
-.atlas-card-showcase img {grid-column:span 2}
-.atlas-card-showcase img:nth-child(4) {grid-column:2 / span 2}
-.atlas-card-showcase img:nth-child(5) {grid-column:4 / span 2}
-.atlas-card-showcase img:nth-child(n+4) {width:89%;justify-self:center}
+/* Fixed design-space geometry from Figma 4377:31182 (1056 × 1110).
+   Absolute coordinates keep top/bottom overlap intact without clipping. */
+.atlas-panel--cards {min-height:0;aspect-ratio:1056 / 1110}
+.atlas-card-showcase {position:absolute;inset:0}
+.atlas-card-showcase img {position:absolute;width:24.1477%;max-width:none;height:auto}
+.atlas-card-showcase img:nth-child(1) {left:6.6288%;top:3.7838%}
+.atlas-card-showcase img:nth-child(2) {left:36.9318%;top:3.7838%}
+.atlas-card-showcase img:nth-child(3) {left:67.2348%;top:3.7838%}
+.atlas-card-showcase img:nth-child(4) {left:9.4697%;top:51.3514%;width:21.3068%}
+.atlas-card-showcase img:nth-child(5) {left:69.1288%;top:51.3514%;width:21.3068%}
 .atlas-results {padding:120px 0 80px}
 .atlas-results .atlas-feature-copy {margin-bottom:24px}
 .atlas-results .portfolio-info-card {min-height:217px}
-@media(min-width:1101px) {
-  .atlas-card-showcase img {max-width:255px}
-}
 @media(max-width:1100px) {
   :root {--pad:40px}
   .atlas-intro {grid-template-columns:240px minmax(0,1fr)}
@@ -85,8 +83,7 @@ body {background:var(--background);color:var(--atlas-ink)}
   .atlas-hero-stage {gap:clamp(16px,4.7vw,68px)}
   .atlas-screen-row {gap:2.1%;padding:5% 2.3%}
   .atlas-panel--money .atlas-screen-row {gap:2.4%;padding:6.6% 2.4%}
-  .atlas-panel--kyc,.atlas-panel--money,.atlas-panel--cards {min-height:0}
-  .atlas-card-showcase {padding:4% 5%;gap:2.4%}
+  .atlas-panel--kyc,.atlas-panel--money {min-height:0}
   .portfolio-info-card h3,.portfolio-info-card p {font-size:16px}
 }
 @media(max-width:767px) {
@@ -116,9 +113,11 @@ body {background:var(--background);color:var(--atlas-ink)}
   .atlas-screen-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
   .atlas-panel--money .atlas-screen-row {gap:4vw;padding:6vw}
   .atlas-screen-row img,.atlas-card-showcase img {border-radius:8px;box-shadow:0 0 15px rgba(0,0,0,.25)}
-  .atlas-card-showcase {grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
-  .atlas-card-showcase img,.atlas-card-showcase img:nth-child(4),.atlas-card-showcase img:nth-child(5) {
-    grid-column:auto;width:100%;justify-self:stretch;max-width:none
+  .atlas-panel--cards {aspect-ratio:auto}
+  .atlas-card-showcase {position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
+  .atlas-card-showcase img,.atlas-card-showcase img:nth-child(1),.atlas-card-showcase img:nth-child(2),
+  .atlas-card-showcase img:nth-child(3),.atlas-card-showcase img:nth-child(4),.atlas-card-showcase img:nth-child(5) {
+    position:static;grid-column:auto;left:auto;top:auto;width:100%;max-width:none;justify-self:stretch
   }
   .atlas-card-showcase img:last-child {grid-column:1 / -1;width:calc(50% - 2vw);justify-self:center}
   .atlas-results {padding:96px 0 94px}
