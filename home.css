@@ -58,9 +58,11 @@ body{overflow-x:clip}
 @media(min-width:768px){
   .home-project__shot{translate:0 var(--home-shot-center-offset,0px)}
   #beeline-family .home-project__shot--first,
-  #equilibrium .home-project__shot--first{left:5.865536%}
+  #equilibrium .home-project__shot--first,
+  #atlas .home-project__shot--first{left:5.865536%}
   #beeline-family .home-project__shot--second,
-  #equilibrium .home-project__shot--second{left:22.348186%}
+  #equilibrium .home-project__shot--second,
+  #atlas .home-project__shot--second{left:22.348186%}
   #alfaforex .home-project__shot--first,
   #finam .home-project__shot--first{left:70.001972%}
   #alfaforex .home-project__shot--second,

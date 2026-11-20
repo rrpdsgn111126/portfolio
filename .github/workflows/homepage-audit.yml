@@ -91,16 +91,22 @@ jobs:
                           assert abs(box['x']-86)<1 and abs(box['y']-expected)<3 and abs(box['w']-1268)<1 and abs(box['h']-328)<1,('card',idx,box)
                           assert cards[idx]['size']=='18px' and cards[idx]['weight']=='700'
                           assert cards[idx]['bg']=='rgb(232, 235, 241)'
-                      # Existing projects alternate screenshot placement; image Y is dynamically
-                      # centered relative to text via home-interactions.js, not hard-coded.
+                      # Atlas leads, followed by the unchanged project order.
+                      # Desktop cards alternate left/right. Image Y is dynamically
+                      # centered relative to text by home-interactions.js.
+                      order=page.locator('#home-work > .home-project').evaluate_all(
+                          '(els) => els.map(e => e.id)')
+                      assert order==['atlas','finam','beeline-family','alfaforex','equilibrium'],order
                       for idx,card in enumerate(cards):
                           assert len(card['images'])==2,('images per card',idx)
                           first,second=card['images']
                           assert first['w']>100 and second['w']>100,('image dimensions',idx)
                           if idx%2==0:
-                              assert first['x']>second['x'],('right-hand composition',idx)
-                          else:
                               assert first['x']<second['x'],('left-hand composition',idx)
+                              assert max(img['x']+img['w'] for img in card['images'])<card['copy']['x'],('image left of text',idx)
+                          else:
+                              assert first['x']>second['x'],('right-hand composition',idx)
+                              assert min(img['x'] for img in card['images'])>card['copy']['x']+card['copy']['w'],('image right of text',idx)
                       print('HOMEPAGE_DOM_GEOMETRY_OK_1440',json.dumps(data),flush=True)
                   if width<=430:
                       assert all(c['rect']['w']<=width-30 for c in data['cards']),(width,data)
