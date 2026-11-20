@@ -51,26 +51,37 @@ body {background:var(--background);color:var(--atlas-ink)}
 .atlas-feature {margin:0}
 .atlas-identity {padding:96px 0 48px}
 .atlas-money {padding:120px 0 48px}
-.atlas-cards {padding:120px 0 48px}
+.atlas-cards,.atlas-affiliate {padding:120px 0 48px}
 .atlas-panel {--atlas-stage-width:min(1056px,calc(100vw - 2 * var(--pad) - 212px));background:var(--atlas-surface);border-radius:0;isolation:isolate}
 .atlas-panel--kyc {min-height:610px}
 .atlas-panel--money {min-height:660px}
 .atlas-screen-row {width:var(--atlas-stage-width);margin-inline:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:start;padding:50px 24px}
 .atlas-panel--money .atlas-screen-row {padding:70px 25px;gap:25px}
-.atlas-screen-row img,.atlas-card-showcase img {
+.atlas-screen-row img,.atlas-pair-showcase img {
   display:block;width:100%;max-width:100%;height:auto;aspect-ratio:375/812;
   object-fit:contain;border-radius:13px;box-shadow:none;
 }
-/* Fixed design-space geometry from Figma 4377:31182 (1056 × 1110).
-   Absolute coordinates keep top/bottom overlap intact without clipping. */
-.atlas-panel--cards {min-height:0}
-.atlas-card-showcase {position:relative;width:var(--atlas-stage-width);aspect-ratio:1056 / 1110;margin-inline:auto}
-.atlas-card-showcase img {position:absolute;width:24.1477%;max-width:none;height:auto}
-.atlas-card-showcase img:nth-child(1) {left:6.6288%;top:3.7838%}
-.atlas-card-showcase img:nth-child(2) {left:36.9318%;top:3.7838%}
-.atlas-card-showcase img:nth-child(3) {left:67.2348%;top:3.7838%}
-.atlas-card-showcase img:nth-child(4) {left:9.4697%;top:51.3514%;width:21.3068%}
-.atlas-card-showcase img:nth-child(5) {left:69.1288%;top:51.3514%;width:21.3068%}
+/* Exported Figma screens. Both paired stages use the same artwork scale. */
+.atlas-panel--money .atlas-screen-row--three {
+  width:min(940px,var(--atlas-stage-width));grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:36px;padding:58px 36px;
+}
+.atlas-panel--everyday,.atlas-panel--affiliate {position:relative;overflow:hidden;min-height:660px}
+.atlas-panel--everyday {background:radial-gradient(ellipse at 50% 16%,#a5f8d5 0%,#d8eee5 54%,#f1f3f2 100%)}
+.atlas-panel--affiliate {background:radial-gradient(ellipse at 50% 42%,#fff 0%,#e7eaed 94%,#e4e7ea 100%)}
+.atlas-panel--everyday::before,.atlas-panel--affiliate::before {
+  content:"";position:absolute;left:50%;top:-170px;transform:translateX(-50%);
+  width:510px;height:510px;border:1px solid rgba(79,155,129,.22);border-radius:50%;
+  box-shadow:0 0 0 80px rgba(107,179,154,.055),0 0 0 160px rgba(107,179,154,.04);pointer-events:none;
+}
+.atlas-panel--affiliate::before {border-color:rgba(150,155,165,.2);box-shadow:0 0 0 80px rgba(150,155,165,.06),0 0 0 160px rgba(150,155,165,.04)}
+.atlas-pair-showcase {
+  position:relative;z-index:1;width:min(680px,var(--atlas-stage-width));min-height:660px;
+  margin-inline:auto;padding:40px 32px 0;display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:52px;align-items:end;
+}
+.atlas-pair-showcase img {max-width:100%;width:100%;height:auto;border-radius:13px 13px 0 0}
+
 .atlas-results {padding:120px 0 80px}
 .atlas-results .atlas-feature-copy {margin-bottom:24px}
 .atlas-results .portfolio-info-card {min-height:217px}
@@ -83,7 +94,7 @@ body {background:var(--background);color:var(--atlas-ink)}
   .atlas-hero {height:min(75vw,720px)}
   .atlas-hero-stage {gap:clamp(16px,4.7vw,68px)}
   .atlas-screen-row {gap:2.1%;padding:5% 2.3%}
-  .atlas-panel--money .atlas-screen-row {gap:2.4%;padding:6.6% 2.4%}
+  .atlas-panel--money .atlas-screen-row--three {gap:3%;padding:5% 3%}
   .atlas-panel--kyc,.atlas-panel--money {min-height:0}
   .portfolio-info-card h3,.portfolio-info-card p {font-size:16px}
 }
@@ -109,18 +120,16 @@ body {background:var(--background);color:var(--atlas-ink)}
   .portfolio-info-card {padding:var(--pad);border-radius:16px}
   .portfolio-info-card h3 {font-size:5vw;line-height:7.5vw;margin-bottom:4.0625vw}
   .portfolio-info-card p {font-size:5vw;line-height:7.5vw}
-  .atlas-identity,.atlas-money,.atlas-cards {padding:96px 0 0}
+  .atlas-identity,.atlas-money,.atlas-cards,.atlas-affiliate {padding:96px 0 0}
   .atlas-feature-copy {width:100%;margin-bottom:28px}
   .atlas-screen-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
-  .atlas-panel--money .atlas-screen-row {gap:4vw;padding:6vw}
-  .atlas-screen-row img,.atlas-card-showcase img {border-radius:8px;box-shadow:none}
-  .atlas-panel--cards {aspect-ratio:auto}
-  .atlas-card-showcase {position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw;aspect-ratio:auto}
-  .atlas-card-showcase img,.atlas-card-showcase img:nth-child(1),.atlas-card-showcase img:nth-child(2),
-  .atlas-card-showcase img:nth-child(3),.atlas-card-showcase img:nth-child(4),.atlas-card-showcase img:nth-child(5) {
-    position:static;grid-column:auto;left:auto;top:auto;width:100%;max-width:none;justify-self:stretch
-  }
-  .atlas-card-showcase img:last-child {grid-column:1 / -1;width:calc(50% - 2vw);justify-self:center}
+  .atlas-panel--money .atlas-screen-row--three {grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
+  .atlas-panel--money .atlas-screen-row--three img:last-child {grid-column:1 / -1;width:calc(50% - 2vw);justify-self:center}
+  .atlas-screen-row img,.atlas-pair-showcase img {border-radius:8px;box-shadow:none}
+  .atlas-panel--everyday,.atlas-panel--affiliate {min-height:0}
+  .atlas-pair-showcase {width:100%;min-height:0;gap:4vw;padding:6vw 6vw 0;align-items:end}
+  .atlas-pair-showcase img {border-radius:8px 8px 0 0}
+
   .atlas-results {padding:96px 0 94px}
 }
 @media(prefers-reduced-motion:reduce) {

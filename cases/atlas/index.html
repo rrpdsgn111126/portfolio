@@ -59,10 +59,10 @@
         </div>
         <div id="identity-media" class="media-frame full-bleed atlas-panel atlas-panel--kyc">
           <div class="atlas-screen-row">
-            <img id="kyc-capture" src="./assets/kyc-capture.png" alt="Atlas identity document capture" width="375" height="812" loading="lazy" decoding="async">
-            <img id="kyc-review" src="./assets/kyc-review.png" alt="Review identity document photo" width="375" height="812" loading="lazy" decoding="async">
-            <img id="kyc-pending" src="./assets/kyc-pending.png" alt="Identity verification under review" width="375" height="812" loading="lazy" decoding="async">
-            <img id="kyc-start" src="./assets/kyc-start.png" alt="Identity verification entry screen" width="375" height="812" loading="lazy" decoding="async">
+            <img id="kyc-start" src="./assets/figma-kyc-start.png" data-figma-node="17948:11067" alt="Atlas identity verification entry screen" width="375" height="812" loading="lazy" decoding="async">
+            <img id="kyc-details" src="./assets/figma-kyc-details.png" data-figma-node="17948:11089" alt="Atlas identity verification information form" width="375" height="812" loading="lazy" decoding="async">
+            <img id="kyc-capture" src="./assets/figma-kyc-capture.png" data-figma-node="17948:10990" alt="Atlas identity document capture" width="375" height="812" loading="lazy" decoding="async">
+            <img id="kyc-pending" src="./assets/figma-kyc-pending.png" data-figma-node="17948:11050" alt="Atlas verification review status" width="375" height="812" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
@@ -74,28 +74,38 @@
           <p class="portfolio-body">Unify USDT and bank operations with clear amounts, fees, confirmations, and transaction receipts</p>
         </div>
         <div id="money-media" class="media-frame full-bleed atlas-panel atlas-panel--money">
-          <div class="atlas-screen-row">
-            <img id="transfer-request" src="./assets/transfer-request.png" alt="Atlas USDT withdrawal request" width="375" height="812" loading="lazy" decoding="async">
-            <img id="transfer-complete" src="./assets/transfer-complete.png" alt="Completed withdrawal details" width="375" height="812" loading="lazy" decoding="async">
-            <img id="transfer-card" src="./assets/transfer-card.png" alt="Withdrawal method and card" width="375" height="812" loading="lazy" decoding="async">
-            <img id="transfer-usdt" src="./assets/transfer-usdt.png" alt="USDT transaction amount and details" width="375" height="812" loading="lazy" decoding="async">
+          <div class="atlas-screen-row atlas-screen-row--three">
+            <img id="withdraw-card" src="./assets/figma-withdraw-card.png" data-figma-node="17948:11386" alt="Atlas withdrawal to a bank card" width="375" height="812" loading="lazy" decoding="async">
+            <img id="withdraw-confirmation" src="./assets/figma-withdraw-confirmation.png" data-figma-node="17948:11289" alt="Atlas withdrawal confirmation modal" width="375" height="812" loading="lazy" decoding="async">
+            <img id="withdraw-usdt" src="./assets/figma-withdraw-usdt.png" data-figma-node="17948:11528" alt="Atlas USDT withdrawal amount" width="375" height="812" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
     </section>
-    <section id="virtual-cards" class="atlas-feature atlas-cards" data-figma-node="4377:31177" aria-labelledby="cards-title">
+        <section id="virtual-cards" class="atlas-feature atlas-cards" data-figma-node="4377:31177" aria-labelledby="cards-title">
       <div class="atlas-narrow">
         <div class="atlas-feature-copy atlas-feature-copy--right" id="cards-copy">
-          <h2 id="cards-title" class="portfolio-section-title">virtual cards</h2>
-          <p class="portfolio-body">Make card issuance and everyday management straightforward, from reviewing fees to accessing protected details and spending limits</p>
+          <h2 id="cards-title" class="portfolio-section-title">everyday experience</h2>
+          <p class="portfolio-body">Manage virtual cards and get help with financial operations — all within one connected wallet experience</p>
         </div>
-        <div id="cards-media" class="media-frame full-bleed atlas-panel atlas-panel--cards">
-          <div class="atlas-card-showcase">
-            <img id="card-issue" src="./assets/card-issue.png" alt="Virtual card issuance and limits" width="375" height="812" loading="lazy" decoding="async">
-            <img id="card-view" src="./assets/card-view.png" alt="Card-related wallet flow" width="375" height="812" loading="lazy" decoding="async">
-            <img id="card-context" src="./assets/transfer-card.png" alt="Card selection within money movement" width="375" height="812" loading="lazy" decoding="async">
-            <img id="account-main" src="./assets/home-account.png" alt="Atlas main account and balance" width="375" height="812" loading="lazy" decoding="async">
-            <img id="account-alt" src="./assets/home-account-alt.png" alt="Atlas account overview and activity" width="375" height="812" loading="lazy" decoding="async">
+        <div id="cards-media" class="media-frame full-bleed atlas-panel atlas-panel--everyday">
+          <div class="atlas-pair-showcase">
+            <img id="virtual-card" src="./assets/figma-virtual-card.png" data-figma-node="17948:12060" alt="Atlas virtual card limits and security" width="375" height="812" loading="lazy" decoding="async">
+            <img id="support-chat" src="./assets/figma-support-chat.png" data-figma-node="17948:12336" alt="Atlas in-app customer support conversation" width="375" height="812" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="affiliate-program" class="atlas-feature atlas-affiliate" data-figma-node="17948:12352" aria-labelledby="affiliate-title">
+      <div class="atlas-narrow">
+        <div class="atlas-feature-copy atlas-feature-copy--left" id="affiliate-copy">
+          <h2 id="affiliate-title" class="portfolio-section-title">affiliate program</h2>
+          <p class="portfolio-body">Make referral earnings, commission tiers and account activation easy to understand and manage</p>
+        </div>
+        <div id="affiliate-media" class="media-frame full-bleed atlas-panel atlas-panel--affiliate">
+          <div class="atlas-pair-showcase">
+            <img id="affiliate-dashboard" src="./assets/figma-affiliate-dashboard.png" data-figma-node="17948:12353" alt="Atlas affiliate rewards and commission tiers" width="375" height="812" loading="lazy" decoding="async">
+            <img id="affiliate-onboarding" src="./assets/figma-affiliate-onboarding.png" data-figma-node="17948:12412" alt="Atlas affiliate account activation" width="375" height="812" loading="lazy" decoding="async">
           </div>
         </div>
       </div>

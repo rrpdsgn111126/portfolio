@@ -40,7 +40,7 @@ jobs:
           from playwright.sync_api import sync_playwright
           out=Path('atlas-audit');out.mkdir(exist_ok=True)
           sections=('#case-intro','#hero-showcase','#product-challenges','#identity-verification',
-                    '#money-movement','#virtual-cards','#results')
+                    '#money-movement','#virtual-cards','#affiliate-program','#results')
           embeds=[
             ('#atlas-hero-onboarding iframe','#onboarding'),
             ('#atlas-hero-glow iframe','#atlas-screen'),
@@ -70,13 +70,14 @@ jobs:
                 assert page.locator(frame_selector).get_attribute('src').endswith('embed=1')
                 page.frame_locator(frame_selector).locator(screen_selector).wait_for(state='attached',timeout=20000)
               assert page.locator('#identity-media img').count()==4
-              assert page.locator('#money-media img').count()==4
-              assert page.locator('#cards-media img').count()==5
+              assert page.locator('#money-media img').count()==3
+              assert page.locator('#cards-media img').count()==2
+              assert page.locator('#affiliate-media img').count()==2
               # Full-bleed media uses the same viewport-width pattern as Finam.
-              for selector in ('#identity-media','#money-media','#cards-media'):
+              for selector in ('#identity-media','#money-media','#cards-media','#affiliate-media'):
                 rect=page.locator(selector).bounding_box()
                 assert abs(rect['x'])<1.5 and abs(rect['width']-width)<2,(width,'full-bleed panel',selector,rect)
-              for selector in ('.atlas-hero-tile','.atlas-screen-row img','.atlas-card-showcase img'):
+              for selector in ('.atlas-hero-tile','.atlas-screen-row img','.atlas-pair-showcase img'):
                 assert page.locator(selector).evaluate_all('(els)=>els.every(e=>getComputedStyle(e).boxShadow==="none")'),(width,'unexpected image shadow',selector)
               # Artwork itself remains centered within its original grid width.
               assert page.locator('#identity-media .atlas-screen-row').evaluate('(el)=>getComputedStyle(el).width')!='auto'
@@ -92,9 +93,9 @@ jobs:
                   rect=tile.bounding_box()
                   assert abs(rect['width']-281)<2 and abs(rect['height']-609)<3,('hero tile',rect)
                 cards=page.locator('#cards-media').bounding_box()
-                artboard=page.locator('#cards-media .atlas-card-showcase').bounding_box()
-                assert abs(cards['width']-1440)<2 and abs(cards['height']-1110)<3,('full-bleed card media',cards)
-                assert abs(artboard['width']-1056)<2 and abs(artboard['height']-1110)<3,('centered card artboard',artboard)
+                artboard=page.locator('#cards-media .atlas-pair-showcase').bounding_box()
+                assert abs(cards['width']-1440)<2 and abs(cards['height']-660)<3,('full-bleed card media',cards)
+                assert abs(artboard['width']-680)<2 and abs(artboard['height']-660)<3,('centered card artboard',artboard)
               if width in (390,768,1440):
                 page.screenshot(path=str(out/f'atlas-{width}.png'),full_page=True,animations='disabled')
               print('ATLAS_BROWSER_OK',width,flush=True)
