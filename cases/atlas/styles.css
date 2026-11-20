@@ -22,7 +22,7 @@ body {background:var(--background);color:var(--atlas-ink)}
 .home-symbol:focus-visible {outline:2px solid var(--atlas-ink);outline-offset:5px;border-radius:6px}
 .atlas-intro {
   display:grid;grid-template-columns:minmax(0,307px) minmax(0,1fr);column-gap:25px;
-  padding-top:72px;min-height:333px;align-content:start;
+  padding-top:72px;min-height:333px;margin-bottom:96px;align-content:start;
 }
 .atlas-intro h1 {font:700 50px/60px var(--font-heading);letter-spacing:0;text-transform:lowercase}
 .atlas-intro-copy {min-width:0}
@@ -90,7 +90,7 @@ body {background:var(--background);color:var(--atlas-ink)}
 @media(max-width:767px) {
   :root {--pad:6.25vw}
   .home-symbol {top:4.375vw;left:2.5vw;width:7.5vw;height:8.125vw;font-size:8.125vw}
-  .atlas-intro {display:flex;flex-direction:column;gap:19px;padding-top:15vw;padding-bottom:48px;min-height:0}
+  .atlas-intro {display:flex;flex-direction:column;gap:19px;padding-top:15vw;min-height:0;margin-bottom:48px}
   .atlas-intro h1 {font-size:7.8125vw;line-height:11.25vw}
   .atlas-intro .portfolio-lead {font-size:7.8125vw;line-height:11.25vw;margin-bottom:7.5vw}
   .atlas-intro .portfolio-body,.atlas-feature-copy .portfolio-body {font-size:5vw;line-height:7.5vw}

@@ -60,6 +60,11 @@ jobs:
               for selector in sections:
                 assert page.locator(selector).count()==1,(width,'missing section',selector)
               assert page.locator('#hero-showcase iframe').count()==3
+              assert page.locator('#hero-artboard > .atlas-hero-tile').evaluate_all('(els)=>els.map(el=>el.id)')==['atlas-hero-onboarding','atlas-hero-photo','atlas-hero-glow'],('hero tile order',width)
+              intro=page.locator('#case-intro').bounding_box()
+              hero=page.locator('#hero-showcase').bounding_box()
+              target_gap=48 if width<=767 else 96
+              assert abs(hero['y']-(intro['y']+intro['height'])-target_gap)<2,('Atlas intro-to-hero gap',width,intro,hero,target_gap)
               assert page.locator('#atlas-hero-photo iframe').get_attribute('src')=='../../experiments/atlas-gradient/?embed=1'
               for frame_selector,screen_selector in embeds:
                 assert page.locator(frame_selector).get_attribute('src').endswith('embed=1')
