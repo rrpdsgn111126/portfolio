@@ -55,6 +55,8 @@ jobs:
               page.on('pageerror',lambda err:problems.append('JS '+str(err)))
               page.on('response',lambda r:problems.append('HTTP '+str(r.status)+' '+r.url) if r.status>=400 and '127.0.0.1:4173' in r.url else None)
               page.goto('http://127.0.0.1:4173/cases/atlas/',wait_until='domcontentloaded',timeout=30000)
+              # Font metrics can change line wrapping between geometry reads
+              page.evaluate('() => document.fonts.ready')
               assert page.title()=='atlas app'
               assert page.locator('#case-title').inner_text()=='atlas'
               for selector in sections:
@@ -83,7 +85,6 @@ jobs:
               assert page.locator('#identity-media .atlas-screen-row').evaluate('(el)=>getComputedStyle(el).width')!='auto'
               page.locator('main img').evaluate_all("(imgs)=>imgs.forEach(img=>img.loading='eager')")
               page.wait_for_function("() => [...document.querySelectorAll('main img')].every(i=>i.complete&&i.naturalWidth>0)",timeout=20000)
-              page.evaluate('() => document.fonts.ready')
               assert not problems,(width,problems)
               assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),('horizontal overflow',width)
               if width==1440:
