@@ -138,7 +138,11 @@ jobs:
                   assert debug.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),('debug overflow',width)
                   # Clicking a named overlay copies its ID and must not open the case link.
                   if width==1440:
+                      # Beeline is third after the Atlas reorder, below the fold.
+                      # The fixed debug overlay hides labels outside the viewport.
+                      debug.locator('#beeline-family').scroll_into_view_if_needed()
                       target=debug.locator('.block-debug-label',has_text='#beeline-family-image-1')
+                      target.wait_for(state='visible',timeout=5000)
                       target.click(force=True)
                       debug.wait_for_timeout(120)
                       assert debug.url.endswith('/?debug=blocks'),('inspector navigated unexpectedly',debug.url)
