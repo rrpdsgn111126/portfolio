@@ -19,7 +19,9 @@ Case URL: `/cases/atlas/`
 Hero frames share Figma's 281:609 aspect ratio. The corresponding source animations remain in:
 - `experiments/atlas-onboarding/`
 - `experiments/atlas-gradient/glow.html`
-- `experiments/atlas-photo-crossfade/`
+- `experiments/atlas-gradient/` (animated photo background, hero image 3)
+
+The separate photo-crossfade experiment remains available but is not used by this hero.
 
 Embedded screens use `?embed=1`, a presentation-only mode that hides test UI and preserves the original animation logic. All image assets in `cases/atlas/assets` are independent local PNG exports, not hotlinked temporary Figma URLs.
 

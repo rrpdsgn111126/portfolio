@@ -32,7 +32,7 @@ body {background:var(--background);color:var(--atlas-ink)}
 .atlas-hero-stage {width:min(979px,calc(100% - 2 * var(--pad)));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:68px;align-items:center}
 .atlas-hero-tile {
   width:100%;aspect-ratio:375/812;min-width:0;position:relative;overflow:hidden;border-radius:14px;
-  box-shadow:0 0 30px rgba(0,0,0,.25);background:#fff;
+  box-shadow:none;background:#fff;
 }
 .atlas-hero-tile iframe {position:absolute;inset:0;width:100%;height:100%;display:block;border:0;border-radius:inherit}
 .atlas-narrow {width:calc(100% - 212px);max-width:1056px;margin-inline:auto}
@@ -52,19 +52,19 @@ body {background:var(--background);color:var(--atlas-ink)}
 .atlas-identity {padding:96px 0 48px}
 .atlas-money {padding:120px 0 48px}
 .atlas-cards {padding:120px 0 48px}
-.atlas-panel {width:100%;background:var(--atlas-surface);border-radius:0;isolation:isolate}
+.atlas-panel {--atlas-stage-width:min(1056px,calc(100vw - 2 * var(--pad) - 212px));background:var(--atlas-surface);border-radius:0;isolation:isolate}
 .atlas-panel--kyc {min-height:610px}
 .atlas-panel--money {min-height:660px}
-.atlas-screen-row {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:start;padding:50px 24px}
+.atlas-screen-row {width:var(--atlas-stage-width);margin-inline:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:start;padding:50px 24px}
 .atlas-panel--money .atlas-screen-row {padding:70px 25px;gap:25px}
 .atlas-screen-row img,.atlas-card-showcase img {
   display:block;width:100%;max-width:100%;height:auto;aspect-ratio:375/812;
-  object-fit:contain;border-radius:13px;box-shadow:0 0 30px rgba(0,0,0,.2);
+  object-fit:contain;border-radius:13px;box-shadow:none;
 }
 /* Fixed design-space geometry from Figma 4377:31182 (1056 × 1110).
    Absolute coordinates keep top/bottom overlap intact without clipping. */
-.atlas-panel--cards {min-height:0;aspect-ratio:1056 / 1110}
-.atlas-card-showcase {position:absolute;inset:0}
+.atlas-panel--cards {min-height:0}
+.atlas-card-showcase {position:relative;width:var(--atlas-stage-width);aspect-ratio:1056 / 1110;margin-inline:auto}
 .atlas-card-showcase img {position:absolute;width:24.1477%;max-width:none;height:auto}
 .atlas-card-showcase img:nth-child(1) {left:6.6288%;top:3.7838%}
 .atlas-card-showcase img:nth-child(2) {left:36.9318%;top:3.7838%}
@@ -79,6 +79,7 @@ body {background:var(--background);color:var(--atlas-ink)}
   .atlas-intro {grid-template-columns:240px minmax(0,1fr)}
   .atlas-intro h1,.atlas-intro .portfolio-lead {font-size:clamp(36px,4vw,50px);line-height:1.2}
   .atlas-narrow {width:100%;max-width:none}
+  .atlas-panel {--atlas-stage-width:min(1056px,calc(100vw - 2 * var(--pad)))}
   .atlas-hero {height:min(75vw,720px)}
   .atlas-hero-stage {gap:clamp(16px,4.7vw,68px)}
   .atlas-screen-row {gap:2.1%;padding:5% 2.3%}
@@ -100,7 +101,7 @@ body {background:var(--background);color:var(--atlas-ink)}
     scrollbar-width:none;
   }
   .atlas-hero-stage::-webkit-scrollbar {display:none}
-  .atlas-hero-tile {flex:0 0 min(70vw,281px);scroll-snap-align:start;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.25)}
+  .atlas-hero-tile {flex:0 0 min(70vw,281px);scroll-snap-align:start;border-radius:10px;box-shadow:none}
   .atlas-challenges {padding:96px 0 0}
   .atlas-challenges .portfolio-section-title {margin-bottom:3.4375vw}
   .portfolio-section-title {font-size:5vw;line-height:7.5vw}
@@ -112,9 +113,9 @@ body {background:var(--background);color:var(--atlas-ink)}
   .atlas-feature-copy {width:100%;margin-bottom:28px}
   .atlas-screen-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
   .atlas-panel--money .atlas-screen-row {gap:4vw;padding:6vw}
-  .atlas-screen-row img,.atlas-card-showcase img {border-radius:8px;box-shadow:0 0 15px rgba(0,0,0,.25)}
+  .atlas-screen-row img,.atlas-card-showcase img {border-radius:8px;box-shadow:none}
   .atlas-panel--cards {aspect-ratio:auto}
-  .atlas-card-showcase {position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw}
+  .atlas-card-showcase {position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4vw;padding:6vw;aspect-ratio:auto}
   .atlas-card-showcase img,.atlas-card-showcase img:nth-child(1),.atlas-card-showcase img:nth-child(2),
   .atlas-card-showcase img:nth-child(3),.atlas-card-showcase img:nth-child(4),.atlas-card-showcase img:nth-child(5) {
     position:static;grid-column:auto;left:auto;top:auto;width:100%;max-width:none;justify-self:stretch
